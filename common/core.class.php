@@ -16,11 +16,20 @@ class core {
 
     private static $instance = null;
     private $config;
-    private $hooks;
     private $themes;
     private $pluginToCall;
     private $js;
     private $css;
+
+    /**
+     * @var array Filters Hook
+     */
+    protected static $hooksFilters = [];
+
+    /**
+     * @var array Action Hook
+     */
+    protected static $hooksAction = [];
 
     ## Constructeur
 
@@ -152,6 +161,71 @@ class core {
     }
 
     /**
+     * Add an Action Hook
+     * 
+     * @param string Hook Name
+     * @param string Callback
+     */
+    public static function registerHookAction(string $name, $callback) {
+        self::$hooksAction[$name][] = $callback;
+    }
+
+    /**
+     * Add a Filter Hook
+     * 
+     * @param string Hook Name
+     * @param string Callback
+     */
+    public static function registerHookFilter(string $name, $callback) {
+        self::$hooksFilters[$name][] = $callback;
+    }
+
+    /**
+     * Run a Hook Action. You can pass mixed content to $params
+     * Hook Action never return content
+     * 
+     * @param string Hook name
+     * @param mixed  Params to pass to the callback
+     */
+    public static function executeHookAction(string $name, $params = null) {
+        if (!isset(self::$hooksAction[$name]) || !is_array(self::$hooksAction[$name])) {
+            return 0;
+        }
+        foreach (self::$hooksAction[$name] as $callback) {
+            if (is_array($callback)) {
+                call_user_func([$callback[0], $callback[1]], $params);
+            } else {
+                call_user_func($callback, $params);
+            }
+        }
+        return;
+    }
+
+    /**
+     * Run a Filter Hook.
+     * Content will be returned ever and ever by the hooks
+     * Content and Params are available in the callback in an array
+     * 
+     * @param string Hook name to run
+     * @param mixed  Content to modify
+     * @param mixed  Params to pass to the callback
+     * @return mixed Filtered Content by Hooks
+     */
+    public static function executeHookFilter(string $name, $content, $params = null) {
+        if (!isset(self::$hooksFilters[$name]) || !is_array(self::$hooksFilters[$name])) {
+            return $content;
+        }
+        foreach (self::$hooksFilters[$name] as $callback) {
+            if (is_array($callback)) {
+                $content = call_user_func_array([$callback[0], $callback[1]], [$content, $params]);
+            } else {
+                $content = call_user_func_array($callback[0], [$content, $params]);
+            }
+        }
+        return $content;
+    }
+
+    /**
      * Permet d'appeler un hook
      * Si un paramètre est fourni, celui-ci sera passé de fonction en fonction Hook de filtre).
      * Sinon, la valeur de retour sera concaténé à chaque fonction (Hook d'action).
@@ -279,5 +353,3 @@ class core {
     }
 
 }
-
-?>
