@@ -54,11 +54,14 @@ class pluginsManager {
     ## Installe un plugin ciblé
 
     public function installPlugin($name, $activate = false) {
-        // Création du dossier data
-        @mkdir(DATA_PLUGIN . $name . '/', 0755);
-        @chmod(DATA_PLUGIN . $name . '/', 0755);
+        core::getInstance()->callHook('beforePluginInstall', $name);
+        // Create data plugin folder
+        @mkdir(DATA_PLUGIN . $name, 0755, true);
+        @chmod(DATA_PLUGIN . $name, 0755);
+
         // Lecture du fichier config usine
         $config = util::readJsonFile(PLUGINS . $name . '/param/config.json');
+
         // Par défaut le plugin est inactif
         if ($activate)
             $config['activate'] = "1";
@@ -70,6 +73,8 @@ class pluginsManager {
         // Appel de la fonction d'installation du plugin
         if (function_exists($name . 'Install'))
             call_user_func($name . 'Install');
+
+        core::getInstance()->callHook('afterPluginInstall', $name);
         // Check du fichier config
         if (!file_exists(DATA_PLUGIN . $name . '/config.json'))
             return false;
@@ -93,6 +98,12 @@ class pluginsManager {
         $instance = self::getInstance();
         $plugin = $instance->getPlugin($pluginName);
         return $plugin->getConfigVal($kConf);
+    }
+    
+    public static function getPluginInfoVal($pluginName, $kConf) {
+        $instance = self::getInstance();
+        $plugin = $instance->getPlugin($pluginName);
+        return $plugin->getInfoVal($kConf);
     }
 
     ## Détermine si le plugin ciblé existe et s'il est actif
@@ -137,7 +148,9 @@ class pluginsManager {
         // Configuration du plugin
         $config = util::readJsonFile(DATA_PLUGIN . $name . '/config.json');
         // Hooks du plugin
+        @include PLUGINS . $name . '/param/hooks.php';
         $hooks = util::readJsonFile(PLUGINS . $name . '/param/hooks.json');
+        //
         // Config usine
         $initConfig = util::readJsonFile(PLUGINS . $name . '/param/config.json');
         // Derniers checks
@@ -151,5 +164,3 @@ class pluginsManager {
     }
 
 }
-
-?>

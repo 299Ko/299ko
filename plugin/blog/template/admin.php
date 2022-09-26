@@ -61,8 +61,11 @@ include_once(ROOT . 'admin/header.php');
             <label>Contenu</label><br>
             <textarea name="content" class="editor"><?php echo $core->callHook('beforeEditEditor', $news->getContent()); ?></textarea>
         </p>
+        
+        <?php
+        core::executeHookAction('adminEditingAnItem', [$runPlugin->getName(), $news->getId()]);
 
-    <?php if ($pluginsManager->isActivePlugin('galerie')) { ?>
+     if ($pluginsManager->isActivePlugin('galerie')) { ?>
             <h3>Image à la une</h3>
             <p>
                 <?php if (galerie::searchByfileName($news->getImg())) { ?><input type="checkbox" name="delImg" /> Supprimer l'image à la une

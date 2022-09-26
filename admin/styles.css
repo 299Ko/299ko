@@ -398,7 +398,7 @@ ul.tabs a, ul.tabs_style a{
 
 /* PARAM */
 
-#param_link, #help_link{
+#param_link, #help_link, #cat_link{
     float: right;
     opacity: 0.45;
     transition: opacity 0.5s ease-in-out;
@@ -406,7 +406,7 @@ ul.tabs a, ul.tabs_style a{
     margin-left: 10px;
 }
 
-#param_link:hover, #help_link:hover{
+#param_link:hover, #help_link:hover, #cat_link:hover{
     opacity: 1;
 }
 
@@ -417,7 +417,6 @@ ul.tabs a, ul.tabs_style a{
 #param_panel .content, #help_panel .content{
     overflow-y: scroll;
     overflow-x: hidden;
-
 }
 
 /* HELP */
@@ -427,6 +426,44 @@ ul.tabs a, ul.tabs_style a{
     text-align:left;
     background:none;
     margin-bottom: 0;
+}
+
+ul.categories-list {
+    list-style-type: none;
+    font-size: 14px;
+}
+
+ul.categories-list li {
+    position: relative;
+    padding: 8px;
+}
+
+ul.categories-list li input{
+    margin-right:5px;
+}
+
+ul.categories-list li.categories-hasChildren > i {
+    position: absolute;
+    right:0;
+    transition: all 0.4s;
+    cursor: pointer;
+}
+
+ul.categories-list-sub {
+    list-style-type: none;
+    margin-left:15px;
+    display: none;
+}
+
+#categorie-add-form {
+    position: relative;
+}
+
+#categorie-add-form button#category-child-delete {
+    display: none;
+    position: absolute;
+    right:0;
+    top:0;
 }
 
 /* MOBILE */

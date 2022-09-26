@@ -44,7 +44,8 @@ defined('ROOT') OR exit('No direct script access allowed');
                     <div id="content" class="<?php echo $runPlugin->getName(); ?>-admin">
                         <div id="sidebar">
                             <ul id="navigation">
-                                <?php foreach ($pluginsManager->getPlugins() as $k => $v)
+                                <?php
+                                foreach ($pluginsManager->getPlugins() as $k => $v)
                                     if ($v->getConfigVal('activate') && $v->getAdminFile() && $v->getIsDefaultAdminPlugin()) {
                                         ?>
                                         <li><a href="index.php?p=<?php echo $v->getName(); ?>"><?php echo $v->getInfoVal('name'); ?></a></li>
@@ -81,5 +82,7 @@ defined('ROOT') OR exit('No direct script access allowed');
                                 </div>
                             </div>
                             <a title="Aide" data-fancybox id="help_link" href="#" data-src="#help_panel"><i class="fa-solid fa-circle-question"></i></a>
-<?php } ?>
+                            <?php }
+                            core::executeHookAction('adminToolsTemplates', [$runPlugin->getName()]);
+                            ?>
                         <h2><?php echo $runPlugin->getInfoVal('name'); ?></h2>

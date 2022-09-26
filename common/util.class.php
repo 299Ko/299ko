@@ -54,7 +54,24 @@ class util {
         }
     }
 
-    ## Transforme une chaîne en URL
+    /**
+     * Return current page URL
+     * 
+     * @return string
+     */
+    public static function getCurrentURL() {
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $url = "https";
+        } else {
+            $url = "http";
+        }
+        $url .= "://";
+        $url .= $_SERVER['HTTP_HOST'];
+        $url .= $_SERVER['REQUEST_URI'];
+        return $url;
+    }
+
+## Transforme une chaîne en URL
 
     public static function strToUrl($str) {
         $str = str_replace('&', 'et', $str);
@@ -161,7 +178,7 @@ class util {
             $data = $day . '/' . $month . '/' . $year;
         return $data;
     }
-    
+
     /**
      * Build absolute URL with siteURL saved in config.json
      * 
@@ -174,9 +191,9 @@ class util {
         if ($admin) {
             $base .= 'admin/';
         }
-        return $base . ltrim($uri, '/') ;
+        return $base . ltrim(self::strToUrl($uri), '/');
     }
 
 }
 
-?>
+

@@ -36,5 +36,35 @@ $(document).ready(function () {
             $('#sidebar').hide();
         }
     });
+    
+    $(".categories-list li i").click(function () {
+        $(this).toggleClass('fa-rotate-180');
+        $(this).next('ul.categories-list-sub').slideToggle();
+    });
+
+    $('.btn-add-categorie').click(function (e) {
+        e.preventDefault();
+        var $form = $('#categorie-add-form-container');
+        var $this = $(this);
+        var parent_id = $this.data('id');
+        var $categorie = $('#categorie-' + parent_id);
+        $form.find('h4').text('Ajouter une catégorie enfant à ' + $categorie.attr('name'));
+        $('#categorie-parentId').val(parent_id);
+        $categorie.after($form);
+        //$('#comment-reply-delete').style.opacity = "100";
+        var $aRem = document.getElementById("category-child-delete");
+        $aRem.style.display = "block";
+    });
+
+    $('#category-child-delete').click(function (e) {
+        e.preventDefault();
+        var $aRem = document.getElementById("category-child-delete");
+        $aRem.style.display = "none";
+        var $form = $('#categorie-add-form-container');
+        var $list = $('#categorie-endlist');
+        $form.find('h4').text('Ajouter une catégorie');
+        $('#comment-parentId').val(0);
+        $list.after($form);
+    });
 });
 
