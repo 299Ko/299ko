@@ -257,7 +257,6 @@ class core {
     ## Detecte le mode de l'administration
 
     public function detectAdminMode() {
-        $mode = '';
         if (isset($_GET['action']) && $_GET['action'] == 'login')
             return 'login';
         elseif (isset($_GET['action']) && $_GET['action'] == 'logout')

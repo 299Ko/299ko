@@ -36,10 +36,15 @@ $(document).ready(function () {
             $('#sidebar').hide();
         }
     });
-    
+
     $(".categories-list li i").click(function () {
         $(this).toggleClass('fa-rotate-180');
         $(this).next('ul.categories-list-sub').slideToggle();
+    });
+
+    $('div.categorie-list i.categories-toggle').click(function () {
+        $(this).toggleClass('fa-rotate-180');
+        $(this).parent('div.categorie-list').nextAll('div.categories-toggle').first().slideToggle();
     });
 
     $('.btn-add-categorie').click(function (e) {

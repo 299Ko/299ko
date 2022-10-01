@@ -14,12 +14,12 @@ switch ($catDisplay) {
         ?>
         <div class="categories-container">
             <?php
-            if (empty($this->categories)) {
+            if (empty($this->imbricatedCategories)) {
                 echo 'Aucune catégorie. <a href="index.php&p=categories&plugin=' . $this->pluginId . '>Ajoutez en une</a>';
             } else { ?>
             <ul class="categories-list">
                 <?php
-                foreach ($this->categories as $cat) {
+                foreach ($this->imbricatedCategories as $cat) {
                     $cat->outputAsCheckbox($itemId);
                 }
                 ?>

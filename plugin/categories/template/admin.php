@@ -28,7 +28,7 @@ switch ($action) {
                     <?php foreach ($pluginsWithCategories as $p) { ?>
                         <tr>
                             <td><?php echo $p->getName(); ?></td>
-                            <td><a href="index.php?p=categories&&plugin=<?php echo $p->getName(); ?>">Gérer les catégories</td>
+                            <td><a href="index.php?p=categories&plugin=<?php echo $p->getName(); ?>">Gérer les catégories</td>
                         </tr>
                     <?php } ?>
                 </tbody>

@@ -17,7 +17,7 @@ class Categorie implements JsonSerializable {
     public $items = [];
     public $label = '';
     public int $parentId;
-    protected array $childrenId = [];
+    public array $childrenId = [];
     protected array $children = [];
     public bool $isChild = false;
     public bool $hasChildren = false;
@@ -37,26 +37,30 @@ class Categorie implements JsonSerializable {
     }
 
     public function jsonSerialize() {
-        return ['items' => [$this->items],
-            'label' => $this->label];
+        return
+                ['items' => $this->items,
+                    'label' => $this->label,
+                    'id' => $this->id,
+                    'parentId' => $this->parentId,
+                    'childrenId' => $this->childrenId];
     }
 
     public function outputToAdmin($mode = self::CHECKBOX) {
         $catDisplay = 'sub';
         require 'categories.php';
     }
-    
+
     public function outputAsCheckbox($itemId) {
         $catDisplay = 'sub';
         require PLUGINS . 'categories/template/checkboxCategories.php';
     }
-    
+
     public function outputAsList() {
         $catDisplay = 'sub';
         require PLUGINS . 'categories/template/listCategories.php';
     }
-    
-        public function getCategorieById(int $id) {
+
+    public function getCategorieById(int $id) {
         if ($id === $this->id) {
             // We search this categorie
             return $this;
@@ -67,14 +71,14 @@ class Categorie implements JsonSerializable {
         }
         foreach ($this->children as $parent) {
             // Search in childs
-            $res = $parent->getCommentById($id);
+            $res = $parent->getCategorieById($id);
             if (is_object($res) && get_class($res) === get_class($this)) {
                 return $res;
             }
         }
         return false;
     }
-    
+
     public function addChild(Categorie $categorie) {
         $categorie->isChild = true;
         $categorie->depth = $this->depth + 1;

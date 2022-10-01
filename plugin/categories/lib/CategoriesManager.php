@@ -14,6 +14,7 @@ class CategoriesManager {
     protected $file;
     public $pluginId;
     public $categories;
+    public $imbricatedCategories;
     protected bool $isActive;
 
     public function __construct(string $pluginId) {
@@ -27,6 +28,61 @@ class CategoriesManager {
 
     public function isActive() {
         return $this->isActive;
+    }
+
+    public function isCategorieExist(int $categorieId) {
+        return (isset($this->categories[$categorieId]));
+    }
+
+    public function createCategorie($label, int $parentId) {
+        $cat = new Categorie($this->pluginId);
+        $cat->label = $label;
+        $cat->parentId = $parentId;
+        $cat->id = $this->findNextId();
+        $this->categories[$cat->id] = $cat;
+        if ($parentId !== 0) {
+            // Have a parent
+            array_push($this->categories[$parentId]->childrenId, $cat->id);
+            $this->categories[$parentId]->childrenId = array_values(array_unique($this->categories[$parentId]->childrenId));
+        }
+        $this->imbricateCategories();
+        $this->saveCategories();
+        return true;
+    }
+
+    public function deleteCategorie($id) {
+        if (!isset($this->categories[$id])) {
+            return false;
+        }
+        $cat = $this->categories[$id];
+        foreach ($cat->childrenId as $childId) {
+            // Childs Categories are affected to the categorie deleted parent
+            $this->categories[$childId]->parentId = $cat->parentId;
+        }
+        if ($cat->parentId !== 0) {
+            // Have a parent, we delete the categorie in here
+            $key = array_search($id, $this->categories[$cat->parentId]->childrenId, true);
+            if ($key !== false) {
+                // Our categorie is here, we delete it
+                unset($this->categories[$cat->parentId]->childrenId[$key]);
+                // And we add the children in the parent
+                array_push($this->categories[$cat->parentId]->childrenId, $cat->childrenId);
+                $this->categories[$cat->parentId]->childrenId = array_values(array_unique($this->categories[$cat->parentId]->childrenId));
+            }
+        }
+        //Delete the categorie
+        unset($this->categories[$id]);
+        $this->imbricateCategories();
+        $this->saveCategories();
+        return true;
+    }
+
+    protected function saveCategories() {
+        $metas = [];
+        foreach ($this->categories as $cat) {
+            $metas[$cat->id] = $cat;
+        }
+        util::writeJsonFile($this->file, $metas);
     }
 
     public static function isPluginUseCategories($pluginId) {
@@ -63,14 +119,14 @@ class CategoriesManager {
                 }
             }
         }
-        $this->categories = $categories;
+        $this->imbricatedCategories = $categories;
     }
 
     public function outputAsCheckbox($itemId) {
         $catDisplay = 'root';
         require PLUGINS . 'categories/template/checkboxCategories.php';
     }
-    
+
     public function outputAsList() {
         $catDisplay = 'root';
         require PLUGINS . 'categories/template/listCategories.php';
@@ -106,6 +162,14 @@ class CategoriesManager {
             return [];
         }
         return util::readJsonFile($file);
+    }
+
+    protected function findNextId(): int {
+        if (!file_exists($this->file)) {
+            return 1;
+        }
+        $cats = util::readJsonFile($this->file);
+        return max(array_column($cats, 'id')) + 1;
     }
 
 }
