@@ -18,7 +18,7 @@ class Categorie implements JsonSerializable {
     public $label = '';
     public int $parentId;
     public array $childrenId = [];
-    protected array $children = [];
+    public array $children = [];
     public bool $isChild = false;
     public bool $hasChildren = false;
     public int $depth = 0;
@@ -45,14 +45,14 @@ class Categorie implements JsonSerializable {
                     'childrenId' => $this->childrenId];
     }
 
-    public function outputToAdmin($mode = self::CHECKBOX) {
-        $catDisplay = 'sub';
-        require 'categories.php';
-    }
-
     public function outputAsCheckbox($itemId) {
         $catDisplay = 'sub';
         require PLUGINS . 'categories/template/checkboxCategories.php';
+    }
+    
+    public function outputAsSelect($parentId, $categorieId) {
+        $catDisplay = 'sub';
+        require PLUGINS . 'categories/template/selectCategorie.php';
     }
 
     public function outputAsList() {
@@ -81,7 +81,6 @@ class Categorie implements JsonSerializable {
 
     public function addChild(Categorie $categorie) {
         $categorie->isChild = true;
-        $categorie->depth = $this->depth + 1;
         $this->hasChildren = true;
         $this->children[$categorie->id] = $categorie;
     }

@@ -9,17 +9,24 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
-$action = $_GET['action'] ?? '';
-$pluginId = $_GET['plugin'] ?? '';
+$action = (string) $_GET['action'] ?? '';
+$pluginId = (string) $_GET['plugin'] ?? '';
+
+if ($pluginId === '' || !CategoriesManager::isPluginUseCategories($pluginId)) {
+    // Plugin isnt use categories
+    $action = '';
+    $pluginId = '';
+} else {
+    $categoriesManager = new CategoriesManager($pluginId);
+}
 
 switch ($action) {
     case 'add':
         $pluginForm = $_POST['categorie-plugin'] ?? '';
         $error = false;
-        if ($pluginId === $pluginForm && CategoriesManager::isPluginUseCategories($pluginId) && $administrator->isAuthorized()) {
+        if ($pluginId === $pluginForm && $administrator->isAuthorized()) {
             $parentId = (int) $_POST['categorie-parentId'];
             $categorieLabel = $_POST['categorie-add-label'];
-            $categoriesManager = new CategoriesManager($pluginId);
             if ($parentId === 0 || $categoriesManager->isCategorieExist($parentId)) {
                 if ($categorieLabel == '') {
                     $categorieLabel = 'Nouvelle Catégorie';
@@ -35,11 +42,10 @@ switch ($action) {
         header('location:index.php?p=categories&plugin=' . $pluginId);
         die();
     case 'del':
-        $id = $_GET['id'];
-        if (!$administrator->isAuthorized() || !CategoriesManager::isPluginUseCategories($pluginId)) {
+        $id = (int) $_GET['id'];
+        if (!$administrator->isAuthorized()) {
             core::getInstance()->error404();
         }
-        $categoriesManager = new CategoriesManager($pluginId);
         if ($categoriesManager->isCategorieExist($id)) {
             if ($categoriesManager->deleteCategorie($id)) {
                 show::msg('La catégorie a bien été supprimée.', 'success');
@@ -49,19 +55,44 @@ switch ($action) {
         }
         header('location:index.php?p=categories&plugin=' . $pluginId);
         die();
-
+    case 'edit':
+        $id = (int) $_GET['id'];
+        if (!$categoriesManager->isCategorieExist($id)) {
+            show::msg('La catégorie demandée n\'existe pas', 'error');
+            header('location:index.php?p=categories&plugin=' . $pluginId);
+            die();
+        }
+        $categorie = $categoriesManager->getCategorie($id);
+        break;
+    case 'save':
+        if (!$administrator->isAuthorized()) {
+            core::getInstance()->error404();
+        }
+        $id = (int) $_GET['id'];
+        if (!$categoriesManager->isCategorieExist($id)) {
+            show::msg('La catégorie demandée n\'existe pas', 'error');
+            header('location:index.php?p=categories&plugin=' . $pluginId);
+            die();
+        }
+        $label = $_POST['categorie-label'];
+        $parentId = (int) $_POST['categorie-parent'];
+        if ($parentId !== 0 && !$categoriesManager->isCategorieExist($parentId)) {
+            show::msg('La catégorie parente n\'existe pas', 'error');
+            header('location:index.php?p=categories&plugin=' . $pluginId);
+            die();
+        }
+        $categorie = $categoriesManager->getCategorie($id);
+        $categorie->parentId = $parentId;
+        $categorie->label = $label;
+        $categoriesManager->saveCategorie($categorie);
+        show::msg('La catégorie a bien été modifiée', 'success');
+        header('location:index.php?p=categories&plugin=' . $pluginId);
+        die();
     default :
-        if ($pluginId) {
-            if (!CategoriesManager::isPluginUseCategories($pluginId)) {
-                core::getInstance()->error404();
-            }
-            $categoriesManager = new CategoriesManager($pluginId);
-        } else {
-            $pluginsWithCategories = [];
-            foreach ($pluginsManager->getPlugins() as $p) {
-                if (CategoriesManager::isPluginUseCategories($p->getName())) {
-                    $pluginsWithCategories[] = $p;
-                }
+        $pluginsWithCategories = [];
+        foreach ($pluginsManager->getPlugins() as $p) {
+            if (CategoriesManager::isPluginUseCategories($p->getName())) {
+                $pluginsWithCategories[] = $p;
             }
         }
         break;

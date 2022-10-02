@@ -115,6 +115,12 @@ class pluginsManager {
             return true;
         return false;
     }
+    
+    public static function isExistPlugin($pluginName) {
+        $instance = self::getInstance();
+        $plugin = $instance->getPlugin($pluginName);
+        return ($plugin && $plugin->isInstalled());
+    }
 
     ## Génère la liste des plugins
 

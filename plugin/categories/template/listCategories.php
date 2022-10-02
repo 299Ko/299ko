@@ -54,7 +54,9 @@ switch ($catDisplay) {
         }
         echo '<div>' . str_repeat("-", ($this->depth * 2)) . ' ' . $this->label . '</div>';
         echo '<div>' . count($this->items) . '</div>';
-        echo '<div class="buttons-bar"><button title="Ajouter une catégorie enfant" class="btn-add-categorie" data-id="' . $this->id . '"><i class="fa-solid fa-folder-plus"></i></button>';
+        echo '<div class="buttons-bar">';
+        echo '<button title="Ajouter une catégorie enfant" class="btn-add-categorie" data-id="' . $this->id . '"><i class="fa-solid fa-folder-plus"></i></button>';
+        echo '<a class="button" title="Editer la catégorie" href="index.php?p=categories&action=edit&plugin=' . $this->pluginId . '&id=' . $this->id . '"><i class="fa-solid fa-pencil"></i></a>';
         echo '<a class="button alert" title="Supprimer la catégorie" href="index.php?p=categories&action=del&plugin=' . $this->pluginId . '&id=' . $this->id . '&token=' . administrator::getToken() . '" onclick="if (!confirm(\'Supprimer cet élément ?\')) return false;"><i class="fa-solid fa-trash"></i></a></div>';
         echo '</div>';
         if ($this->hasChildren) {

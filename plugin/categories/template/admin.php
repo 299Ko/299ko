@@ -11,6 +11,22 @@ defined('ROOT') OR exit('No direct script access allowed');
 include_once(ROOT . 'admin/header.php');
 
 switch ($action) {
+    case 'edit':
+        echo '<h3>Modification de la catégorie</h3>';
+        echo '<form method="post" action="index.php?p=categories&action=save&plugin=' . $pluginId . '&id=' . $id . '">';
+        show::adminTokenField();
+        ?>
+        <p><label for='categorie-label'>Nom de la catégorie</label>
+            <input type="text" name="categorie-label" value="<?php echo $categorie->label; ?>" /></p>
+        <p><label for='categorie-parent'>Catégorie Parente</label>
+            <?php
+            echo $categoriesManager->outputAsSelect($categorie->parentId, $categorie->id);
+            ?>
+        </p>
+        <button type="submit">Valider les modifications</button>
+        </form>
+        <?php
+        break;
     default :
         if ($pluginId) {
             echo '<h3>Catégories du plugin ' . $pluginId . '</h3>';
@@ -25,12 +41,12 @@ switch ($action) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($pluginsWithCategories as $p) { ?>
+            <?php foreach ($pluginsWithCategories as $p) { ?>
                         <tr>
                             <td><?php echo $p->getName(); ?></td>
                             <td><a href="index.php?p=categories&plugin=<?php echo $p->getName(); ?>">Gérer les catégories</td>
                         </tr>
-                    <?php } ?>
+            <?php } ?>
                 </tbody>
             </table>
             <?php

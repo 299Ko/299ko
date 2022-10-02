@@ -12,9 +12,9 @@ defined('ROOT') OR exit('No direct script access allowed');
 class CategoriesManager {
 
     protected $file;
-    public $pluginId;
-    public $categories;
-    public $imbricatedCategories;
+    protected $pluginId;
+    protected $categories;
+    protected $imbricatedCategories;
     protected bool $isActive;
 
     public function __construct(string $pluginId) {
@@ -28,6 +28,13 @@ class CategoriesManager {
 
     public function isActive() {
         return $this->isActive;
+    }
+
+    public function getCategorie(int $id) {
+        if (isset($this->categories[$id])) {
+            return clone $this->categories[$id];
+        }
+        return false;
     }
 
     public function isCategorieExist(int $categorieId) {
@@ -45,6 +52,27 @@ class CategoriesManager {
             array_push($this->categories[$parentId]->childrenId, $cat->id);
             $this->categories[$parentId]->childrenId = array_values(array_unique($this->categories[$parentId]->childrenId));
         }
+        $this->imbricateCategories();
+        $this->saveCategories();
+        return true;
+    }
+
+    public function saveCategorie(Categorie $categorie) {
+        $oldCategorie = $this->categories[$categorie->id];
+        if ($oldCategorie->parentId !== 0) {
+            // We will modify old parent
+            $key = array_search($categorie->id, $this->categories[$oldCategorie->parentId]->childrenId, true);
+            if ($key !== false) {
+                // Our categorie is here, we delete it
+                unset($this->categories[$oldCategorie->parentId]->childrenId[$key]);
+            }
+        }
+        if ($categorie->parentId !== 0) {
+            // We will register the categorie in the new parent
+            array_push($this->categories[$categorie->parentId]->childrenId, $categorie->id);
+            $this->categories[$categorie->parentId]->childrenId = array_values(array_unique($this->categories[$categorie->parentId]->childrenId));
+        }
+        $this->categories[$categorie->id] = $categorie;
         $this->imbricateCategories();
         $this->saveCategories();
         return true;
@@ -86,6 +114,9 @@ class CategoriesManager {
     }
 
     public static function isPluginUseCategories($pluginId) {
+        if (!pluginsManager::isExistPlugin($pluginId)) {
+            return false;
+        }
         return pluginsManager::getPluginInfoVal($pluginId, 'useCategories');
     }
 
@@ -120,11 +151,26 @@ class CategoriesManager {
             }
         }
         $this->imbricatedCategories = $categories;
+        $this->calcDepth($this->imbricatedCategories, 0);
+    }
+    
+    protected function calcDepth(&$categories, int $depth = 0) {
+        foreach ($categories as &$cat) {
+            $cat->depth = $depth;
+            if ($cat->hasChildren) {
+                $this->calcDepth($cat->children, $depth + 1);
+            }
+        }
     }
 
     public function outputAsCheckbox($itemId) {
         $catDisplay = 'root';
         require PLUGINS . 'categories/template/checkboxCategories.php';
+    }
+
+    public function outputAsSelect($parentId, $categorieId) {
+        $catDisplay = 'root';
+        require PLUGINS . 'categories/template/selectCategorie.php';
     }
 
     public function outputAsList() {
