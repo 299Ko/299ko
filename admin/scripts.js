@@ -9,7 +9,24 @@
  * @package 299Ko https://github.com/299Ko/299ko
  */
 
+
+function resizeListener() {
+    if (window.innerWidth > 768) {
+        $('#content').addClass('withSidebar');
+    } else {
+        $('#content').removeClass('withSidebar');
+    }
+}
+
 $(document).ready(function () {
+
+    // For sidebar
+
+    if ($('#adminSidebar').length) {
+        window.addEventListener("resize", resizeListener);
+        resizeListener();
+    }
+    
     $(".msg").each(function (index) {
         $(this).children(".msg-button-close").click(function () {
             $(this).parent().dequeue();
@@ -71,5 +88,6 @@ $(document).ready(function () {
         $('#comment-parentId').val(0);
         $list.after($form);
     });
+
 });
 

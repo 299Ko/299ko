@@ -130,6 +130,10 @@ input[type=submit], input[type=button], button, .button{
     border-radius: 4px;
 }
 
+label {
+    margin:5px;
+}
+
 
 button, a.button {
     display: inline-block;
@@ -340,12 +344,46 @@ ul.tabs a, ul.tabs_style a{
     z-index: 997;
 }
 
+#adminSidebar {
+    position: fixed;
+    top:40px;
+    right:0;
+    z-index: 2;
+    padding: 7px;
+    width: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height:calc(100% - 40px);
+    border-left:1px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    background: #fff;
+}
+
+#adminSidebar .sidebarModule {
+    margin: 10px 5px;
+    border:1px solid #eee;
+}
+
+#adminSidebar .sidebarModuleContent {
+    padding:5px;
+}
+
+#adminSidebar .sidebarModule h3 {
+    margin:0 0 10px 0;
+}
+
 #content{
     background: #fff;
-    padding: 120px 15px;
-    max-width: 1280px;
+    padding: 100px 20px 100px 20px;
     margin: 0 auto;
     position: relative;
+    width:auto;
+    max-width: 1200px;
+}
+
+#content.withSidebar{
+    padding-right:320px;
+    max-width: 1500px;
 }
 
 /* MENU */
@@ -474,6 +512,8 @@ ul.categories-list li.categories-hasChildren > i {
     right:0;
     transition: all 0.4s;
     cursor: pointer;
+    padding: 1px 8px;
+    font-size:17px;
 }
 
 ul.categories-list-sub {
@@ -506,7 +546,6 @@ div.categorie-list {
 
 div.categories-container > div.categorie-list:first-child {
     background-color: #eee;
-    
 }
 
 div.categorie-list > div:nth-of-type(1){
@@ -566,6 +605,25 @@ div.categories-toggle {
 
     body.login {
         margin: 40px 0;
+    }
+
+    #adminSidebar {
+        position: relative;
+        width:auto;
+        top:0px;
+        z-index: 2;
+        padding: 0;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        height:auto;
+        border-left:none;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    #content, #content.withSidebar {
+        padding:50px 15px;
+        max-width: 1200px;
     }
 
 }

@@ -25,10 +25,11 @@ function categoriesAdminToolsTemplates($params) {
 function categoriesAdminEditingAnItem($params) {
     $pluginId = $params[0];
     $itemId = $params[1] ?? -1;
-    echo '<h3>Catégories</h3>';    
     if (CategoriesManager::isPluginUseCategories($pluginId)) {
         $catManager = new CategoriesManager($pluginId);
-        $catManager->outputAsCheckbox($itemId);
+        $title = 'Categories';
+        $content = $catManager->outputAsCheckbox($itemId);
+        show::addSidebarAdminModule($title, $content);        
     }
 }
 

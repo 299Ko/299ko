@@ -29,6 +29,25 @@ function galerieEndFrontHead() {
     
 }
 
+/**
+ * Add a module in the admin sidebar to choose a featured image
+ * 
+ * @param string Image Filename
+ */
+function galerieDisplaySidebarModule($fileName) {
+    $str = '';
+    if (galerie::searchByfileName($fileName)) { 
+        $str .= '<input type="checkbox" id="delImg" name="delImg" /><label for="delImg">Supprimer l\'image à la une</label>';
+    } else {
+        $str .= '<label>Fichier (png, jpg, jpeg, gif)</label><br><input type="file" name="file" accept="image/*" />';
+    }
+    $str .= '<br/><br/>';
+    if (galerie::searchByfileName($fileName)) { 
+        $str .= '<img src="' . UPLOAD . 'galerie/' . $fileName . '" alt="' . $fileName .'"/>';
+    }
+    show::addSidebarAdminModule('Image à la une', $str);
+}
+
 ## Code relatif au plugin
 
 class galerie {

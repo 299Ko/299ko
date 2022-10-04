@@ -165,17 +165,23 @@ class CategoriesManager {
 
     public function outputAsCheckbox($itemId) {
         $catDisplay = 'root';
+        ob_start();
         require PLUGINS . 'categories/template/checkboxCategories.php';
+        return ob_get_clean();
     }
 
     public function outputAsSelect($parentId, $categorieId) {
         $catDisplay = 'root';
+        ob_start();
         require PLUGINS . 'categories/template/selectCategorie.php';
+        return ob_get_clean();
     }
 
     public function outputAsList() {
         $catDisplay = 'root';
+        ob_start();
         require PLUGINS . 'categories/template/listCategories.php';
+        return ob_get_clean();
     }
 
     public static function getAllCategoriesPluginId(string $pluginId) {

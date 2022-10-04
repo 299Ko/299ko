@@ -12,6 +12,8 @@
 defined('ROOT') OR exit('No direct script access allowed');
 
 class show {
+    
+    protected static $sidebarAdminModules = [];
 
     /**
      * Add a message to display in the next view, saved in session
@@ -51,6 +53,42 @@ class show {
             echo '<div class="msg ' . $msg['class'] . '"><p>' . $msg['content'] . '</p><a href="#" class="msg-button-close"><i class="fa-solid fa-xmark"></i></a></div>';
         }
         unset($_SESSION['flash_msg']);
+    }
+    
+    /**
+     * Display a module in the Admin Sidebar
+     * 
+     * @param string Title
+     * @param string Content
+     */
+    public static function addSidebarAdminModule(string $title, string $content) {
+        self::$sidebarAdminModules[] = [
+            'title' => $title,
+            'content' => $content
+        ];
+    }
+    
+    public static function displayAdminSidebar() {
+        if (function_exists('displayAdminSidebar')) {
+            call_user_func('displayAdminSidebar');
+            return;
+        }
+        if (empty(self::$sidebarAdminModules)) {
+            return;
+        }
+        echo '<div id="adminSidebar">';
+        foreach (self::$sidebarAdminModules as $module) {
+            echo '<div class="sidebarModule">';
+            echo '<h3>' . $module['title'] . '</h3>';
+            echo '<div class="sidebarModuleContent">';
+            echo $module['content'];
+            echo '</div></div>';
+        }
+        echo '</div>';
+    }
+    
+    public static function isAdminSidebar() {
+        return (!empty(self::$sidebarAdminModules));
     }
 
     ## Affiche les balises "link" type css (admin + theme)
