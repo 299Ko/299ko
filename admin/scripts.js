@@ -25,6 +25,9 @@ $(document).ready(function () {
     if ($('#adminSidebar').length) {
         window.addEventListener("resize", resizeListener);
         resizeListener();
+        if ($('#adminSidebar').parents('form:first').length) {
+            $('#adminSidebar').closest('form').find(':submit').appendTo('#adminSidebar');
+        }
     }
     
     $(".msg").each(function (index) {

@@ -372,6 +372,11 @@ ul.tabs a, ul.tabs_style a{
     margin:0 0 10px 0;
 }
 
+#adminSidebar button[type=submit], #adminSidebar input[type=submit] {
+    margin:10px auto;
+    display: block;
+}
+
 #content{
     background: #fff;
     padding: 100px 20px 100px 20px;
