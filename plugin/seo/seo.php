@@ -59,7 +59,7 @@ function seoGetSocialIcons($before = '', $after = '') {
 
     foreach ($social as $k => $v) {
         $tConfig = $plugin->getConfigVal($v);
-        if ($tConfig !== '') {
+        if ($tConfig && $tConfig !== '') {
             $str .= $before . '<a target="_blank" title="Suivez-nous sur ' . $k . '" href="' . $tConfig . '"><i class="fa-brands fa-' . $v . '"></i></a>' . $after;
         }
     }
@@ -72,6 +72,7 @@ function seoGetSocialVars() {
         'Twitter' => 'twitter',
         'YouTube' => 'youtube',
         'Instagram' => 'instagram',
+        'TikTok' => 'tiktok',
         'Pinterest' => 'pinterest',
         'Linkedin' => 'linkedin',
         'Viadeo' => 'viadeo',
