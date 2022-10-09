@@ -210,7 +210,6 @@ ul.tabs a, ul.tabs_style a{
 #alert-msg{
     margin: 0;
     position: absolute;
-    z-index: 996;
     width: 100%;
     top: 0;
     padding: 5px;
@@ -230,6 +229,7 @@ ul.tabs a, ul.tabs_style a{
     background-color: #EBEBEB;
     color: #444;
     font-size:14px;
+    z-index: 996;
 }
 
 #alert-msg .msg:before, #alert-msg .msg.info:before {
@@ -567,12 +567,11 @@ div.categorie-list > div:nth-of-type(3){
 
 div.categorie-list i.categories-toggle {
     position: absolute;
-    left:6px;
     transition: all 0.4s;
     cursor: pointer;
 }
 
-div.categories-toggle {
+div.toggle {
     display: none;
 }
 

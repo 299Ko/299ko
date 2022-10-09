@@ -48,11 +48,11 @@ switch ($catDisplay) {
         // Categories
         echo '<div id="categorie-' . $this->id . '" name="' . $this->label . '" class="categorie-list ';
         if ($this->hasChildren) {
-            echo 'hasChildren"><i class="fa-solid fa-caret-down categories-toggle"></i>';
+            echo 'hasChildren"><i style="left:' . ($this->depth * 15 + 5 ). 'px;" class="fa-solid fa-caret-down categories-toggle"></i>';
         } else {
             echo '">';
         }
-        echo '<div>' . str_repeat("-", ($this->depth * 2)) . ' ' . $this->label . '</div>';
+        echo '<div style="padding-left:' . $this->depth * 15 . 'px;">' . str_repeat("-", ($this->depth * 2)) . ' ' . $this->label . '</div>';
         echo '<div>' . count($this->items) . '</div>';
         echo '<div class="buttons-bar">';
         echo '<button title="Ajouter une catégorie enfant" class="btn-add-categorie" data-id="' . $this->id . '"><i class="fa-solid fa-folder-plus"></i></button>';
@@ -60,7 +60,7 @@ switch ($catDisplay) {
         echo '<a class="button alert" title="Supprimer la catégorie" href="index.php?p=categories&action=del&plugin=' . $this->pluginId . '&id=' . $this->id . '&token=' . administrator::getToken() . '" onclick="if (!confirm(\'Supprimer cet élément ?\')) return false;"><i class="fa-solid fa-trash"></i></a></div>';
         echo '</div>';
         if ($this->hasChildren) {
-            echo '<div class="categories-toggle">';
+            echo '<div class="toggle">';
             foreach ($this->children as $child) {
                 $child->outputAsList();
             }

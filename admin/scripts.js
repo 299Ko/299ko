@@ -12,85 +12,149 @@
 
 function resizeListener() {
     if (window.innerWidth > 768) {
-        $('#content').addClass('withSidebar');
+        document.querySelector('#content').classList.add('withSidebar');
     } else {
-        $('#content').removeClass('withSidebar');
+        document.querySelector('#content').classList.remove('withSidebar');
     }
 }
 
-$(document).ready(function () {
+function fadeOut(el) {
+    el.style.opacity = 1;
+    (function fade() {
+        if ((el.style.opacity -= .03) < 0) {
+            el.style.display = "none";
+        } else {
+            requestAnimationFrame(fade);
+        }
+    })();
+}
+
+
+function fadeIn(el, display) {
+    el.style.opacity = 0;
+    el.style.display = display || "block";
+    (function fade() {
+        var val = parseFloat(el.style.opacity);
+        if (!((val += .03) > 1)) {
+            el.style.opacity = val;
+            requestAnimationFrame(fade);
+        }
+    })();
+}
+
+/* plain JS slideToggle https://github.com/ericbutler555/plain-js-slidetoggle */
+function _s(o, i, p, l) {
+    void 0 === i && (i = 400), void 0 === l && (l = !1), o.style.overflow = "hidden", l && (o.style.display = "block");
+    var n, t = window.getComputedStyle(o), s = parseFloat(t.getPropertyValue("height")), a = parseFloat(t.getPropertyValue("padding-top")), r = parseFloat(t.getPropertyValue("padding-bottom")), y = parseFloat(t.getPropertyValue("margin-top")), d = parseFloat(t.getPropertyValue("margin-bottom")), g = s / i, m = a / i, h = r / i, u = y / i, x = d / i;
+    window.requestAnimationFrame(function t(e) {
+        void 0 === n && (n = e);
+        e -= n;
+        l ? (o.style.height = g * e + "px", o.style.paddingTop = m * e + "px", o.style.paddingBottom = h * e + "px", o.style.marginTop = u * e + "px", o.style.marginBottom = x * e + "px") : (o.style.height = s - g * e + "px", o.style.paddingTop = a - m * e + "px", o.style.paddingBottom = r - h * e + "px", o.style.marginTop = y - u * e + "px", o.style.marginBottom = d - x * e + "px"), i <= e ? (o.style.height = "", o.style.paddingTop = "", o.style.paddingBottom = "", o.style.marginTop = "", o.style.marginBottom = "", o.style.overflow = "", l || (o.style.display = "none"), "function" == typeof p && p()) : window.requestAnimationFrame(t)
+    })
+}
+HTMLElement.prototype.slideToggle = function (t, e) {
+    0 === this.clientHeight ? _s(this, t, e, !0) : _s(this, t, e)
+}, HTMLElement.prototype.slideUp = function (t, e) {
+    _s(this, t, e)
+}, HTMLElement.prototype.slideDown = function (t, e) {
+    _s(this, t, e, !0)
+};
+
+var getNextSibling = function (elem, selector) {
+    // Get the next sibling element
+    var sibling = elem.nextElementSibling;
+    // If there's no selector, return the first sibling
+    if (!selector)
+        return sibling;
+    // If the sibling matches our selector, use it
+    // If not, jump to the next sibling and continue the loop
+    while (sibling) {
+        if (sibling.matches(selector))
+            return sibling;
+        sibling = sibling.nextElementSibling
+    }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
 
     // For sidebar
-
-    if ($('#adminSidebar').length) {
+    if (document.querySelector('#adminSidebar')) {
         window.addEventListener("resize", resizeListener);
         resizeListener();
-        if ($('#adminSidebar').parents('form:first').length) {
-            $('#adminSidebar').closest('form').find(':submit').appendTo('#adminSidebar');
+        if (document.querySelector('#adminSidebar').closest('form')) {
+            var par = document.querySelector('#adminSidebar').closest('form');
+            document.querySelector('#adminSidebar').append(par.querySelector('[type="submit"]'));
         }
     }
-    
-    $(".msg").each(function (index) {
-        $(this).children(".msg-button-close").click(function () {
-            $(this).parent().dequeue();
+
+    document.querySelectorAll('.msg').forEach(function (item, index) {
+        item.querySelector('.msg-button-close').addEventListener('click', function () {
+            fadeOut(item);
         });
-        $(this).delay(5000 + index * 5000).slideUp();
+        setTimeout(function () {
+            fadeOut(item);
+        }, 5000 + index * 5000);
     });
-
-
-    // tri menu
-    var elem = $('#navigation').find('li').sort(sortMe);
-    function sortMe(a, b) {
-        return a.className > b.className;
+    // Login : btn Quitter redirection
+    if (document.querySelector('#login input.alert')) {
+        document.querySelector('#login input.alert').addEventListener('click', function () {
+            document.location.href = this.getAttribute('rel');
+        });
     }
-    $('#navigation').append(elem);
-    // login
-    $('#login input.alert').click(function () {
-        document.location.href = $(this).attr('rel');
-    });
+
     // nav
-    $('#open_nav').click(function () {
-        if ($('#sidebar').css('display') == 'none') {
-            $('#sidebar').fadeIn();
-        } else {
-            $('#sidebar').hide();
-        }
+    if (document.querySelector('#open_nav')) {
+        document.querySelector('#open_nav').addEventListener("click", function () {
+
+            var sidebar = document.querySelector('#sidebar');
+            if (sidebar.style.display == 'none' || sidebar.style.display == '') {
+                fadeIn(sidebar, 'block');
+            } else {
+                fadeOut(sidebar);
+            }
+
+        });
+    }
+
+    document.querySelectorAll(".categories-list li i").forEach(function (item) {
+        item.addEventListener('click', function () {
+            item.classList.toggle('fa-rotate-180');
+            getNextSibling(item, 'ul.categories-list-sub').slideToggle(400);
+        });
     });
 
-    $(".categories-list li i").click(function () {
-        $(this).toggleClass('fa-rotate-180');
-        $(this).next('ul.categories-list-sub').slideToggle();
+    document.querySelectorAll("div.categorie-list i.categories-toggle").forEach(function (item) {
+        item.addEventListener('click', function () {
+            item.classList.toggle('fa-rotate-180');
+            getNextSibling(item.parentNode, 'div.toggle').slideToggle(400);
+        });
     });
 
-    $('div.categorie-list i.categories-toggle').click(function () {
-        $(this).toggleClass('fa-rotate-180');
-        $(this).parent('div.categorie-list').nextAll('div.categories-toggle').first().slideToggle();
+    document.querySelectorAll('.btn-add-categorie').forEach(function (item) {
+        item.addEventListener("click", function (e) {
+            e.preventDefault();
+            var $form = document.querySelector('#categorie-add-form-container');
+            var parent_id = item.getAttribute('data-id');
+            var $categorie = document.querySelector('#categorie-' + parent_id);
+            $form.querySelector('h4').textContent = 'Ajouter une catégorie enfant à ' + $categorie.getAttribute('name');
+            document.querySelector('#categorie-parentId').value = parent_id;
+            $categorie.after($form);
+            var $aRem = document.querySelector("#category-child-delete");
+            $aRem.style.display = "block";
+        });
     });
 
-    $('.btn-add-categorie').click(function (e) {
-        e.preventDefault();
-        var $form = $('#categorie-add-form-container');
-        var $this = $(this);
-        var parent_id = $this.data('id');
-        var $categorie = $('#categorie-' + parent_id);
-        $form.find('h4').text('Ajouter une catégorie enfant à ' + $categorie.attr('name'));
-        $('#categorie-parentId').val(parent_id);
-        $categorie.after($form);
-        //$('#comment-reply-delete').style.opacity = "100";
-        var $aRem = document.getElementById("category-child-delete");
-        $aRem.style.display = "block";
-    });
-
-    $('#category-child-delete').click(function (e) {
-        e.preventDefault();
-        var $aRem = document.getElementById("category-child-delete");
-        $aRem.style.display = "none";
-        var $form = $('#categorie-add-form-container');
-        var $list = $('#categorie-endlist');
-        $form.find('h4').text('Ajouter une catégorie');
-        $('#comment-parentId').val(0);
-        $list.after($form);
-    });
+    if (document.querySelector('#category-child-delete')) {
+        document.querySelector('#category-child-delete').addEventListener("click", function (e) {
+            e.preventDefault();
+            var $aRem = document.querySelector("#category-child-delete");
+            $aRem.style.display = "none";
+            var $form = document.querySelector('#categorie-add-form-container');
+            var $list = document.querySelector('#categorie-endlist');
+            $form.querySelector('h4').textContent = 'Ajouter une catégorie';
+            document.querySelector('#categorie-parentId').value = 0;
+            $list.after($form);
+        });
+    }
 
 });
-
