@@ -3,5 +3,6 @@
     "label" : "Blog",
     "itemsByPage" : "5",
     "hideContent" : "0",
-    "comments" : "1"
+    "comments" : "1",
+    "displayCategories": 1
 }

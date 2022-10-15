@@ -45,7 +45,7 @@ class pluginsManager {
 
     ## Sauvegarde la configuration d'un objet plugin
 
-    public function savePluginConfig($obj) {
+    public function savePluginConfig(plugin $obj) {
         if ($obj->getIsValid() && $path = $obj->getDataPath()) {
             return util::writeJsonFile($path . 'config.json', $obj->getConfig());
         }

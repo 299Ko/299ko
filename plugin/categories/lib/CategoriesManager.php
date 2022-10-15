@@ -36,6 +36,14 @@ class CategoriesManager {
         }
         return false;
     }
+    
+    public function getCategories() {
+        return $this->categories;
+    }
+    
+    public function getNestedCategories() {
+        return $this->imbricatedCategories;
+    }
 
     public function isCategorieExist(int $categorieId) {
         return (isset($this->categories[$categorieId]));
@@ -121,7 +129,7 @@ class CategoriesManager {
     }
 
     protected function setCategoriesStatus() {
-        $this->isActive = self::isPluginUseCategories($this->pluginId);
+        $this->isActive = self::isPluginUseCategories($this->pluginId);        
     }
 
     protected function getCategoriesFromMetas() {

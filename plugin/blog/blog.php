@@ -38,6 +38,18 @@ function blogEndFrontHead() {
     }
 }
 
+function blogDisplayCategoriesSidebar($pluginId) {
+    if ($pluginId !== 'blog' || !pluginsManager::getPluginConfVal('blog', 'displayCategories')) {
+        return;
+    }
+    $catManager = new CategoriesManager('blog');
+    $categories = $catManager->getNestedCategories();
+    ob_start();
+    require PLUGINS . 'blog/template/sidebarCategories.php';
+    $content = ob_get_clean();
+    show::addSidebarPublicModule("Catégories", $content);
+}
+
 ## Code relatif au plugin
 
 class newsManager {

@@ -50,6 +50,7 @@ if ($administrator->isAuthorized() && $core->detectAdminMode() == 'login') {
 if (!$administrator->isLogged() && $core->detectAdminMode() != 'lostpwd')
     include_once('login.php');
 elseif ($core->detectAdminMode() == 'plugin') {
+    core::executeHookAction('adminBeforeRunPlugin', $runPlugin->getName());
     if ($runPlugin->getAdminTemplate()) {
         if (util::getFileExtension($runPlugin->getAdminTemplate()) === 'tpl') {
             $layout = new Template(ADMIN_PATH . 'layout.tpl');

@@ -261,12 +261,21 @@ code{
 
 #body{
     overflow: hidden;
-    max-width: 800px;
+    max-width: 1480px;
     margin: 60px auto;
     padding: 15px;
+    display: flex;
+}
+
+#sidebar {
+    flex-basis: 250px;
+    margin:0px auto;
 }
 
 #content{
+    flex: 1 0 auto;
+    max-width: 1000px;
+    margin:0px auto;
 }
 
 #footer{

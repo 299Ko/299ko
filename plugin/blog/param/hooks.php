@@ -9,6 +9,5 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
-core::registerHookAction("adminToolsTemplates", "categoriesAdminToolsTemplates");
-core::registerHookAction("adminEditingAnItem", "categoriesAdminEditingAnItem");
-core::registerHookAction("adminOnSaveItem", "categoriesAdminOnSaveItem");
+// Sidebar Public
+core::registerHookAction("frontHead", "blogDisplayCategoriesSidebar");

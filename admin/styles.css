@@ -539,6 +539,10 @@ ul.categories-list-sub {
     top:0;
 }
 
+div#categorie-add-form-container {
+    background-color: #f3f3f3;
+}
+
 div.categorie-list {
     display: flex;
     flex-direction: row;

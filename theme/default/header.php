@@ -5,7 +5,8 @@ include_once(THEMES . $core->getConfigVal('theme') . '/functions.php');
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php eval($core->callHook('frontHead')); ?>
+        <?php eval($core->callHook('frontHead')); 
+        core::executeHookAction('frontHead', $runPlugin->getName()); ?>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><?php show::titleTag(); ?></title>
         <base href="<?php show::siteUrl(); ?>/" />

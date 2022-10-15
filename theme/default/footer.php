@@ -1,5 +1,13 @@
 <?php defined('ROOT') OR exit('No direct script access allowed'); ?>
             </div>
+            <?php if(show::isPublicSidebar()) {
+            ?>
+            <aside id="sidebar">
+                <?php
+                show::displayPublicSidebar();
+                ?>
+            </aside><?php
+        } ?>
         </div>
         <div id="footer">
             <div id="footer_content">

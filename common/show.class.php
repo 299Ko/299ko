@@ -14,6 +14,8 @@ defined('ROOT') OR exit('No direct script access allowed');
 class show {
     
     protected static $sidebarAdminModules = [];
+    
+    protected static $sidebarPublicModules = [];
 
     /**
      * Add a message to display in the next view, saved in session
@@ -68,6 +70,9 @@ class show {
         ];
     }
     
+    /**
+     * Display the Admin Sidebar
+     */
     public static function displayAdminSidebar() {
         if (function_exists('displayAdminSidebar')) {
             call_user_func('displayAdminSidebar');
@@ -90,7 +95,46 @@ class show {
     public static function isAdminSidebar() {
         return (!empty(self::$sidebarAdminModules));
     }
+    
+    /**
+     * Display a module in the Public Sidebar
+     * 
+     * @param string Title
+     * @param string Content
+     */
+    public static function addSidebarPublicModule(string $title, string $content) {
+        self::$sidebarPublicModules[] = [
+            'title' => $title,
+            'content' => $content
+        ];
+    }
 
+    /**
+     * Display the Public Sidebar
+     */
+    public static function displayPublicSidebar() {
+        if (function_exists('displayPublicSidebar')) {
+            call_user_func('displayPublicSidebar');
+            return;
+        }
+        if (empty(self::$sidebarPublicModules)) {
+            return;
+        }
+
+        foreach (self::$sidebarPublicModules as $module) {
+            echo '<div class="sidebarModule">';
+            echo '<h3>' . $module['title'] . '</h3>';
+            echo '<div class="sidebarModuleContent">';
+            echo $module['content'];
+            echo '</div></div>';
+        }
+
+    }
+    
+    public static function isPublicSidebar() {
+        return (!empty(self::$sidebarPublicModules));
+    }
+    
     ## Affiche les balises "link" type css (admin + theme)
 
     public static function linkTags() {

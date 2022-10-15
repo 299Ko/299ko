@@ -15,6 +15,7 @@ include_once(ROOT . 'common/common.php');
 if (!$runPlugin || $runPlugin->getConfigVal('activate') < 1)
     $core->error404();
 elseif ($runPlugin->getPublicFile()) {
+    core::executeHookAction('publicBeforeRunPlugin', $runPlugin->getName());
     if (util::getFileExtension($runPlugin->getPublicTemplate()) === 'tpl' && file_exists(THEMES . $core->getConfigVal('theme') . '/layout.tpl')) {
         $layout = new Template(THEMES . $core->getConfigVal('theme') . '/layout.tpl');
         $tpl = new Template($runPlugin->getPublicTemplate());

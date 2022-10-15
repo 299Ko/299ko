@@ -22,6 +22,7 @@ switch ($action) {
             $runPlugin->setConfigVal('itemsByPage', trim(intval($_REQUEST['itemsByPage'])));
             $runPlugin->setConfigVal('hideContent', (isset($_POST['hideContent']) ? 1 : 0));
             $runPlugin->setConfigVal('comments', (isset($_POST['comments']) ? 1 : 0));
+            $runPlugin->setConfigVal('displayCategories', (isset($_POST['comments']) ? 1 : 0));
             $pluginsManager->savePluginConfig($runPlugin);
             header('location:index.php?p=blog');
             die();
