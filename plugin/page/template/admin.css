@@ -1,0 +1,3 @@
+.page-admin tr:first-child .up, .page-admin tr:last-child .down {
+    display: none;
+}
