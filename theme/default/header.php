@@ -15,7 +15,8 @@ include_once(THEMES . $core->getConfigVal('theme') . '/functions.php');
         <link rel="icon" href="<?php show::themeIcon(); ?>" />
         <?php show::linkTags(); ?>
         <?php show::scriptTags(); ?>
-        <?php eval($core->callHook('endFrontHead')); ?>
+        <?php eval($core->callHook('endFrontHead'));
+        core::executeHookAction('endFrontHead'); ?>
     </head>
     <body>
         <div id="container">

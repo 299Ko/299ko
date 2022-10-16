@@ -16,6 +16,8 @@ class show {
     protected static $sidebarAdminModules = [];
     
     protected static $sidebarPublicModules = [];
+    
+    protected static $featuredImage = '';
 
     /**
      * Add a message to display in the next view, saved in session
@@ -135,6 +137,15 @@ class show {
         return (!empty(self::$sidebarPublicModules));
     }
     
+    public static function setFeaturedImage(string $imageUrl) {
+        self::$featuredImage = $imageUrl;
+    }
+    
+    public static function getFeaturedImage() {
+        return self::$featuredImage;
+    }
+
+
     ## Affiche les balises "link" type css (admin + theme)
 
     public static function linkTags() {

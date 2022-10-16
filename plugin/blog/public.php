@@ -84,6 +84,9 @@ switch ($action) {
         // Traitements divers : métas, fil d'ariane...
         $runPlugin->setMainTitle($item->getName());
         $runPlugin->setTitleTag($item->getName());
+        if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($item->getImg())) {
+            show::setFeaturedImage(util::urlBuild(UPLOAD . 'galerie/' . $item->getImg()));
+        }
         break;
     case 'rss':
         echo $newsManager->rss();

@@ -22,6 +22,9 @@ function seoInstall() {
 
 function seoEndFrontHead() {
     $plugin = pluginsManager::getInstance()->getPlugin('seo');
+    if (!$plugin->getConfigVal('wt') || $plugin->getConfigVal('wt') == '') {
+        return;
+    }
     $temp = "<script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -79,4 +82,42 @@ function seoGetSocialVars() {
         'GitHub' => 'github',
         "Mastodon" => 'mastodon'
     ];
+}
+
+/**
+ * Display Open Graph to socials networks and Google
+ * 
+ * @global plugin $runPlugin
+ */
+function seoAddMetaOpenGraph() {
+    global $runPlugin;
+    $core = core::getInstance();
+    // Facebook, Pinterest
+    echo '<meta property="og:title" content="'. $runPlugin->getMainTitle() .'" />
+    <meta property="og:url" content="'.util::getCurrentURL() . '" />
+    <meta property="og:image" content="'.show::getFeaturedImage() . '" />
+    <meta property="og:description" content="'.$runPlugin->getMetaDescriptionTag() . '" />
+    <meta property="og:site_name" content="'.$core->getConfigVal('siteName') . '" />
+    <meta property="og:type" content="article" />';
+    
+    // Google
+    echo '<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": "'.$runPlugin->getMainTitle(). '",
+      "image": "' .show::getFeaturedImage().'"
+    }
+    </script>';
+    
+    // Twitter
+    $twitterUser = pluginsManager::getPluginConfVal('seo', 'twitter');
+    echo '<meta name="twitter:card" content="summary_large_image" />';
+    if ($twitterUser && $twitterUser !== '') {
+        $user = basename($twitterUser);
+        echo '<meta name="twitter:site" content="@' . $user .'">';
+    }
+    echo '<meta name="twitter:title" content="'. $runPlugin->getMainTitle() .'" />
+    <meta name="twitter:description" content="'.$runPlugin->getMetaDescriptionTag() . '" />
+    <meta name="twitter:image:src" content="'.show::getFeaturedImage() . '" />';
 }
