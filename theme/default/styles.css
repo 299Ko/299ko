@@ -390,6 +390,28 @@ code{
     margin: 0 auto;
 }
 
+.item-header span {
+    font-size: 12px;
+    margin-left:8px;
+}
+
+.item-header span.item-categories a{
+    padding:0 5px;
+}
+
+.item-header span.item-categories a:first-of-type {
+    padding-left:0;
+} 
+
+.item-header span.item-categories a:last-of-type {
+    padding-right: 0;
+}
+
+.item-header span i {
+    padding:0 5px;
+}
+
+
 /* Galerie */
 
 #content.galerie #list{
@@ -480,11 +502,6 @@ code{
 
 .blog .items li.item:first-child{
     padding-top: 0;
-}
-
-.blog .date{
-    font-size: 12px;
-    display: block;
 }
 
 .blog .items h2{

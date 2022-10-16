@@ -22,7 +22,18 @@ elseif (isset($_GET['send']))
 else
     $action = '';
 $antispam = ($pluginsManager->isActivePlugin('antispam')) ? new antispam() : false;
-$newsManager = new newsManager();
+if (isset($_GET['idcat'])) {
+    $catId = $_GET['idcat'];
+    $categoriesManager = new CategoriesManager('blog');
+    if ($categoriesManager->isCategorieExist($catId)) {
+        $categorie = new Categorie('blog', $catId);
+        $newsManager = new newsManager($categorie->items);
+    } else {
+        core::getInstance()->error404();
+    }
+} else {
+    $newsManager = new newsManager();
+}
 
 switch ($action) {
     case '':
@@ -41,19 +52,39 @@ switch ($action) {
         $end = $start + $newsByPage - 1;
         $pagination = array();
         for ($i = 0; $i != $nbPages; $i++) {
-            if ($i != 0)
-                $pagination[$i]['url'] = $runPlugin->getPublicUrl() . ($i + 1) . '/';
-            else
-                $pagination[$i]['url'] = $runPlugin->getPublicUrl();
+            if (isset($_GET['idcat'])) {
+                if ($i != 0)
+                    $pagination[$i]['url'] = $runPlugin->getPublicUrl() . 'cat-' . $catId . '/page-' . ($i + 1) . '/' . util::strToUrl($categorie->label) . '.html';
+                else
+                    $pagination[$i]['url'] = $runPlugin->getPublicUrl() . 'cat-' . $catId . '/' . util::strToUrl($categorie->label) . '.html';
+            } else {
+                if ($i != 0)
+                    $pagination[$i]['url'] = $runPlugin->getPublicUrl() . ($i + 1) . '/';
+                else
+                    $pagination[$i]['url'] = $runPlugin->getPublicUrl();
+            }
+
             $pagination[$i]['num'] = $i + 1;
         }
         // Récupération des news
         $news = array();
         $i = 1;
+        $categoriesManager = new CategoriesManager('blog');
         foreach ($newsManager->getItems() as $k => $v)
             if (!$v->getDraft()) {
                 $date = $v->getDate();
                 if ($i >= $start && $i <= $end) {
+                    // Categories
+                    $news[$k]['cats'] = [];
+                    foreach ($categoriesManager->getCategories() as $cat) {
+                        if (in_array($v->getId(), $cat->items)) {
+                            $news[$k]['cats'][] = [
+                                'label' => $cat->label,
+                                'url' => blogCreateCategorieUrl($cat)
+                            ];
+                        }
+                    }
+
                     $news[$k]['name'] = $v->getName();
                     $news[$k]['date'] = util::FormatDate($date, 'en', 'fr');
                     $news[$k]['id'] = $v->getId();
@@ -67,6 +98,9 @@ switch ($action) {
         // Traitements divers : métas, fil d'ariane...
         $runPlugin->setMainTitle($pluginsManager->getPlugin('blog')->getConfigVal('label'));
         $runPlugin->setTitleTag($pluginsManager->getPlugin('blog')->getConfigVal('label') . ' : page ' . $currentPage);
+        if (isset($categorie)) {
+            $runPlugin->setTitleTag($pluginsManager->getPlugin('blog')->getConfigVal('label') . ' : ' . $categorie->label);
+        }
         if ($runPlugin->getIsDefaultPlugin() && $currentPage == 1) {
             $runPlugin->setTitleTag($pluginsManager->getPlugin('blog')->getConfigVal('label'));
             $runPlugin->setMetaDescriptionTag($core->getConfigVal('siteDescription'));
@@ -84,6 +118,16 @@ switch ($action) {
         // Traitements divers : métas, fil d'ariane...
         $runPlugin->setMainTitle($item->getName());
         $runPlugin->setTitleTag($item->getName());
+        $categoriesManager = new CategoriesManager('blog');
+        $cats = [];
+        foreach ($categoriesManager->getCategories() as $cat) {
+            if (in_array($item->getId(), $cat->items)) {
+                $cats[] = [
+                    'label' => $cat->label,
+                    'url' => blogCreateCategorieUrl($cat)
+                ];
+            }
+        }
         if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($item->getImg())) {
             show::setFeaturedImage(util::urlBuild(UPLOAD . 'galerie/' . $item->getImg()));
         }

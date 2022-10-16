@@ -5,30 +5,34 @@
     <ul class="items <?php if ($runPlugin->getConfigVal('hideContent')) { ?>simple<?php } ?>">
         <?php foreach ($news as $k => $v) { ?>
             <li class="item">
-                <?php if (!$runPlugin->getConfigVal('hideContent')) { ?>
+                <div class="item-header">
                     <h2>
                         <a href="<?php echo $v['url']; ?>"><?php echo $v['name']; ?></a>
-                        <p class="date"><?php echo $v['date']; ?>
-                            <?php if ($runPlugin->getConfigVal('comments') && !$v['commentsOff']) { ?> | <?php echo $newsManager->countComments($v['id']); ?> commentaire<?php if ($newsManager->countComments($v['id']) > 1) echo 's' ?><?php } ?></p>
                     </h2>
-                    <?php
+                    <span class="item-date"><i class="fa-solid fa-calendar-days"></i><?php echo $v['date']; ?></span>
+                    <span class="item-categories"><i class="fa-solid fa-folder-open"></i>
+                        <?php
+                        foreach ($v['cats'] as $cat) {
+                            echo '<a href="' . $cat['url'] . '">' . $cat['label'] . '</a>';
+                        }
+                        ?>
+                    </span>
+                    <?php if ($runPlugin->getConfigVal('comments') && !$v['commentsOff']) { ?> <span class="item-comments"><i class="fa-solid fa-comment"></i><?php echo $newsManager->countComments($v['id']); ?> commentaire<?php if ($newsManager->countComments($v['id']) > 1) echo 's' ?></span><?php } ?>
+                </div>
+                <?php
+                if (!$runPlugin->getConfigVal('hideContent')) {
                     if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($v['img']))
                         echo '<img class="featured" src="' . UPLOAD . 'galerie/' . $v['img'] . '" alt="' . $v['img'] . '" />';
                     echo $v['content'];
-                } else {
-                    ?>
-                    <h2>
-                        <a href="<?php echo $v['url']; ?>"><?php echo $v['name']; ?></a>
-                    </h2>
-                    <p class="date"><?php echo $v['date']; ?><?php if ($runPlugin->getConfigVal('comments') && !$v['commentsOff']) { ?> | <?php echo $newsManager->countComments($v['id']); ?> commentaire<?php if ($newsManager->countComments($v['id']) > 1) echo 's' ?><?php } ?></p>
-            <?php } ?>
+                }
+                ?>
             </li>
         <?php } ?>
     </ul>
     <ul class="pagination">
         <?php foreach ($pagination as $k => $v) { ?>
             <li><a href="<?php echo $v['url']; ?>"><?php echo $v['num']; ?></a></li>
-    <?php } ?>
+        <?php } ?>
     </ul>
 <?php } ?>
 
@@ -36,12 +40,23 @@
     <p>Aucun élément n'a été trouvé.</p>
 <?php } ?>
 
-    <?php if ($mode == 'read') { ?>
-    <p class="date">
-        Posté le <?php echo util::FormatDate($item->getDate(), 'en', 'fr'); ?>
-    <?php if ($runPlugin->getConfigVal('comments') && !$item->getCommentsOff()) { ?> | <?php echo $newsManager->countComments(); ?> commentaire<?php if ($newsManager->countComments($item->getId()) > 1) echo 's' ?><?php } ?>
-        | <a href="<?php echo $runPlugin->getPublicUrl(); ?>">Retour à la liste</a>
-    </p>
+<?php if ($mode == 'read') { ?>
+    <div class="item-header">
+        <span class="item-date">
+            <i class="fa-solid fa-calendar-days"></i> <?php echo util::FormatDate($item->getDate(), 'en', 'fr'); ?>
+        </span>
+        <span class="item-categories"><i class="fa-solid fa-folder-open"></i>
+            <?php
+            foreach ($cats as $cat) {
+                echo '<a href="' . $cat['url'] . '">' . $cat['label'] . '</a>';
+            }
+            ?>
+        </span>
+        <?php if ($runPlugin->getConfigVal('comments') && !$item->getCommentsOff()) { ?> <span class="item-comments"><i class="fa-solid fa-comment"></i><?php echo $newsManager->countComments(); ?> commentaire<?php if ($newsManager->countComments($item->getId()) > 1) echo 's' ?></span><?php } ?>
+        <span class="item-return">
+            <a href="<?php echo $runPlugin->getPublicUrl(); ?>">Retour à la liste</a>
+        </span>
+    </div>
     <div class="content">
         <?php
         if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($item->getImg()))
@@ -73,7 +88,7 @@
             </p>
             <p><label>Email</label><br><input type="text" name="authorEmail" required="required" /></p>
             <p><label>Commentaire</label><br><textarea name="content" required="required"></textarea></p>
-        <?php echo $antispamField; ?>
+            <?php echo $antispamField; ?>
             <p><input type="submit" value="Enregistrer" /></p>
         </form>
     <?php } ?>

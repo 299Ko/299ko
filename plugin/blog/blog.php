@@ -18,6 +18,8 @@ function blogInstall() {
     $core = core::getInstance();
     $htaccess = $core->getHtaccess();
     $htaccess .= "\nRewriteRule ^blog/([a-z-0-9]+)-([0-9]+).html$  index.php?p=blog&url=$1&id=$2 [L]";
+    $htaccess .= "\nRewriteRule ^blog/cat-([0-9]+)/page-([0-9]+)/([a-z-0-9]+).html$  index.php?p=blog&idcat=$1&page=2&url=$3 [L]";
+    $htaccess .= "\nRewriteRule ^blog/cat-([0-9]+)/([a-z-0-9]+).html$  index.php?p=blog&idcat=$1&url=$2 [L]";
     $htaccess .= "\nRewriteRule ^blog/([0-9]+)/$  index.php?p=blog&page=$1 [L]";
     $htaccess .= "\nRewriteRule ^blog/rss.html$  index.php?p=blog&rss=1 [L]";
     $htaccess .= "\nRewriteRule ^blog/send.html$  index.php?p=blog&send=1 [L]";
@@ -50,6 +52,10 @@ function blogDisplayCategoriesSidebar($pluginId) {
     show::addSidebarPublicModule("Catégories", $content);
 }
 
+function blogCreateCategorieUrl(Categorie $categorie) {
+    return "blog/cat-" . $categorie->id . "/" . util::strToUrl($categorie->label) .".html";
+}
+
 ## Code relatif au plugin
 
 class newsManager {
@@ -57,13 +63,15 @@ class newsManager {
     private $items;
     private $comments;
 
-    public function __construct() {
+    public function __construct($ids = false) {
         $data = array();
         if (file_exists(ROOT . 'data/plugin/blog/blog.json')) {
             $temp = util::readJsonFile(ROOT . 'data/plugin/blog/blog.json');
             $temp = util::sort2DimArray($temp, 'date', 'desc');
             foreach ($temp as $k => $v) {
-                $data[] = new news($v);
+                if ($ids === false || in_array($v['id'], $ids)) {
+                    $data[] = new news($v);
+                }
             }
         }
         $this->items = $data;

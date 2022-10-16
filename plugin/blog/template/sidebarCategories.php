@@ -14,7 +14,7 @@ defined('ROOT') OR exit('No direct script access allowed');
 <?php
 foreach ($categories as $categorie) {
     ?>
-    <li class="cat-item"><a href="blog/cat-<?php echo $categorie->id . "-" . util::strToUrl($categorie->label); ?>.html"><?php echo $categorie->label ?></a>
+    <li class="cat-item"><a href="<?php echo blogCreateCategorieUrl($categorie); ?>"><?php echo $categorie->label ?></a>
     <?php
     if ($categorie->hasChildren) {
         $categories = $categorie->children;
