@@ -47,7 +47,6 @@ switch ($action) {
             $news->setName($_REQUEST['name']);
             $news->setContent($core->callHook('beforeSaveEditor', $_REQUEST['content']));
             $newsUrl = util::urlBuild($runPlugin->getName() . '/'. $news->getName() . '-' . $news->getId() . '.html');
-            core::executeHookAction('adminOnSaveItem', [$runPlugin->getName(), $news->getId(), $newsUrl]);
             $news->setDraft((isset($_POST['draft']) ? 1 : 0));
             if (!isset($_REQUEST['date']) || $_REQUEST['date'] == "")
                 $news->setDate($news->getDate());
@@ -57,6 +56,7 @@ switch ($action) {
             $news->setCommentsOff((isset($_POST['commentsOff']) ? 1 : 0));
             if ($newsManager->saveNews($news)) {
                 show::msg("Les modifications ont été enregistrées", 'success');
+                core::executeHookAction('adminOnSaveItem', [$runPlugin->getName(), $news->getId(), $newsUrl]);
             } else {
                 show::msg("Une erreur est survenue", 'error');
             }
