@@ -29,8 +29,8 @@ if ($mode == 'list') { ?>
                         <td><?php echo $pageItem->getName(); ?></td>
                         <td><?php if ($pageItem->targetIs() != 'parent') { ?><input readonly="readonly" type="text" value="<?php echo $page->makeUrl($pageItem); ?>" /><?php } ?></td>
                         <td>
-                            <a class="up" href="index.php?p=page&action=up&id=<?php echo $pageItem->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><img src="<?php echo PLUGINS; ?>page/template/up.png" alt="icon" /></a>&nbsp;
-                            <a class="down" href="index.php?p=page&action=down&id=<?php echo $pageItem->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><img src="<?php echo PLUGINS; ?>page/template/down.png" alt="icon" /></a>
+                            <a class="up" href="index.php?p=page&action=up&id=<?php echo $pageItem->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><i class="fa-solid fa-circle-up"></i></a>
+                            <a class="down" href="index.php?p=page&action=down&id=<?php echo $pageItem->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><i class="fa-solid fa-circle-down"></i></a>
                         </td>
                         <td>
                             <a class="button" href="index.php?p=page&amp;action=edit&amp;id=<?php echo $pageItem->getId(); ?>">Modifier</a> 
@@ -45,8 +45,8 @@ if ($mode == 'list') { ?>
                                 <td>▸ <?php echo $pageItemChild->getName(); ?></td>
                                 <td><input readonly="readonly" type="text" value="<?php echo $page->makeUrl($pageItemChild); ?>" /></td>
                                 <td>
-                                    <a class="up" href="index.php?p=page&action=up&id=<?php echo $pageItemChild->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><img src="<?php echo PLUGINS; ?>page/template/up.png" alt="icon" /></a>&nbsp;
-                                    <a class="down" href="index.php?p=page&action=down&id=<?php echo $pageItemChild->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><img src="<?php echo PLUGINS; ?>page/template/down.png" alt="icon" /></a>
+                                    <a class="up" href="index.php?p=page&action=up&id=<?php echo $pageItemChild->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><i class="fa-solid fa-circle-up"></i></a>
+                                    <a class="down" href="index.php?p=page&action=down&id=<?php echo $pageItemChild->getId(); ?>&token=<?php echo administrator::getToken(); ?>"><i class="fa-solid fa-circle-down"></i></a>
                                 </td>
                                 <td>
                                     <a class="button" href="index.php?p=page&amp;action=edit&amp;id=<?php echo $pageItemChild->getId(); ?>">Modifier</a> 

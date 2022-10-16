@@ -1,3 +1,11 @@
 .page-admin tr:first-child .up, .page-admin tr:last-child .down {
     display: none;
 }
+
+.page-admin tr .up, .page-admin tr .down {
+    font-size: 19px;
+}
+
+.page-admin tr .up:hover, .page-admin tr .down:hover {
+    color: #666;
+}
