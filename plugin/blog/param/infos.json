@@ -4,5 +4,6 @@
     "authorEmail" : "",
     "authorWebsite" : "",
     "version" : "none",
-    "useCategories" : true
+    "useCategories" : true,
+    "typeCategories" : "multi"
 }

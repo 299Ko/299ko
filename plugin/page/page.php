@@ -12,6 +12,9 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
+require_once PLUGINS . 'page/lib/PagesManager.php';
+require_once PLUGINS . 'page/lib/PageItem.php';
+
 ## Fonction d'installation
 
 function pageInstall() {
@@ -58,11 +61,44 @@ function pageEndFrontHead() {
     }
 }
 
+function pageEditCategories(Categorie $categorie) {
+    if ($categorie->pluginId !== 'page') {
+        return;
+    }
+    echo '<p><input type="checkbox" name="pageCategoriesHide" id="pageCategoriesHide" ';
+    if (isset($categorie->pluginArgs['hide']) && $categorie->pluginArgs['hide'] == true) {
+        echo ' checked ';
+    }
+    echo ' /><label for="pageCategoriesHide">Cacher dans le menu</label></p>';
+    
+    echo '<label for="PageCategoriesPosition">Position</label>';
+    echo '<p><input type="number" name="pageCategoriesPosition" id="pageCategoriesPosition" value="' .$categorie->pluginArgs['position']. '" />';
+
+}
+
+function pageBeforeSaveCategorie(Categorie &$categorie) {
+    if ($categorie->pluginId !== 'page') {
+        return $categorie;
+    }
+    if (isset($_POST['pageCategoriesHide'])) {
+        $categorie->pluginArgs['hide'] = true;
+    } else {
+        $categorie->pluginArgs['hide'] = false;
+    }
+    $position = $_POST['pageCategoriesPosition'] ?? 0;
+    $pageManager = new PagesManager();
+    if ($position < 0.5) {
+        $position = $pageManager->makePosition();
+    }
+    $categorie->pluginArgs['position'] = $position;
+    return $categorie;
+}
+
 ## Code relatif au plugin
 
-page::addToNavigation();
+PagesManager::addToNavigation();
 
-class page {
+class pagee {
 
     private $items;
     private $pagesFile;
@@ -303,7 +339,7 @@ class page {
 
 }
 
-class pageItem {
+class pageIteme {
 
     private $id;
     private $name;
@@ -322,6 +358,13 @@ class pageItem {
     private $cssClass;
     private $password;
     private $img;
+    
+    protected $type;
+    
+    const PAGE      = 'page';
+    const CATEGORIE = 'categorie';
+    const URL       = 'url';
+    const PLUGIN    = 'plugin';
 
     public function __construct($val = array()) {
         if (count($val) > 0) {
@@ -342,6 +385,7 @@ class pageItem {
             $this->cssClass = (isset($val['cssClass']) ? $val['cssClass'] : '');
             $this->password = (isset($val['password']) ? $val['password'] : '');
             $this->img = (isset($val['img']) ? $val['img'] : '');
+            $this->type = $val['type'];
         }
     }
 
@@ -494,7 +538,13 @@ class pageItem {
         else
             return 'plugin';
     }
+    
+    public function setType(string $type) {
+        $this->type = $type;
+    }
+    
+    public function getType() {
+        return $this->type;
+    }
 
 }
-
-?>

@@ -498,21 +498,21 @@ ul.tabs a, ul.tabs_style a{
 
 /* Categories */
 
-ul.categories-list {
+ul.list-item-list {
     list-style-type: none;
     font-size: 14px;
 }
 
-ul.categories-list li {
+ul.list-item-list li {
     position: relative;
     padding-top: 9px;
 }
 
-ul.categories-list li input{
+ul.list-item-list li input{
     margin-right:5px;
 }
 
-ul.categories-list li.categories-hasChildren > i {
+ul.list-item-list li.list-item-hasChildren > i {
     position: absolute;
     right:0;
     transition: all 0.4s;
@@ -521,7 +521,7 @@ ul.categories-list li.categories-hasChildren > i {
     font-size:17px;
 }
 
-ul.categories-list-sub {
+ul.list-item-list-sub {
     list-style-type: none;
     margin-left:15px;
     display: none;
@@ -543,7 +543,7 @@ div#categorie-add-form-container {
     background-color: #f3f3f3;
 }
 
-div.categorie-list {
+div.list-item-list {
     display: flex;
     flex-direction: row;
     position: relative;
@@ -553,23 +553,23 @@ div.categorie-list {
     border-top:none;
 }
 
-div.categories-container > div.categorie-list:first-child {
+div.list-item-container > div.list-item-list:first-child {
     background-color: #eee;
 }
 
-div.categorie-list > div:nth-of-type(1){
+div.list-item-list > div:nth-of-type(1){
     width:40%;
 }
 
-div.categorie-list > div:nth-of-type(2){
+div.list-item-list > div:nth-of-type(2){
     width:30%;
 }
 
-div.categorie-list > div:nth-of-type(3){
+div.list-item-list > div:nth-of-type(3){
     width:20%;
 }
 
-div.categorie-list i.categories-toggle {
+div.list-item-list i.list-item-toggle {
     position: absolute;
     transition: all 0.4s;
     cursor: pointer;

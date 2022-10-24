@@ -3,5 +3,7 @@
     "description" : "Gestion des pages et du menu",
     "authorEmail" : "",
     "authorWebsite" : "",
-    "version" : "none"
+    "version" : "none",
+    "useCategories" : true,
+    "typeCategories" : "one"
 }

@@ -22,6 +22,8 @@ class Categorie implements JsonSerializable {
     public bool $isChild = false;
     public bool $hasChildren = false;
     public int $depth = 0;
+    
+    public array $pluginArgs = [];
 
     public function __construct(string $pluginId, int $id = -1) {
         $this->id = $id;
@@ -33,6 +35,7 @@ class Categorie implements JsonSerializable {
             $this->label = $metas[$this->id]['label'];
             $this->childrenId = $metas[$this->id]['childrenId'];
             $this->parentId = $metas[$this->id]['parentId'];
+            $this->pluginArgs = $metas[$this->id]['pluginArgs'] ?? [];
         }
     }
 
@@ -42,7 +45,8 @@ class Categorie implements JsonSerializable {
                     'label' => $this->label,
                     'id' => $this->id,
                     'parentId' => $this->parentId,
-                    'childrenId' => $this->childrenId];
+                    'childrenId' => $this->childrenId,
+                    'pluginArgs' => $this->pluginArgs];
     }
 
     public function outputAsCheckbox($itemId) {
@@ -53,6 +57,11 @@ class Categorie implements JsonSerializable {
     public function outputAsSelect($parentId, $categorieId) {
         $catDisplay = 'sub';
         require PLUGINS . 'categories/template/selectCategorie.php';
+    }
+    
+    public function outputAsSelectOne($itemId) {
+        $catDisplay = 'sub';
+        require PLUGINS . 'categories/template/selectOneCategorie.php';
     }
 
     public function outputAsList() {

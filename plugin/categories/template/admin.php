@@ -23,6 +23,9 @@ switch ($action) {
             echo $categoriesManager->outputAsSelect($categorie->parentId, $categorie->id);
             ?>
         </p>
+        <?php
+        core::executeHookAction('categoriesEditCategorie', $categorie);
+        ?>
         <button type="submit">Valider les modifications</button>
         </form>
         <?php

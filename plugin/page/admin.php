@@ -15,7 +15,9 @@ defined('ROOT') OR exit('No direct script access allowed');
 $mode = '';
 $action = (isset($_GET['action'])) ? urldecode($_GET['action']) : '';
 $error = false;
-$page = new page();
+//$page = new page();
+$pageManager = new PagesManager();
+$categoriesManager = new CategoriesManager('page');
 
 switch ($action) {
     case 'save':
@@ -34,43 +36,44 @@ switch ($action) {
                 }
             }
             if ($_POST['id'] != '')
-                $pageItem = $page->create($_POST['id']);
+                $pageItem = new PageItem($_POST['id']);
             else
                 $pageItem = new pageItem();
-            $pageItem->setName($_POST['name']);
-            $pageItem->setPosition($_POST['position']);
-            $pageItem->setIsHomepage((isset($_POST['isHomepage'])) ? 1 : 0);
-            $pageItem->setContent((isset($_POST['content'])) ? $core->callHook('beforeSaveEditor', $_POST['content']) : '');
-            $pageItem->setFile((isset($_POST['file'])) ? $_POST['file'] : '');
-            $pageItem->setIsHidden((isset($_POST['isHidden'])) ? 1 : 0);
-            $pageItem->setMainTitle((isset($_POST['mainTitle'])) ? $_POST['mainTitle'] : '');
-            $pageItem->setMetaDescriptionTag((isset($_POST['metaDescriptionTag'])) ? $_POST['metaDescriptionTag'] : '');
-            $pageItem->setMetaTitleTag((isset($_POST['metaTitleTag'])) ? $_POST['metaTitleTag'] : '');
-            $pageItem->setTarget((isset($_POST['target'])) ? $_POST['target'] : '');
-            $pageItem->setTargetAttr((isset($_POST['targetAttr'])) ? $_POST['targetAttr'] : '');
-            $pageItem->setNoIndex((isset($_POST['noIndex'])) ? 1 : 0);
-            $pageItem->setParent((isset($_POST['parent'])) ? $_POST['parent'] : '');
-            $pageItem->setCssClass($_POST['cssClass']);
-            $pageItem->setImg($imgId);
+            $pageItem->name = $_POST['name'];
+            $pageItem->position = $_POST['position'];
+            $pageItem->homepage = $_POST['isHomepage'] ?? false;
+            $pageItem->content = isset($_POST['content']) ? $core->callHook('beforeSaveEditor', $_POST['content']) : '';
+            $pageItem->file = $_POST['file'] ?? '';
+            $pageItem->isHidden = $_POST['isHidden'] ?? false;
+            $pageItem->mainTitle = $_POST['mainTitle'] ?? '';
+            $pageItem->metaDescriptionTag = $_POST['metaDescriptionTag'] ?? '';
+            $pageItem->metaTitleTag = $_POST['metaTitleTag'] ?? '';
+            $pageItem->target = $_POST['target'] ?? '';
+            $pageItem->targetAttr = $_POST['targetAttr'] ?? '';
+            $pageItem->noIndex = $_POST['noIndex'] ?? false;
+            $pageItem->parent = $_POST['parent'] ?? '';
+            $pageItem->cssClass = $_POST['cssClass'];
+            $pageItem->img = $imgId;
             if (isset($_POST['_password']) && $_POST['_password'] != '')
-                $pageItem->setPassword($_POST['_password']);
+                $pageItem->password = $_POST['_password'];
             if (isset($_POST['resetPassword']))
-                $pageItem->setPassword('');
-            if ($page->save($pageItem))
+                $pageItem->password = '';
+            if ($pageManager->savePageItem($pageItem)) {
                 show::msg("Les modifications ont été enregistrées", 'success');
-            else
+                core::executeHookAction('adminOnSaveItem', [$runPlugin->getName(), $pageItem->id, $pageItem->getUrl()]);
+            } else {
                 show::msg("Une erreur est survenue", 'error');
+            }
             header('location:index.php?p=page');
             die();
         }
         break;
     case 'edit':
         if (isset($_GET['id']))
-            $pageItem = $page->create($_GET['id']);
+            $pageItem = new PageItem($_GET['id']);
         else
-            $pageItem = new pageItem();
-        $isLink = (isset($_GET['link']) || $pageItem->targetIs() == 'url') ? true : false;
-        $isParent = (isset($_GET['parent']) || $pageItem->targetIs() == 'parent') ? true : false;
+            $pageItem = new PageItem();
+        $isLink = (isset($_GET['link']) || $pageItem->type === PageItem::URL) ? true : false;
         $mode = 'edit';
         break;
     case 'del':
@@ -86,20 +89,36 @@ switch ($action) {
         break;
     case 'up':
         if ($administrator->isAuthorized()) {
-            $pageItem = $page->create($_GET['id']);
-            $newPos = $pageItem->getPosition() - 1.5;
-            $pageItem->setPosition($newPos);
-            $page->save($pageItem);
+            if (strpos($_GET['id'], 'cat-') === false) {
+                // Item
+                $pageItem = new PageItem($_GET['id']);
+                $newPos = $pageItem->position - 1.5;
+                $pageItem->position = $newPos;
+                $pageManager->savePageItem($pageItem);
+                
+            } else {
+                $categorie = $categoriesManager->getCategorie(str_replace('cat-', '', $_GET['id']));
+                $categorie->pluginArgs['position'] = $categorie->pluginArgs['position'] - 1.5;
+                $categoriesManager->saveCategorie($categorie);
+            }
             header('location:index.php?p=page');
             die();
         }
         break;
     case 'down':
         if ($administrator->isAuthorized()) {
-            $pageItem = $page->create($_GET['id']);
-            $newPos = $pageItem->getPosition() + 1.5;
-            $pageItem->setPosition($newPos);
-            $page->save($pageItem);
+            if (strpos($_GET['id'], 'cat-') === false) {
+                // Item
+                $pageItem = new PageItem($_GET['id']);
+                $newPos = $pageItem->position + 1.5;
+                $pageItem->position = $newPos;
+                $pageManager->savePageItem($pageItem);
+                
+            } else {
+                $categorie = $categoriesManager->getCategorie(str_replace('cat-', '', $_GET['id']));
+                $categorie->pluginArgs['position'] = $categorie->pluginArgs['position'] + 1.5;
+                $categoriesManager->saveCategorie($categorie);
+            }
             header('location:index.php?p=page');
             die();
         }
@@ -116,20 +135,21 @@ switch ($action) {
         break;
     default:
         // Recherche des pages perdues
-        $parents = array();
-        $lost = '';
-        foreach ($page->getItems() as $k => $v)
-            if ($v->getParent() == 0) {
-                $parents[] = $v->getId();
-            }
-        foreach ($page->getItems() as $k => $v)
-            if ($v->getParent() > 0) {
-                if (!in_array($v->getParent(), $parents))
-                    $lost .= $v->getId() . ',';
-            }
-        // Suite...
-        if (!$page->createHomepage() && $pluginsManager->getPlugin('page')->getIsDefaultPlugin())
-            show::msg("Aucune page d'accueil n'a été définie", 'warning');
+//        $parents = array();
+//        $lost = '';
+//        foreach ($page->getItems() as $k => $v)
+//            if ($v->getParent() == 0) {
+//                $parents[] = $v->getId();
+//            }
+//        foreach ($page->getItems() as $k => $v)
+//            if ($v->getParent() > 0) {
+//                if (!in_array($v->getParent(), $parents))
+//                    $lost .= $v->getId() . ',';
+//            }
+//        // Suite...
+//        if (!$page->createHomepage() && $pluginsManager->getPlugin('page')->getIsDefaultPlugin())
+//            show::msg("Aucune page d'accueil n'a été définie", 'warning');
         $mode = 'list';
+        $categoriesManager = new CategoriesManager('page');
 }
 ?>

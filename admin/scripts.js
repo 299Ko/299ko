@@ -116,14 +116,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    document.querySelectorAll(".categories-list li i").forEach(function (item) {
+    document.querySelectorAll(".list-item-list li i").forEach(function (item) {
         item.addEventListener('click', function () {
             item.classList.toggle('fa-rotate-180');
-            getNextSibling(item, 'ul.categories-list-sub').slideToggle(400);
+            getNextSibling(item, 'ul.list-item-list-sub').slideToggle(400);
         });
     });
 
-    document.querySelectorAll("div.categorie-list i.categories-toggle").forEach(function (item) {
+    document.querySelectorAll("div.list-item-list i.list-item-toggle").forEach(function (item) {
         item.addEventListener('click', function () {
             item.classList.toggle('fa-rotate-180');
             getNextSibling(item.parentNode, 'div.toggle').slideToggle(400);

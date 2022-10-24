@@ -12,43 +12,43 @@ switch ($catDisplay) {
     case 'root':
         // Categories Container
         ?>
-        <div class="categories-container">
-            <div class="categorie-list">
+        <div class="list-item-container">
+            <div class="list-item-list">
                 <div>Nom</div>
                 <div>Nombre d'éléments</div>
                 <div>Actions</div>
             </div>
             <?php
             if (empty($this->imbricatedCategories)) {
-                echo 'Aucune catégorie. <a href="index.php&p=categories&plugin=' . $this->pluginId . '>Ajoutez en une</a>';
+                echo '<div class="list-item-list">Aucune catégorie. Ajoutez en une.</div>';
             } else {
                 foreach ($this->imbricatedCategories as $cat) {
                     $cat->outputAsList();
                 }
-                ?>
-                <div id="categorie-endlist">
-                    <div id="categorie-add-form-container" class="categorie-list">
-                        <form id="categorie-add-form" name="categorie-add-form" method="post" action="index.php?p=categories&action=add&plugin=<?php echo $this->pluginId ?>" >
-                            <h4>Ajouter une catégorie</h4>
-                            <button class="alert" title="Annuler la catégorie enfant" id="category-child-delete"><i class="fa-solid fa-delete-left"></i></button>
-                            <input type="hidden" name="categorie-parentId" id="categorie-parentId" value="0" />
-                            <?php show::adminTokenField(); ?> 
-                            <input type="hidden" name="categorie-plugin" id="categorie-plugin" value="<?php echo $this->pluginId ?>" />
-                            <label for="category-add-label">Nom de la catégorie</label>
-                            <input type="text" name="categorie-add-label" id="categorie-add-label"/>
-                            <button type="submit" id="categorie-add-btn">Ajouter une catégorie</button>
-                        </form>
-                    </div>
+            }
+            ?>
+            <div id="list-item-endlist">
+                <div id="categorie-add-form-container" class="list-item-list">
+                    <form id="categorie-add-form" name="categorie-add-form" method="post" action="index.php?p=categories&action=add&plugin=<?php echo $this->pluginId ?>" >
+                        <h4>Ajouter une catégorie</h4>
+                        <button class="alert" title="Annuler la catégorie enfant" id="category-child-delete"><i class="fa-solid fa-delete-left"></i></button>
+                        <input type="hidden" name="categorie-parentId" id="categorie-parentId" value="0" />
+                        <?php show::adminTokenField(); ?> 
+                        <input type="hidden" name="categorie-plugin" id="categorie-plugin" value="<?php echo $this->pluginId ?>" />
+                        <label for="category-add-label">Nom de la catégorie</label>
+                        <input type="text" name="categorie-add-label" id="categorie-add-label"/>
+                        <button type="submit" id="list-item-add-btn">Ajouter une catégorie</button>
+                    </form>
                 </div>
-            <?php } ?>
+            </div>
         </div>
         <?php
         break;
     case 'sub':
         // Categories
-        echo '<div id="categorie-' . $this->id . '" name="' . $this->label . '" class="categorie-list ';
+        echo '<div id="categorie-' . $this->id . '" name="' . $this->label . '" class="list-item-list ';
         if ($this->hasChildren) {
-            echo 'hasChildren"><i style="left:' . ($this->depth * 15 + 5 ). 'px;" class="fa-solid fa-caret-down categories-toggle"></i>';
+            echo 'hasChildren"><i style="left:' . ($this->depth * 15 + 5 ) . 'px;" class="fa-solid fa-caret-down list-item-toggle"></i>';
         } else {
             echo '">';
         }

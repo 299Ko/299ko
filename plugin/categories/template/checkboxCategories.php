@@ -12,12 +12,12 @@ switch ($catDisplay) {
     case 'root':
         // Categories Container
         ?>
-        <div class="categories-container">
+        <div class="list-item-container">
             <?php
             if (empty($this->imbricatedCategories)) {
-                echo 'Aucune catégorie. <a href="index.php&p=categories&plugin=' . $this->pluginId . '>Ajoutez en une</a>';
+                echo 'Aucune catégorie. <a href="index.php?p=categories&plugin=' . $this->pluginId . '"> Ajoutez en une</a>';
             } else { ?>
-            <ul class="categories-list">
+            <ul class="list-item-list">
                 <?php
                 foreach ($this->imbricatedCategories as $cat) {
                     $cat->outputAsCheckbox($itemId);
@@ -31,7 +31,7 @@ switch ($catDisplay) {
     case 'sub':
         // Categories
         if ($this->hasChildren) {
-            echo "<li class='categories-hasChildren'>";
+            echo "<li class='list-item-hasChildren'>";
         } else {
             echo "<li>";
         }
@@ -43,7 +43,7 @@ switch ($catDisplay) {
         echo "/><label for='cat_" . $this->id . "'>" . $this->label . "</label>";
         if ($this->hasChildren) {
             echo "<i class='fa-solid fa-caret-down'></i>";
-            echo "<ul class='categories-list-sub'>";
+            echo "<ul class='list-item-list-sub'>";
             foreach ($this->children as $child) {
                 $child->outputAsCheckbox($itemId);
             }

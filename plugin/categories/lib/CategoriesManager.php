@@ -127,6 +127,13 @@ class CategoriesManager {
         }
         return pluginsManager::getPluginInfoVal($pluginId, 'useCategories');
     }
+    
+    public static function isPluginUseMultiCategories($pluginId) {
+        if (!pluginsManager::isExistPlugin($pluginId)) {
+            return false;
+        }
+        return pluginsManager::getPluginInfoVal($pluginId, 'typeCategories') === 'multi';
+    }
 
     protected function setCategoriesStatus() {
         $this->isActive = self::isPluginUseCategories($this->pluginId);        
@@ -182,6 +189,13 @@ class CategoriesManager {
         $catDisplay = 'root';
         ob_start();
         require PLUGINS . 'categories/template/selectCategorie.php';
+        return ob_get_clean();
+    }
+    
+    public function outputAsSelectOne($itemId) {
+        $catDisplay = 'root';
+        ob_start();
+        require PLUGINS . 'categories/template/selectOneCategorie.php';
         return ob_get_clean();
     }
 
