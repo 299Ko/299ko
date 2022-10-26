@@ -86,6 +86,24 @@ class PageItem implements JsonSerializable {
         $this->children[$item->id] = $item;
     }
     
+    public function addToNavigation($parentItem = false) {
+        if ($this->type === self::CATEGORIE) {
+            $item = new ParentItem($this->name, $this->id, $this->cssClass);
+            foreach ($this->children as $child) {
+                $item = $child->addToNavigation($item);
+            }
+        } else {
+            $item = new Item($this->name, $this->getUrl(), $this->id, $this->cssClass, $this->targetAttr);
+        }
+        if ($parentItem === false) {
+            Menu::addMenuItem($item);
+            return;
+        } else {
+            $parentItem->addMenuItem($item);
+            return $parentItem;
+        }
+    }
+    
     public function getUrl() {
         switch ($this->type) {
             case self::CATEGORIE:
@@ -98,7 +116,7 @@ class PageItem implements JsonSerializable {
             case self::URL:
                 return $this->target;
             case self::PLUGIN:
-                return util::urlBuild($this->target);
+                return util::urlBuild($this->target) . '/';
         }
     }
     

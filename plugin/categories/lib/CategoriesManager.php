@@ -211,8 +211,11 @@ class CategoriesManager {
         return array_keys($metas);
     }
 
-    public static function saveItemToCategories(string $pluginId, $itemId, array $categoriesId) {
+    public static function saveItemToCategories(string $pluginId, $itemId, $categoriesId) {
         $metas = self::getMetas($pluginId);
+        if (!is_array($categoriesId)) {
+            $categoriesId = [$categoriesId];
+        }
         $categories = [];
         foreach ($metas as $cat) {
             $key = array_search($itemId, $cat['items'], true);

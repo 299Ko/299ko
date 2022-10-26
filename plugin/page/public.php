@@ -11,44 +11,44 @@
  * @package 299Ko https://github.com/299Ko/299ko
  */
 defined('ROOT') OR exit('No direct script access allowed');
-$page = new page();
+$pagesManager = new PagesManager();
 # Création, de la page
 $id = (isset($_GET['id'])) ? $_GET['id'] : false;
 if (!$id)
-    $pageItem = $page->createHomepage();
-elseif ($pageItem = $page->create($id)) {
+    $pageItem = new PageItem();
+elseif ($pageItem = new PageItem($id)) {
     
 } else
     $core->error404();
-if ($pageItem->targetIs() != 'page')
+if ($pageItem->type === PageItem::PAGE)
     $core->error404();
 $action = (isset($_POST['unlock'])) ? 'unlock' : '';
 switch ($action) {
     case 'unlock':
         // quelques contrôle et temps mort volontaire avant le send...
         sleep(2);
-        if ($_POST['_password'] == '' && $_SERVER['HTTP_REFERER'] == $runPlugin->getPublicUrl() . util::strToUrl($pageItem->getName()) . '-' . $pageItem->getId() . '.html')
+        if ($_POST['_password'] == '' && $_SERVER['HTTP_REFERER'] == $runPlugin->getPublicUrl() . util::strToUrl($pageItem->name) . '-' . $pageItem->id . '.html')
             $page->unlock($pageItem, $_POST['password']);
-        $redirect = $runPlugin->getPublicUrl() . util::strToUrl($pageItem->getName()) . '-' . $pageItem->getId() . '.html';
+        $redirect = $runPlugin->getPublicUrl() . util::strToUrl($pageItem->name) . '-' . $pageItem->id . '.html';
         header('location:' . $redirect);
         die();
         break;
     default:
-        if ($page->isUnlocked($pageItem)) {
+        if ($pagesManager->isUnlocked($pageItem)) {
             # Gestion du titre
             if ($runPlugin->getConfigVal('hideTitles'))
                 $runPlugin->setMainTitle('');
             else
-                $runPlugin->setMainTitle(($pageItem->getMainTitle() != '') ? $pageItem->getMainTitle() : $pageItem->getName());
+                $runPlugin->setMainTitle(($pageItem->mainTitle != '') ? $pageItem->mainTitle : $pageItem->name);
             # Gestion des metas
-            if ($pageItem->getMetaTitleTag())
-                $runPlugin->setTitleTag($pageItem->getMetaTitleTag());
+            if ($pageItem->metaTitleTag)
+                $runPlugin->setTitleTag($pageItem->metaTitleTag);
             else
-                $runPlugin->setTitleTag($pageItem->getName());
-            if ($pageItem->getMetaDescriptionTag())
-                $runPlugin->setMetaDescriptionTag($pageItem->getMetaDescriptionTag());
+                $runPlugin->setTitleTag($pageItem->name);
+            if ($pageItem->metaDescriptionTag)
+                $runPlugin->setMetaDescriptionTag($pageItem->metaDescriptionTag);
             // template
-            $pageFile = ($pageItem->getFile()) ? THEMES . $core->getConfigVal('theme') . '/' . $pageItem->getFile() : false;
+            $pageFile = ($pageItem->file) ? THEMES . $core->getConfigVal('theme') . '/' . $pageItem->file : false;
         } else {
             $runPlugin->setTitleTag('Accès restreint');
             $runPlugin->setMainTitle('Accès restreint');

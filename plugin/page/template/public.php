@@ -1,18 +1,18 @@
 <?php
 defined('ROOT') OR exit('No direct script access allowed');
 include_once(THEMES . $core->getConfigVal('theme') . '/header.php');
-if ($page->isUnlocked($pageItem)) {
-    if ($pageItem->getFile())
-        include_once(THEMES . $core->getConfigVal('theme') . '/' . $pageItem->getFile());
+if ($pagesManager->isUnlocked($pageItem)) {
+    if ($pageItem->file)
+        include_once(THEMES . $core->getConfigVal('theme') . '/' . $pageItem->file);
     else {
-        if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($pageItem->getImg()))
-            echo '<img class="featured" src="' . UPLOAD . 'galerie/' . $pageItem->getImg() . '" alt="' . $pageItem->getName() . '" />';
-        echo $pageItem->getContent();
+        if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($pageItem->img))
+            echo '<img class="featured" src="' . UPLOAD . 'galerie/' . $pageItem->img . '" alt="' . $pageItem->name . '" />';
+        echo $pageItem->content;
     }
 } else {
     ?>
     <form method="post" action="">
-        <input type="hidden" name="unlock" value="<?php echo $pageItem->getId(); ?>" />
+        <input type="hidden" name="unlock" value="<?php echo $pageItem->id; ?>" />
         <p>
             <label>Mot de passe</label><br>
             <input style="display:none;" type="text" name="_password" value="" />

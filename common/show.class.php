@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright (C) 2022, 299Ko, based on code (2010-2021) 99ko https://github.com/99kocms/
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
@@ -12,11 +13,9 @@
 defined('ROOT') OR exit('No direct script access allowed');
 
 class show {
-    
+
     protected static $sidebarAdminModules = [];
-    
     protected static $sidebarPublicModules = [];
-    
     protected static $featuredImage = '';
 
     /**
@@ -58,7 +57,7 @@ class show {
         }
         unset($_SESSION['flash_msg']);
     }
-    
+
     /**
      * Display a module in the Admin Sidebar
      * 
@@ -71,7 +70,7 @@ class show {
             'content' => $content
         ];
     }
-    
+
     /**
      * Display the Admin Sidebar
      */
@@ -93,11 +92,11 @@ class show {
         }
         echo '</div>';
     }
-    
+
     public static function isAdminSidebar() {
         return (!empty(self::$sidebarAdminModules));
     }
-    
+
     /**
      * Display a module in the Public Sidebar
      * 
@@ -130,21 +129,19 @@ class show {
             echo $module['content'];
             echo '</div></div>';
         }
-
     }
-    
+
     public static function isPublicSidebar() {
         return (!empty(self::$sidebarPublicModules));
     }
-    
+
     public static function setFeaturedImage(string $imageUrl) {
         self::$featuredImage = $imageUrl;
     }
-    
+
     public static function getFeaturedImage() {
         return self::$featuredImage;
     }
-
 
     ## Affiche les balises "link" type css (admin + theme)
 
@@ -279,41 +276,46 @@ class show {
         if (function_exists('mainNavigation'))
             call_user_func('mainNavigation', $format);
         else {
-            $pluginsManager = pluginsManager::getInstance();
-            $core = core::getInstance();
-            $data = '';
-            foreach ($pluginsManager->getPlugins() as $k => $plugin)
-                if ($plugin->getConfigval('activate') == 1) {
-                    foreach ($plugin->getNavigation() as $k2 => $item)
-                        if ($item['label'] != '') {
-                            if ($item['parent'] < 1) {
-                                $temp = $format;
-                                $temp = str_replace('[target]', $item['target'], $temp);
-                                $temp = str_replace('[label]', $item['label'], $temp);
-                                $temp = str_replace('[targetAttribut]', $item['targetAttribut'], $temp);
-                                $temp = str_replace('[cssClass]', $item['cssClass'], $temp);
-                                $data2 = '<ul>';
-                                $i = 0;
-                                foreach ($plugin->getNavigation() as $k3 => $item2)
-                                    if ($item2['label'] != '' && $item2['parent'] == $item['id']) {
-                                        $temp2 = $format;
-                                        $temp2 = str_replace('[target]', $item2['target'], $temp2);
-                                        $temp2 = str_replace('[label]', $item2['label'], $temp2);
-                                        $temp2 = str_replace('[targetAttribut]', $item2['targetAttribut'], $temp2);
-                                        $temp2 = str_replace('[cssClass]', $item2['cssClass'], $temp2);
-                                        $temp2 = str_replace('[childrens]', '', $temp2);
-                                        $data2 .= $temp2;
-                                        $i++;
-                                    }
-                                $data2 .= '</ul>';
-                                if ($i == 0)
-                                    $data2 = '';
-                                $temp = str_replace('[childrens]', $data2, $temp);
-                                $data .= $temp;
-                            }
-                        }
-                }
-            echo $data;
+            Menu::output();
+
+
+//        else {
+//            $pluginsManager = pluginsManager::getInstance();
+//            $core = core::getInstance();
+//            $data = '';
+//            foreach ($pluginsManager->getPlugins() as $k => $plugin)
+//                if ($plugin->getConfigval('activate') == 1) {
+//                    var_dump($plugin->getNavigation());
+//                    foreach ($plugin->getNavigation() as $k2 => $item)
+//                        if ($item['label'] != '') {
+//                            if ($item['parent'] < 1) {
+//                                $temp = $format;
+//                                $temp = str_replace('[target]', $item['target'], $temp);
+//                                $temp = str_replace('[label]', $item['label'], $temp);
+//                                $temp = str_replace('[targetAttribut]', $item['targetAttribut'], $temp);
+//                                $temp = str_replace('[cssClass]', $item['cssClass'], $temp);
+//                                $data2 = '<ul>';
+//                                $i = 0;
+//                                foreach ($plugin->getNavigation() as $k3 => $item2)
+//                                    if ($item2['label'] != '' && $item2['parent'] == $item['id']) {
+//                                        $temp2 = $format;
+//                                        $temp2 = str_replace('[target]', $item2['target'], $temp2);
+//                                        $temp2 = str_replace('[label]', $item2['label'], $temp2);
+//                                        $temp2 = str_replace('[targetAttribut]', $item2['targetAttribut'], $temp2);
+//                                        $temp2 = str_replace('[cssClass]', $item2['cssClass'], $temp2);
+//                                        $temp2 = str_replace('[childrens]', '', $temp2);
+//                                        $data2 .= $temp2;
+//                                        $i++;
+//                                    }
+//                                $data2 .= '</ul>';
+//                                if ($i == 0)
+//                                    $data2 = '';
+//                                $temp = str_replace('[childrens]', $data2, $temp);
+//                                $data .= $temp;
+//                            }
+//                        }
+//                }
+//            echo $data;
         }
     }
 
@@ -326,11 +328,11 @@ class show {
             foreach ($pluginsManager->getPlugins() as $k => $v) {
                 if ($v->getConfigVal('activate') && $v->getAdminFile()) {
                     if ($v->getIsDefaultAdminPlugin()) {
-                        $data = '<li><a href="index.php?p=' . $v->getName() .'">' .
-                            $v->getInfoVal('name') .'</a></li>' . $data;
+                        $data = '<li><a href="index.php?p=' . $v->getName() . '">' .
+                                $v->getInfoVal('name') . '</a></li>' . $data;
                     } else {
-                    $data .= '<li><a href="index.php?p=' . $v->getName() .'">' .
-                            $v->getInfoVal('name') .'</a></li>';
+                        $data .= '<li><a href="index.php?p=' . $v->getName() . '">' .
+                                $v->getInfoVal('name') . '</a></li>';
                     }
                 }
             }
@@ -391,4 +393,5 @@ class show {
     }
 
 }
+
 ?>

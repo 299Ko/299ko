@@ -9,7 +9,19 @@
  * @package 299Ko https://github.com/299Ko/299ko
  */
 
-@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+/** Vars */
+
+:root{
+  --header-bg-color: #fff;
+  --main-font-color: #2e3440;
+  --main-bg-color: #f7f7f7;
+  --content-bg-color: #fff;
+  --links-color : #4c566a;
+  --links-color-hover: #8fbcbb;
+  --border-color: #e7e7e7;
+  --main-box-shadow: 0 1px 0 0 rgba(238, 238, 238, 0.6);
+}
 
 /* BASIC */
 
@@ -27,10 +39,9 @@ html
 }
 
 body{
-    font-family:'Roboto',sans-serif;
-    font-size:18px;
-    color:#333;
-    background:#f7f7f7;
+    font:14px/1.8571428 "Open Sans", Arial, sans-serif;
+    color:var(--main-font-color);
+    background:var(--main-bg-color);
     margin:0;
     padding:0;
     position:relative;
@@ -38,12 +49,14 @@ body{
 }
 
 a,a:hover,a:active,a:visited{
-    color:#999;
-    text-decoration:none
+    text-decoration:none;
+    color:var(--links-color);
+    transition: 0.4s color;
 }
 
 a:hover{
-    color:#333
+    color:var(--links-color-hover);
+    
 }
 
 h1{
@@ -240,23 +253,22 @@ code{
 
 #container{
     width: 100%;
-    background: #fff;
     overflow: hidden;
 }
 
 #header{
     width: 100%;
     position: fixed;
-    background: #fff;
-    box-shadow: 0px 0px 12px 2px rgba(0, 0, 0, 0.30);
+    background: var(--header-bg-color);
+    box-shadow: var(--main-box-shadow);
     z-index: 995;
+    border-bottom:1px solid var(--border-color);
 }
 
 #header_content{
     max-width: 960px;
     margin: 0 auto;
     padding: 0 15px;
-    overflow: hidden;
 }
 
 #body{
@@ -272,10 +284,21 @@ code{
     margin:0px auto;
 }
 
+.sidebarModule {
+    background-color: var(--content-bg-color);
+    border:1px solid var(--border-color);
+    box-shadow: var(--main-box-shadow);
+    padding: 15px;
+}
+
 #content{
     flex: 1 0 auto;
     max-width: 1000px;
     margin:0px auto;
+    background-color: var(--content-bg-color);
+    border:1px solid var(--border-color);
+    box-shadow: var(--main-box-shadow);
+    padding: 15px;
 }
 
 #footer{
@@ -313,47 +336,71 @@ code{
     font-size: 23px;
 }
 
-#navigation{
+#navigation {
+    display: flex;
+    font-size: 12px;
+}
+
+#navigation li {
     display: block;
+    position: relative;
+    background-color: var(--header-bg-color);
+}
+
+#navigation li a {
+    text-decoration: none;
+    padding: 15px;
+    display: block;
+}
+
+#navigation li.parent > a:after {
+    font: var(--fa-font-solid);
+    font-size: 12px;
+    opacity: 0.3;
+}
+
+#navigation > li.parent > a:after {
+    content:'\f078';
+    margin-left:10px;
+}
+
+#navigation ul li.parent > a:after {
+    content:'\f105';
+    position: absolute;
+    top:40%;
+    right:8px;
+}
+
+#navigation .parent:hover >ul {
+    visibility: visible;
+    opacity: 1;
+    transition: 0.3s visibility, opacity 0.3s linear;
+}
+
+#navigation .parent > ul {
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s visibility, opacity 0.5s linear;
+    position: absolute;
+    box-shadow: var(--main-box-shadow);
+}
+
+#navigation .parent > ul li {
+    width: 100%;
+    border:1px solid var(--border-color);
+    border-top:none;
+}
+
+#navigation, #navigation ul {
     list-style: none;
     margin: 0;
-    width: 65%;
-    font-size: 12px;
-    text-transform: uppercase;
-    overflow: hidden;
+    padding: 0px;
+    min-width: 10em;
 }
 
-#navigation li{
-    float: left;
-}
-
-#navigation a{
-    display: block;
-    color: #4986b7;
-    padding: 15px;
-}
-
-#navigation a:hover{
-    background: #4986b7;
-    color: #fff;
-}
-
-#navigation li ul{
-    display: none;
-    position: absolute;
-    list-style: none;
-    background: #fff;
-    box-shadow: 0px 0px 12px 2px rgba(0, 0, 0, 0.30);
-    padding: 0;
-}
-
-#navigation li:hover ul{
-    display: block;
-}
-
-#navigation li ul li{
-    clear: both;
-    width: 100%;
+#navigation .parent ul ul {
+    left: 100%;
+    top: 0;
 }
 
 #siteName{
@@ -401,7 +448,7 @@ code{
 
 .item-header span.item-categories a:first-of-type {
     padding-left:0;
-} 
+}
 
 .item-header span.item-categories a:last-of-type {
     padding-right: 0;
@@ -577,9 +624,14 @@ code{
     #header{
         position: inherit;
     }
+    
+    #header_content {
+        padding: 0;
+    }
 
     #siteName{
         width: 100%;
+        padding: 15px;
     }
 
     #mobile_menu{
@@ -589,6 +641,12 @@ code{
     #navigation{
         display: none;
         width: 100%;
+        overflow: hidden;
+        transition: height 0.4s ease;
+    }
+    
+    #navigation.active {
+        display: block;
     }
 
     #navigation li{
@@ -605,11 +663,14 @@ code{
         color: #4986b7;
     }
 
-    #navigation li ul{
+    #navigation .parent ul, #navigation .parent ul ul {
         display: block;
         position: inherit;
         box-shadow: inherit;
         padding-left: 30px;
+        visibility: visible;
+        opacity: 1;
+        left:0;
     }
 
     #banner{

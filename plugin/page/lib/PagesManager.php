@@ -22,7 +22,6 @@ class PagesManager {
         $this->regenPositions();
         $this->savePages();
         $this->saveCategories();
-        
     }
 
     public function output() {
@@ -62,16 +61,20 @@ class PagesManager {
                 }
             }
         // génération de la navigation
-        foreach ($pageManager->items as $k => $pageItem) {
-            if (!$pageItem->isHidden) {
-                if ($pageItem->type == PageItem::PLUGIN && !$pluginsManager->isActivePlugin($pageItem->target)) {
-                    // no item !
-                } else {
-                    $url = $pageItem->getUrl();
-                    $pluginsManager->getPlugin('page')->addToNavigation($pageItem->name, $url, $pageItem->targetAttr, $pageItem->id, $pageItem->parent, $pageItem->cssClass);
-                }
+            $newPagesManager = new self();
+            foreach ($newPagesManager->nestedItems as $item) {
+                $item->addToNavigation();
             }
-        }
+//        foreach ($pageManager->items as $k => $pageItem) {
+//            if (!$pageItem->isHidden) {
+//                if ($pageItem->type == PageItem::PLUGIN && !$pluginsManager->isActivePlugin($pageItem->target)) {
+//                    // no item !
+//                } else {
+//                    $url = $pageItem->getUrl();
+//                    $pluginsManager->getPlugin('page')->addToNavigation($pageItem->name, $url, $pageItem->targetAttr, 'page-' . $pageItem->id, 'page' . $pageItem->parent, $pageItem->cssClass);
+//                }
+//            }
+//        }
     }
 
     public function savePageItem(PageItem $pageItem) {
@@ -91,7 +94,11 @@ class PagesManager {
         foreach ($this->items as $item) {
             if ($item->type !== PageItem::CATEGORIE) {
                 $metas[$item->id] = $item;
-            } 
+            }
+            if ($item->parent && $item->parent !== 0 && $item->type !== PageItem::CATEGORIE) {
+                $parent = str_replace('cat-', '', $item->parent);
+                CategoriesManager::saveItemToCategories('page', $item->id, $parent);
+            }
         }
         return util::writeJsonFile($this->file, $metas);
     }
@@ -132,6 +139,15 @@ class PagesManager {
             $ids[] = $pageItem->id;
         }
         return max($ids) + 1;
+    }
+    
+    public function isUnlocked(PageItem $obj) {
+        if ($obj->password == '')
+            return true;
+        elseif (isset($_SESSION['pagePassword']) && sha1($obj->id) . $obj->password . sha1($_SERVER['REMOTE_ADDR']) == $_SESSION['pagePassword'])
+            return true;
+        else
+            return false;
     }
 
     protected function loadPages() {
@@ -178,7 +194,6 @@ class PagesManager {
         $items = $this->items;
         foreach ($items as $item) {
             if ($item->parent !== 0 && $item->parent !== '') {
-                echo $item->name . ' ';
                 if ($item->type === PageItem::CATEGORIE) {
                     $item->parent = 'cat-' . $item->parent;
                 }

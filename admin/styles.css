@@ -524,7 +524,6 @@ ul.list-item-list li.list-item-hasChildren > i {
 ul.list-item-list-sub {
     list-style-type: none;
     margin-left:15px;
-    display: none;
 }
 
 #categorie-add-form {
@@ -575,8 +574,10 @@ div.list-item-list i.list-item-toggle {
     cursor: pointer;
 }
 
-div.toggle {
+div.toggle, ul.list-item-list-sub {
+    /** Uncomment to hide by default
     display: none;
+    */
 }
 
 /* MOBILE */

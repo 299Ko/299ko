@@ -51,13 +51,13 @@ function pageEndFrontHead() {
     global $runPlugin;
     if ($runPlugin && $runPlugin->getName() == 'page') {
         global $pageItem;
-        if ($pageItem && $pageItem->getNoIndex()) {
+        if ($pageItem && $pageItem->noIndex) {
             echo '<meta name="robots" content="noindex"><meta name="googlebot" content="noindex">';
         }
         $core = core::getInstance();
         $pluginsManager = pluginsManager::getInstance();
-        if ($pageItem && $pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($pageItem->getImg()))
-            echo '<meta property="og:image" content="' . $core->getConfigVal('siteUrl') . '/' . str_replace('./', '', UPLOAD) . 'galerie/' . $pageItem->getImg() . '" />';
+        if ($pageItem && $pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($pageItem->img))
+            echo '<meta property="og:image" content="' . $core->getConfigVal('siteUrl') . '/' . str_replace('./', '', UPLOAD) . 'galerie/' . $pageItem->img . '" />';
     }
 }
 
