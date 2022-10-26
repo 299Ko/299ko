@@ -62,10 +62,8 @@ class core {
                 $this->pluginToCall = $this->getConfigVal('defaultAdminPlugin');
             }
         }
-        $this->css[] = NORMALIZE;
         $this->css[] = FONTICON;
         $this->css[] = FANCYCSS;
-        $this->js[] = JQUERY;
         $this->js[] = FANCYJS;
     }
 
