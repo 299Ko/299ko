@@ -191,7 +191,7 @@ class util {
         if ($admin) {
             $base .= 'admin/';
         }
-        return $base . ltrim(self::strToUrl($uri), '/');
+        return $base . ltrim($uri, '/');
     }
 
 }

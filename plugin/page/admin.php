@@ -51,8 +51,9 @@ switch ($action) {
             $pageItem->target = $_POST['target'] ?? '';
             $pageItem->targetAttr = $_POST['targetAttr'] ?? '';
             $pageItem->noIndex = $_POST['noIndex'] ?? false;
-            $pageItem->parent = $_POST['parent'] ?? '';
+            $pageItem->parent = $_POST['categorie-one'] ? 'cat-' . $_POST['categorie-one'] : '';
             $pageItem->cssClass = $_POST['cssClass'];
+            $pageItem->type = $_POST['type'];
             $pageItem->img = $imgId;
             if (isset($_POST['_password']) && $_POST['_password'] != '')
                 $pageItem->password = $_POST['_password'];
@@ -69,11 +70,16 @@ switch ($action) {
         }
         break;
     case 'edit':
-        if (isset($_GET['id']))
+        if (isset($_GET['id'])) {
             $pageItem = new PageItem($_GET['id']);
-        else
+        } else {
             $pageItem = new PageItem();
-        $isLink = (isset($_GET['link']) || $pageItem->type === PageItem::URL) ? true : false;
+            if (isset($_GET['link'])) {
+                $pageItem->type = PageItem::URL;
+            } else {
+                $pageItem->type = PageItem::PAGE;
+            }
+        }
         $mode = 'edit';
         break;
     case 'del':

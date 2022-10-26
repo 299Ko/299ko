@@ -1,17 +1,16 @@
 <?php
 defined('ROOT') OR exit('No direct script access allowed');
 include_once(ROOT . 'admin/header.php');
-echo $pageItem->name;
 if ($mode == 'list') {
-    
-        echo $pageManager->output();
         ?>
     <ul class = "tabs_style">
         <li><a class = "button" href = "index.php?p=page&amp;action=edit">Ajouter une page</a></li>
-        <li><a class = "button" href = "index.php?p=page&amp;action=edit&parent=1">Ajouter un item parent</a></li>
+        <li><a class = "button" href = "index.php?p=categories&plugin=page">Ajouter une catégorie</a></li>
         <li><a class = "button" href = "index.php?p=page&amp;action=edit&link=1">Ajouter un lien externe</a></li>
     </ul>
-    <?php if ($lost != '') {
+    <?php
+    echo $pageManager->output();
+    if ($lost != '') {
         ?>
         <p>Des pages "fantômes" pouvant engendrer des dysfonctionnements ont été trouvées. <a href="index.php?p=page&amp;action=maintenance&id=<?php echo $lost; ?>&token=<?php echo administrator::getToken(); ?>">Cliquez ici</a> pour exécuter le script de maintenance.</p>
     <?php } ?>
@@ -67,10 +66,11 @@ if ($mode == 'list') {
     </table>
 <?php } ?>
 
-<?php if ($mode == 'edit' && !$isLink && $pageItem->type === PageItem::PAGE) { ?>
+<?php if ($mode == 'edit' && $pageItem->type === PageItem::PAGE) { ?>
     <form method="post" action="index.php?p=page&amp;action=save" enctype="multipart/form-data">
         <?php show::adminTokenField(); ?>
         <input type="hidden" name="id" value="<?php echo $pageItem->id; ?>" />
+        <input type="hidden" name="type" value="<?php echo $pageItem->type; ?>" />
         <?php if ($pluginsManager->isActivePlugin('galerie')) { ?>
             <input type="hidden" name="imgId" value="<?php echo $pageItem->img; ?>" />
         <?php } ?>
@@ -135,20 +135,20 @@ if ($mode == 'list') {
             <label>Inclure un fichier .php au lieu du contenu
                 <select name="file" class="large-3 columns">
                     <option value="">--</option>
-                    <?php foreach ($page->listTemplates() as $file) { ?>
-                        <option <?php if ($file == $pageItem->getFile()) { ?>selected<?php } ?> value="<?php echo $file; ?>"><?php echo $file; ?></option>
+                    <?php foreach ($pageManager->listTemplates() as $file) { ?>
+                        <option <?php if ($file == $pageItem->file) { ?>selected<?php } ?> value="<?php echo $file; ?>"><?php echo $file; ?></option>
                     <?php } ?>
                 </select>
         </p>
         <p>
             <label>Contenu</label>
-            <textarea name="content" class="editor"><?php echo $core->callHook('beforeEditEditor', $pageItem->getContent()); ?></textarea>
+            <textarea name="content" class="editor"><?php echo $core->callHook('beforeEditEditor', $pageItem->content); ?></textarea>
         </p>
         <?php
         if ($pluginsManager->isActivePlugin('galerie')) {
-            galerieDisplaySidebarModule($pageItem->getImg());
+            galerieDisplaySidebarModule($pageItem->img);
         }
-        core::executeHookAction('adminEditingAnItem', [$runPlugin->getName(), $pageItem->getId()]);
+        core::executeHookAction('adminEditingAnItem', [$runPlugin->getName(), $pageItem->id]);
         show::displayAdminSidebar();
         ?>
         <p>
@@ -161,7 +161,7 @@ if ($mode == 'list') {
     <form method="post" action="index.php?p=page&amp;action=save">
         <?php show::adminTokenField(); ?>
         <input type="hidden" name="id" value="<?php echo $pageItem->id; ?>" />
-        <!--<input type="hidden" name="position" value="<?php echo $pageItem->position; ?>" />-->
+        <input type="hidden" name="type" value="<?php echo $pageItem->type; ?>" />
         <p>
             <input <?php if ($pageItem->isHidden) { ?>checked<?php } ?> type="checkbox" name="isHidden" /> <label for="isHidden">Ne pas afficher dans le menu</label>
         </p>
@@ -213,31 +213,4 @@ if ($mode == 'list') {
     </form>
 <?php } ?>
 
-<?php if ($mode == 'edit' && $isParent) { ?>
-    <form method="post" action="index.php?p=page&amp;action=save">
-        <?php show::adminTokenField(); ?>
-        <input type="hidden" name="id" value="<?php echo $pageItem->id; ?>" />
-        <!--<input type="hidden" name="position" value="<?php echo $pageItem->getPosition(); ?>" />-->
-        <input type="hidden" name="target" value="javascript:" />
-        <p>
-            <input <?php if ($pageItem->getIsHidden()) { ?>checked<?php } ?> type="checkbox" name="isHidden" /> <label for="isHidden">Ne pas afficher dans le menu</label>
-        </p>
-        <p>
-            <label>Nom</label><br>
-            <input type="text" name="name" value="<?php echo $pageItem->getName(); ?>" required="required" />
-        </p>
-        <p>
-            <label>Classe CSS</label>
-            <input type="text" name="cssClass" value="<?php echo $pageItem->getCssClass(); ?>" />
-        </p>
-        <p>
-            <label>Position</label>
-            <input type="number" name="position" value="<?php echo $pageItem->getPosition(); ?>" />
-        </p>
-        <p>
-            <button type="submit" class="button success radius">Enregistrer</button>
-        </p>
-    </form>
-<?php } ?>
-
-<?php include_once(ROOT . 'admin/footer.php'); ?>
+<?php include_once(ROOT . 'admin/footer.php');

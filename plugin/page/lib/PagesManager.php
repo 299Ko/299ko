@@ -34,7 +34,7 @@ class PagesManager {
     public function getItems() {
         return $this->items;
     }
-    
+
     public static function addToNavigation() {
         $pageManager = new PagesManager();
         $pluginsManager = pluginsManager::getInstance();
@@ -61,10 +61,10 @@ class PagesManager {
                 }
             }
         // génération de la navigation
-            $newPagesManager = new self();
-            foreach ($newPagesManager->nestedItems as $item) {
-                $item->addToNavigation();
-            }
+        $newPagesManager = new self();
+        foreach ($newPagesManager->nestedItems as $item) {
+            $item->addToNavigation();
+        }
 //        foreach ($pageManager->items as $k => $pageItem) {
 //            if (!$pageItem->isHidden) {
 //                if ($pageItem->type == PageItem::PLUGIN && !$pluginsManager->isActivePlugin($pageItem->target)) {
@@ -88,7 +88,7 @@ class PagesManager {
         $this->items[$pageItem->id] = $pageItem;
         return $this->savePages();
     }
-    
+
     protected function savePages() {
         $metas = [];
         foreach ($this->items as $item) {
@@ -102,12 +102,12 @@ class PagesManager {
         }
         return util::writeJsonFile($this->file, $metas);
     }
-    
+
     protected function saveCategories() {
         $categoriesManager = new CategoriesManager('page');
         foreach ($this->items as $item) {
             if ($item->type === PageItem::CATEGORIE) {
-                $categorie = $categoriesManager->getCategorie(str_replace('cat-', '',$item->id));
+                $categorie = $categoriesManager->getCategorie(str_replace('cat-', '', $item->id));
                 $categorie->pluginArgs['position'] = $item->position;
                 $categoriesManager->saveCategorie($categorie);
             }
@@ -121,7 +121,7 @@ class PagesManager {
         }
         return max($pos) + 1;
     }
-    
+
     protected function regenPositions() {
         $pos = 1;
         foreach ($this->nestedItems as &$item) {
@@ -140,7 +140,7 @@ class PagesManager {
         }
         return max($ids) + 1;
     }
-    
+
     public function isUnlocked(PageItem $obj) {
         if ($obj->password == '')
             return true;
@@ -218,6 +218,17 @@ class PagesManager {
                 $this->calcDepth($page->children, $depth + 1);
             }
         }
+    }
+
+    public function listTemplates() {
+        $core = core::getInstance();
+        $data = [];
+        $items = util::scanDir(THEMES . $core->getConfigVal('theme') . '/', array('header.php', 'footer.php', 'style.css', '404.php', 'functions.php'));
+        foreach ($items['file'] as $file) {
+            if (in_array(util::getFileExtension($file), array('htm', 'html', 'txt', 'php')))
+                $data[] = $file;
+        }
+        return $data;
     }
 
 }

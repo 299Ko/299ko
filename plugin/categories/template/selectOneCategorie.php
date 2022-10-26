@@ -21,9 +21,6 @@ switch ($catDisplay) {
         
         <?php
         foreach ($this->imbricatedCategories as $cat) {
-            if ($cat->id == $categorieId) {
-                continue;
-            }
             $cat->outputAsSelectOne($itemId);
         }
         ?>
@@ -38,7 +35,7 @@ switch ($catDisplay) {
         </option>
         <?php if ($this->hasChildren) {
             foreach ($this->children as $child) {
-                $cat->outputAsSelectOne($itemId);
+                $child->outputAsSelectOne($itemId);
             }
         }
         break;

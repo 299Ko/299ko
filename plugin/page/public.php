@@ -20,7 +20,7 @@ elseif ($pageItem = new PageItem($id)) {
     
 } else
     $core->error404();
-if ($pageItem->type === PageItem::PAGE)
+if ($pageItem->type !== PageItem::PAGE)
     $core->error404();
 $action = (isset($_POST['unlock'])) ? 'unlock' : '';
 switch ($action) {

@@ -48,12 +48,13 @@ class PageItem implements JsonSerializable {
         if ($id !== false) {
             $metas = util::readJsonFile(self::FILE);
             if (!isset($metas[$id])) {
-                return;
+                return false;
             }
             foreach ($metas[$id] as $k => $v){
                 $this->$k = $v;
             }
         }
+        return true;
     }
     
     public function output() {
@@ -112,7 +113,7 @@ class PageItem implements JsonSerializable {
                 if ($this->isHomepage) {
                     return util::urlBuild('');
                 }
-                return util::urlBuild('/page/' . preg_replace ("#\<i.+\<\/i\>#i", '', $this->name) . '-' . $this->id . '.html');
+                return util::urlBuild('/page/' . util::strToUrl(preg_replace ("#\<i.+\<\/i\>#i", '', $this->name)) . '-' . $this->id . '.html');
             case self::URL:
                 return $this->target;
             case self::PLUGIN:

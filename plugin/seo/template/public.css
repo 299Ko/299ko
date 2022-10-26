@@ -1,6 +1,13 @@
 #navigation li.seo_element {
-    float: right;
     font-size: 19px;
+}
+
+#navigation > li.seo_element {
+    margin-left: auto;
+}
+
+#navigation > li.seo_element ~ li.seo_element {
+    margin-left: 0;
 }
 
 #navigation li.seo_element a {
@@ -22,7 +29,6 @@
 #seo_social_float a{
     display: block;
     color: #fff;
-    text-transform: uppercase;
     padding: 15px;
     font-size: 19px;
     float: left;
