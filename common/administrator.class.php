@@ -12,54 +12,92 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
+/**
+ * Administrator is the class relative to the admin
+ * Use it as a singleton
+ */
 class administrator {
 
+    /**
+     * @var self Instance
+     */
     private static $instance = null;
+    
+    /**
+     * @var string Admin email
+     */
     private $email;
+    
+    /**
+     * @var string Encrypted Admin Password
+     */
     private $pwd;
+    
+    /**
+     * @var string Token (stored in session) to verify user is the Admin
+     */
     private $token;
+    
+    /**
+     * @var string new password if Admin ask to reset him
+     */
     private $newPwd;
 
-    ## Constructeur
-
+    /**
+     * Build the Administrator instance
+     * @param string Admin email
+     * @param string Admin password
+     */
     public function __construct($email = '', $pwd = '') {
         $this->email = ($email != '') ? $email : @$_SESSION['adminEmail'];
         $this->pwd = ($pwd != '') ? $pwd : @$_SESSION['adminPwd'];
-        $this->token = (isset($_SESSION['adminToken'])) ? $_SESSION['adminToken'] : sha1(uniqid(mt_rand(), true));
+        $this->token = $_SESSION['adminToken'] ?? sha1(uniqid(mt_rand(), true));
         $_SESSION['adminToken'] = $this->token;
-        $this->newPwd = (isset($_SESSION['newPwd'])) ? $_SESSION['newPwd'] : '';
+        $this->newPwd = $_SESSION['newPwd'] ?? '';
         $_SESSION['newPwd'] = $this->newPwd;
     }
 
-    ## Retourne l'email
-
+    /**
+     * Return the Admin Email
+     * @return string Admin email
+     */
     public function getEmail() {
         return $this->email;
     }
 
-    ## Retourne le nouveau mot de passe
-
+    /**
+     * Return the new password admin
+     * @return string New password
+     */
     public function getNewPwd() {
         return $this->newPwd;
     }
 
-    ## Retourne l'instance de l'objet administrator
-
+    /**
+     * Return the administrator singleton instance
+     * @return self Object instance
+     */
     public static function getInstance() {
         if (is_null(self::$instance))
             self::$instance = new administrator();
         return self::$instance;
     }
 
-    ## Retourne le jeton
-
+    /**
+     * Return the current Admin Token
+     * @return string Admin token
+     */
     public static function getToken() {
         $instance = self::getInstance();
         return $instance->token;
     }
 
-    ## Démmare la session
-
+    /**
+     * Start the admin login and store datas in session
+     * @param string admin email
+     * @param string admin password
+     * @return boolean true if logged in
+     */
     public function login($email, $pwd) {
         if ($this->encrypt($pwd) == $this->pwd && $email == $this->email) {
             $_SESSION['admin'] = $this->pwd;
@@ -70,14 +108,17 @@ class administrator {
             return false;
     }
 
-    ## Détruit la session
-
+    /**
+     * Logout admin by destroying the session
+     */
     public function logout() {
         session_destroy();
     }
 
-    ## Teste l'état de la session
-
+    /**
+     * Check if current user is the admin by checking session datas
+     * @return boolean true if logged in
+     */
     public function isLogged() {
         if (!isset($_SESSION['admin']) || $_SESSION['admin'] != $this->pwd)
             return false;
@@ -85,8 +126,10 @@ class administrator {
             return true;
     }
 
-    ## Teste le statut du jeton
-
+    /**
+     * Check token in POST and GET
+     * @return boolean true if authorized
+     */
     public function isAuthorized() {
         if (!isset($_REQUEST['token']))
             return false;
@@ -95,14 +138,19 @@ class administrator {
         return true;
     }
 
-    ## Fonction de cryptage
-
+    /**
+     * Used to encrypt admin password
+     * @param string Content to encrypt
+     * @return string Encrypted content
+     */
     public function encrypt($data) {
         return hash_hmac('sha1', $data, KEY);
     }
 
-    ## Regeneration / envoi pwd
-
+    /**
+     * Create a new password for the admin user and send it by the admin email
+     * @param int size of password
+     */
     public function makePwd($size = 8) {
         $core = core::getInstance();
         $password = '';
@@ -127,5 +175,3 @@ Lien de confirmation : " . $core->getConfigVal('siteUrl') . "/admin/index.php?ac
     }
 
 }
-
-?>
