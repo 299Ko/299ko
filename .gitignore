@@ -1,3 +1,6 @@
 /data/
 /.htaccess
 /.lando.yml
+/plugin/sandbox/
+/plugin/mdeditor/
+*.tpl.cache.php

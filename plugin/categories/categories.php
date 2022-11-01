@@ -13,7 +13,7 @@ require_once PLUGINS . 'categories/lib/Categorie.php';
 require_once PLUGINS . 'categories/lib/CategoriesManager.php';
 
 function categoriesAdminToolsTemplates($params) {
-    $pluginId = $params[0];
+    $pluginId = $params;
     if (CategoriesManager::isPluginUseCategories($pluginId)) {
         echo '<a title="Gérer les catégories" id="cat_link" '
         . 'href="index.php?p=categories&plugin=' . $pluginId

@@ -31,8 +31,10 @@ class core {
      */
     protected static $hooksAction = [];
 
-    ## Constructeur
-
+    /**
+     * Core Constructor (singleton)
+     * Dont use this in your plugin, use core::getInstance()
+     */
     public function __construct() {
         // Timezone
         date_default_timezone_set(date_default_timezone_get());
@@ -69,7 +71,6 @@ class core {
 
     /**
      * Return Core Instance
-     * 
      * @return \self
      */
     public static function getInstance() {
@@ -78,20 +79,27 @@ class core {
         return self::$instance;
     }
 
-    ## Retourne la liste des thèmes
-
+    /**
+     * Return installed themes
+     * @return array Themes
+     */
     public function getThemes() {
         return $this->themes;
     }
 
-    ## Retourne la configuration complète
-
+    /**
+     * Return Core Config
+     * @return array Config
+     */
     public function getconfig() {
         return $this->config;
     }
 
-    ## Retourne une valeur de configuration
-
+    /**
+     * Return a Core Config Value
+     * @param string Config Key
+     * @return mixed Config Value
+     */
     public function getConfigVal($k) {
         if (isset($this->config[$k]))
             return $this->config[$k];
@@ -99,35 +107,43 @@ class core {
             return false;
     }
 
-    ## Retourne les infos du thème ciblé
-
+    /**
+     * Return a Theme Info Value
+     * @param string Info Key
+     * @return mixed Theme Info Value
+     */
     public function getThemeInfo($k) {
-        if (isset($this->themes[$this->getConfigVal('theme')]))
-            return $this->themes[$this->getConfigVal('theme')][$k];
-        else
-            return false;
+        return $this->themes[$this->getConfigVal('theme')][$k] ?? false;
     }
 
-    ## Retourne l'identifiant du plugin solicité
-
+    /**
+     * Return the current called Plugin
+     * @return string Plugin Name
+     */
     public function getPluginToCall() {
         return $this->pluginToCall;
     }
 
-    ## Retourne le tableau de ressources JS de base
-
+    /**
+     * Return the JS Core array
+     * @return array JS files
+     */
     public function getJs() {
         return $this->js;
     }
 
-    ## Retourne le tableau de ressources CSS de base
-
+    /**
+     * Return the CSS Core array
+     * @return array CSS files
+     */
     public function getCss() {
         return $this->css;
     }
 
-    ## Détermine si 299ko est installé
-
+    /**
+     * Return if 299 is installed or not
+     * @return boolean
+     */
     public function isInstalled() {
         if (!file_exists(DATA . 'config.json'))
             return false;
@@ -135,8 +151,10 @@ class core {
             return true;
     }
 
-    ## Génère l'URL du site
-
+    /**
+     * Generate and return Site URL
+     * @return string Site URL
+     */
     public function makeSiteUrl() {
         $siteUrl = str_replace(array('install.php', '/admin/index.php'), array('', ''), $_SERVER['SCRIPT_NAME']);
         $isSecure = false;
@@ -152,8 +170,12 @@ class core {
         return $siteUrl;
     }
 
-    ## Alimente le tableau des hooks
-
+    /**
+     * Add a Hook
+     * @todo Change all Hooks to new Hooks (hooks.php with action and filters)
+     * @param string name
+     * @param string Callback to Call
+     */
     public function addHook($name, $function) {
         $this->hooks[$name][] = $function;
     }
@@ -191,9 +213,17 @@ class core {
         }
         foreach (self::$hooksAction[$name] as $callback) {
             if (is_array($callback)) {
-                call_user_func([$callback[0], $callback[1]], $params);
+                if (is_array($params)) {
+                    call_user_func_array([$callback[0], $callback[1]], $params);
+                } else {
+                    call_user_func([$callback[0], $callback[1]], $params);
+                }
             } else {
-                call_user_func($callback, $params);
+                if (is_array($params)) {
+                    call_user_func_array($callback, $params);
+                } else {
+                    call_user_func($callback, $params);
+                }
             }
         }
         return;
@@ -215,12 +245,10 @@ class core {
         }
         foreach (self::$hooksFilters[$name] as $callback) {
             if (is_array($callback)) {
-                $content = call_user_func_array([$callback[0], $callback[1]], $content, $params);
+                $content = call_user_func_array([$callback[0], $callback[1]], [$content, $params]);
             } else {
-                echo $callback;
-            $content = call_user_func_array($callback, [$content, $params]);
+                $content = call_user_func_array($callback, [$content, $params]);
             }
-            
         }
         return $content;
     }
@@ -269,8 +297,12 @@ class core {
             return 'plugin';
     }
 
-    ## Renvoi une page 404
-
+    /**
+     * Call a 404 error
+     * 
+     * @global Plugin $runPlugin
+     * @param string 404 Error Main Title
+     */
     public function error404($mainTitle = '404') {
         $core = $this;
         global $runPlugin;
@@ -284,9 +316,14 @@ class core {
         die();
     }
 
-    ## Update le fichier de configuration
-
-    public function saveConfig($val, $append = array()) {
+    /**
+     * Save a config get by $core->getConfig()
+     * 
+     * @param array Core Config
+     * @param array Optional Config array
+     * @return boolean Saved or not
+     */
+    public function saveConfig($val, array $append = []) {
         $config = util::readJsonFile(DATA . 'config.json', true);
         $config = array_merge($config, $append);
         foreach ($config as $k => $v)
@@ -300,8 +337,10 @@ class core {
             return false;
     }
 
-    ## Installation de 299ko
-
+    /**
+     * 299Ko Installation
+     * @return boolean 299Ko is correctly installed
+     */
     public function install() {
         $install = true;
         @chmod(ROOT . '.htaccess', 0604);
@@ -338,14 +377,18 @@ class core {
         return $install;
     }
 
-    ## Retourne le contenu du fichier htaccess
-
+    /**
+     * Return the htaccess content
+     * @return string htaccess content
+     */
     public function getHtaccess() {
         return @file_get_contents(ROOT . '.htaccess');
     }
 
-    ## Update le contenu du fichier htaccess
-
+    /**
+     * Save content to htaccess
+     * @param string htaccess Content
+     */
     public function saveHtaccess($content) {
         $content = str_replace("&amp;", "&", $content);
         @file_put_contents(ROOT . '.htaccess', $content);

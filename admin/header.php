@@ -83,6 +83,6 @@ defined('ROOT') OR exit('No direct script access allowed');
                             </div>
                             <a title="Aide" data-fancybox id="help_link" href="#" data-src="#help_panel"><i class="fa-solid fa-circle-question"></i></a>
                             <?php }
-                            core::executeHookAction('adminToolsTemplates', [$runPlugin->getName()]);
+                            core::executeHookAction('adminToolsTemplates', $runPlugin->getName());
                             ?>
                         <h2><?php echo $runPlugin->getInfoVal('name'); ?></h2>

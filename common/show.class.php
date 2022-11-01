@@ -228,7 +228,7 @@ class show {
 
     ## Affiche le titre de page (theme)
 
-    public static function mainTitle($format = '<h1>[mainTitle]</h1>') {
+    public static function mainTitle($format = '<h1>#mainTitle#</h1>') {
         if (function_exists('mainTitle'))
             call_user_func('mainTitle', $format);
         else {
@@ -236,11 +236,11 @@ class show {
             global $runPlugin;
             $data = $format;
             if (!$runPlugin)
-                $data = str_replace('[mainTitle]', '404', $data);
+                $data = str_replace('#mainTitle#', '404', $data);
             else {
                 if ($core->getConfigVal('hideTitles') == 0 && $runPlugin->getMainTitle() != '') {
                     $data = $format;
-                    $data = str_replace('[mainTitle]', $runPlugin->getMainTitle(), $data);
+                    $data = str_replace('#mainTitle#', $runPlugin->getMainTitle(), $data);
                 } else
                     $data = '';
             }
@@ -277,45 +277,6 @@ class show {
             call_user_func('mainNavigation', $format);
         else {
             Menu::output();
-
-
-//        else {
-//            $pluginsManager = pluginsManager::getInstance();
-//            $core = core::getInstance();
-//            $data = '';
-//            foreach ($pluginsManager->getPlugins() as $k => $plugin)
-//                if ($plugin->getConfigval('activate') == 1) {
-//                    var_dump($plugin->getNavigation());
-//                    foreach ($plugin->getNavigation() as $k2 => $item)
-//                        if ($item['label'] != '') {
-//                            if ($item['parent'] < 1) {
-//                                $temp = $format;
-//                                $temp = str_replace('[target]', $item['target'], $temp);
-//                                $temp = str_replace('[label]', $item['label'], $temp);
-//                                $temp = str_replace('[targetAttribut]', $item['targetAttribut'], $temp);
-//                                $temp = str_replace('[cssClass]', $item['cssClass'], $temp);
-//                                $data2 = '<ul>';
-//                                $i = 0;
-//                                foreach ($plugin->getNavigation() as $k3 => $item2)
-//                                    if ($item2['label'] != '' && $item2['parent'] == $item['id']) {
-//                                        $temp2 = $format;
-//                                        $temp2 = str_replace('[target]', $item2['target'], $temp2);
-//                                        $temp2 = str_replace('[label]', $item2['label'], $temp2);
-//                                        $temp2 = str_replace('[targetAttribut]', $item2['targetAttribut'], $temp2);
-//                                        $temp2 = str_replace('[cssClass]', $item2['cssClass'], $temp2);
-//                                        $temp2 = str_replace('[childrens]', '', $temp2);
-//                                        $data2 .= $temp2;
-//                                        $i++;
-//                                    }
-//                                $data2 .= '</ul>';
-//                                if ($i == 0)
-//                                    $data2 = '';
-//                                $temp = str_replace('[childrens]', $data2, $temp);
-//                                $data .= $temp;
-//                            }
-//                        }
-//                }
-//            echo $data;
         }
     }
 
@@ -393,5 +354,3 @@ class show {
     }
 
 }
-
-?>
