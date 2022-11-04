@@ -87,6 +87,7 @@ class plugin {
 
     /**
      * Determine Templates Files if files exist or not
+     * .tpl files have priority to .php files
      */
     protected function determineTemplatesFiles() {
         $core = core::getInstance();

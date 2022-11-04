@@ -73,7 +73,7 @@ class Template {
         $this->addGlobalsToVars();
         $this->parse();
         // Uncomment the next line to see parsed template
-        // file_put_contents($this->file . '.cache.php', $this->content);
+         file_put_contents($this->file . '.cache.php', $this->content);
         eval('?>' . $this->content);
         return ob_get_clean();
     }
@@ -104,7 +104,7 @@ class Template {
         $this->content = preg_replace_callback('#\{\% *HOOK.(.+) *\%\}#iU', 'self::_callHook', $this->content);
         $this->content = preg_replace_callback('#\{\% *INCLUDE +([0-9a-z_\.\-\[\]\,\/]+) *\%\}#iU', 'self::_include', $this->content);
         $this->content = preg_replace('#\{\{ *(.+) *\}\}#iU', '<?php $this->_show_var(\'$1\'); ?>', $this->content);
-        $this->content = preg_replace_callback('#\{\% *FOR +([0-9a-z_\.\-\[\]\,]+) +IN +([0-9a-z_\.\-\[\]\,]+) *\%\}#i', 'self::_replace_for', $this->content);
+        $this->content = preg_replace_callback('#\{\% *FOR +([0-9a-z_\.\-\[\]\,\ ]+) +IN +([0-9a-z_\.\-\[\]\,]+) *\%\}#i', 'self::_replace_for', $this->content);
         $this->content = preg_replace('#\{\% *ENDFOR *\%\}#i', '<?php endforeach; ?>', $this->content);
         $this->content = preg_replace('#\{\% *ENDIF *\%\}#i', '<?php } ?>', $this->content);
         $this->content = preg_replace('#\{\% *ELSE *\%\}#i', '<?php }else{ ?>', $this->content);
@@ -184,8 +184,17 @@ class Template {
     }
 
     protected function _replace_for($matches) {
-        return '<?php foreach ($this->getVar(\'' . $matches[2] . '\', $this->data) as $KEY => $' . $matches[1] . '): $this->data[\'' . $matches[1] . '\' ] = $' . $matches[1] .
-                '; $this->data[\'' . $matches[1] . '\'][\'KEY\'] = $KEY; ?>';
+        $parts = explode(',', $matches[1]);
+        if (count($parts) === 1) {
+            return '<?php foreach ($this->getVar(\'' . $matches[2] . '\', $this->data) as $' . $matches[1] . '): $this->data[\'' . $matches[1] . '\' ] = $' . $matches[1] .
+                '; ?>';
+        } else {
+            $parts[0] = trim($parts[0]);
+            $parts[1] = trim($parts[1]);
+            return '<?php foreach ($this->getVar(\'' . $matches[2] . '\', $this->data) as $' . $parts[0] . ' => $' . $parts[1] . ' ): $this->data[\'' . $parts[0] . '\' ] = $' . $parts[0] .
+                '; $this->data[\'' . $parts[1] . '\' ] = $' . $parts[1] . '; ?>';
+        }
+        
     }
 
     /**
@@ -251,7 +260,6 @@ class Template {
             return $parent->$var;
         }
         // Test if var contain parameters
-        $args = false;
         $manyArgs = false;
         preg_match('#\[(.+)\]#i', $var, $match);
         if (isset($match[1])) {
@@ -269,7 +277,7 @@ class Template {
             $args = $arrArgs;
         } elseif ($args) {
             $args = $this->getVar($match[1], $this->data);
-        }
+        }        
         if (is_object($parent) || class_exists($parent)) {
             if (is_callable([$parent, $var])) {
                 $rm = new \ReflectionMethod($parent, $var);
@@ -283,7 +291,7 @@ class Template {
                 // Method
                 if ($manyArgs)
                     return call_user_func_array([$parent, $var], $args);
-                if ($args)
+                if (isset($args))
                     return call_user_func_array([$parent, $var], [$args]);
                 return $parent->$var();
             }
@@ -294,7 +302,7 @@ class Template {
             // Function
             if ($manyArgs)
                 return call_user_func_array($var, $args);
-            if ($args)
+            if (isset($args))
                 return call_user_func($var, $args);
             return call_user_func($var);
         }
