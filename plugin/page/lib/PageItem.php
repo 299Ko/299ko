@@ -10,7 +10,7 @@
 defined('ROOT') OR exit('No direct script access allowed');
 
 class PageItem implements JsonSerializable {
-    
+
     public $id;
     public $name;
     public $position;
@@ -29,39 +29,35 @@ class PageItem implements JsonSerializable {
     public $password;
     public $img;
     public $type;
-    
     public $children;
-    
     public int $depth = 0;
-    
     public $isChild = false;
     public $hasChildren = false;
-    
-    const PAGE      = 'page';
+
+    const PAGE = 'page';
     const CATEGORIE = 'categorie';
-    const URL       = 'url';
-    const PLUGIN    = 'plugin';
-    
+    const URL = 'url';
+    const PLUGIN = 'plugin';
     const FILE = DATA_PLUGIN . 'page/pages.json';
-    
+
     public function __construct($id = false) {
         if ($id !== false) {
             $metas = util::readJsonFile(self::FILE);
             if (!isset($metas[$id])) {
                 return false;
             }
-            foreach ($metas[$id] as $k => $v){
+            foreach ($metas[$id] as $k => $v) {
                 $this->$k = $v;
             }
         }
         return true;
     }
-    
+
     public function output() {
         $pageDisplay = 'sub';
         require PLUGINS . 'page/template/pages.php';
     }
-    
+
     public function getItemById($id) {
         if ($id === $this->id) {
             // We search this item
@@ -80,18 +76,20 @@ class PageItem implements JsonSerializable {
         }
         return false;
     }
-    
+
     public function addChild(PageItem $item) {
         $item->isChild = true;
         $this->hasChildren = true;
         $this->children[$item->id] = $item;
     }
-    
+
     public function addToNavigation($parentItem = false) {
         if ($this->type === self::CATEGORIE) {
             $item = new ParentItem($this->name, $this->id, $this->cssClass);
-            foreach ($this->children as $child) {
-                $item = $child->addToNavigation($item);
+            if (!empty($this->children)) {
+                foreach ($this->children as $child) {
+                    $item = $child->addToNavigation($item);
+                }
             }
         } else {
             $item = new Item($this->name, $this->getUrl(), $this->id, $this->cssClass, $this->targetAttr);
@@ -104,7 +102,7 @@ class PageItem implements JsonSerializable {
             return $parentItem;
         }
     }
-    
+
     public function getUrl() {
         switch ($this->type) {
             case self::CATEGORIE:
@@ -113,14 +111,14 @@ class PageItem implements JsonSerializable {
                 if ($this->isHomepage) {
                     return util::urlBuild('');
                 }
-                return util::urlBuild('/page/' . util::strToUrl(preg_replace ("#\<i.+\<\/i\>#i", '', $this->name)) . '-' . $this->id . '.html');
+                return util::urlBuild('/page/' . util::strToUrl(preg_replace("#\<i.+\<\/i\>#i", '', $this->name)) . '-' . $this->id . '.html');
             case self::URL:
                 return $this->target;
             case self::PLUGIN:
                 return util::urlBuild($this->target) . '/';
         }
     }
-    
+
     public function jsonSerialize() {
         return
                 [
@@ -143,7 +141,7 @@ class PageItem implements JsonSerializable {
                     'img' => $this->img,
                     'type' => $this->type];
     }
-    
+
     public function regenPositions() {
         $pos = 1;
         foreach ($this->children as &$item) {
@@ -154,5 +152,5 @@ class PageItem implements JsonSerializable {
             $pos++;
         }
     }
-    
+
 }

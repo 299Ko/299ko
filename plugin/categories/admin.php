@@ -9,8 +9,8 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
-$action = (string) $_GET['action'] ?? '';
-$pluginId = (string) $_GET['plugin'] ?? '';
+$action = $_GET['action'] ?? '';
+$pluginId = $_GET['plugin'] ?? '';
 
 if ($pluginId === '' || !CategoriesManager::isPluginUseCategories($pluginId)) {
     // Plugin isnt use categories

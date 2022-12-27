@@ -48,7 +48,7 @@ switch ($pageDisplay) {
         }
         echo '<div style="padding-left:' . ($this->depth * 15 + 10) . 'px;">' . str_repeat("-", ($this->depth * 2)) . ' ' . $this->name . '</div><div>';
         if ($this->type === PageItem::CATEGORIE) {
-            echo count($this->children) . ' élément(s)';
+            echo count($this->children ?? []) . ' élément(s)';
         } else {
             echo '<input readonly="readonly" class="small" type="text" value="' . $this->getUrl() . '" />';
         }

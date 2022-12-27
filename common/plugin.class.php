@@ -139,7 +139,7 @@ class plugin {
     }
 
     public function getInfoVal($val) {
-        return $this->infos[$val];
+        return $this->infos[$val] ?? false;
     }
 
     public function getName() {
