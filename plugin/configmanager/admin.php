@@ -12,7 +12,7 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
-$action = (isset($_GET['action'])) ? $_GET['action'] : '';
+$action = $_GET['action'] ?? '';
 $error = false;
 $passwordError = false;
 
@@ -49,5 +49,16 @@ switch ($action) {
             die();
         }
         break;
+    case 'del_install':
+        if ($administrator->isAuthorized()) {
+            $del = unlink(ROOT . 'install.php');
+            if ($del) {
+                show::msg("Le fichier install.php a bien été supprimé", 'success');
+            } else {
+                show::msg("Erreur lors de la suppression du fichier d'installation", 'alert');
+            }
+        }
+        header('location:index.php?p=configmanager');
+        die();
 }
 ?>
