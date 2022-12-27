@@ -34,6 +34,14 @@ class PagesManager {
     public function getItems() {
         return $this->items;
     }
+    
+    public function createHomepage() {
+        foreach ($this->items as $pageItem) {
+            if ($pageItem->isHomepage)
+                return $pageItem;
+        }
+        return false;
+    }
 
     public static function addToNavigation() {
         $pageManager = new PagesManager();

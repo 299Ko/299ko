@@ -19,33 +19,38 @@ defined('ROOT') OR exit('No direct script access allowed');
         <meta name="robots" content="noindex"><meta name="googlebot" content="noindex">
         <title>299ko - Connexion</title>	
         <?php show::linkTags(); ?>
+        <link rel="stylesheet" href="<?php show::siteUrl(); ?>/assets/css/pico.min.css" />
         <link rel="stylesheet" href="styles.css" media="all">
         <?php show::scriptTags(); ?>
         <script type="text/javascript" src="scripts.js"></script>
     </head>
     <body class="login">
-        <div id="alert-msg">
-            <?php show::displayMsg(); ?>
-        </div>
-        <div id="login">
-            <h1>Connexion</h1>
-            <form method="post" action="index.php?action=login">   
-                <?php show::adminTokenField(); ?>          
-                <p>
-                    <label for="adminEmail">Email</label><br>
-                    <input style="display:none;" type="text" name="_email" value="" />
-                    <input type="email" id="adminEmail" name="adminEmail" required>
-                </p>
-                <p><label for="adminPwd">Mot de passe</label>
-                    <input type="password" id="adminPwd" name="adminPwd" required></p>
-                <p>
-                    <input type="button" class="button alert" value="Quitter" rel="<?php echo $core->getConfigVal('siteUrl'); ?>" />
-                    <input type="submit" class="button" value="Valider" />
-                </p>
-                <p><a href="index.php?action=lostpwd&token=<?php echo $administrator->getToken(); ?>">Mot de passe perdu ?</a></p>
-                <p class="just_using"><a target="_blank" href="https://github.com/299ko/">Just using 299ko</a>
-                </p>
-            </form>
+        <div class="container">
+            <div id="alert-msg">
+                <?php show::displayMsg(); ?>
+            </div>
+            <article id="login">
+                <header><h1>Connexion</h1></header>
+                    <form method="post" action="index.php?action=login">   
+                        <?php show::adminTokenField(); ?>          
+                        <p>
+                            <label for="adminEmail">Email</label><br>
+                            <input style="display:none;" type="text" name="_email" value="" />
+                            <input type="email" id="adminEmail" name="adminEmail" required>
+                        </p>
+                        <p><label for="adminPwd">Mot de passe</label>
+                            <input type="password" id="adminPwd" name="adminPwd" required></p>
+                        <p>
+                            <input type="button" class="button alert" value="Quitter" rel="<?php echo $core->getConfigVal('siteUrl'); ?>" />
+                            <input type="submit" class="button" value="Valider" />
+                        </p>
+                        </p>
+                    </form>
+                <footer>
+                    <p><a href="index.php?action=lostpwd&token=<?php echo $administrator->getToken(); ?>">Mot de passe perdu ?</a></p>
+                    <p class="just_using"><a target="_blank" href="https://github.com/299ko/">Just using 299ko</a>
+                </footer>
+            </article>
         </div>
     </body>
 </html>

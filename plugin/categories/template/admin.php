@@ -17,7 +17,7 @@ switch ($action) {
         show::adminTokenField();
         ?>
         <p><label for='categorie-label'>Nom de la catégorie</label>
-            <input type="text" name="categorie-label" value="<?php echo $categorie->label; ?>" /></p>
+            <input type="text" name="categorie-label" id="categorie-label" value="<?php echo $categorie->label; ?>" /></p>
         <p><label for='categorie-parent'>Catégorie Parente</label>
             <?php
             echo $categoriesManager->outputAsSelect($categorie->parentId, $categorie->id);

@@ -63,7 +63,7 @@ function seoGetSocialIcons($before = '', $after = '') {
     foreach ($social as $k => $v) {
         $tConfig = $plugin->getConfigVal($v);
         if ($tConfig && $tConfig !== '') {
-            $str .= $before . '<a target="_blank" title="Suivez-nous sur ' . $k . '" href="' . $tConfig . '"><i class="fa-brands fa-' . $v . '"></i></a>' . $after;
+            $str .= $before . '<a target="_blank" title="Suivez-nous sur ' . $k . '" href="' . $tConfig . '"><i class="bi bi-' . $v . '"></i></a>' . $after;
         }
     }
     return $str;

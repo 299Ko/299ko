@@ -15,7 +15,7 @@ $pagesManager = new PagesManager();
 # Création, de la page
 $id = (isset($_GET['id'])) ? $_GET['id'] : false;
 if (!$id)
-    $pageItem = new PageItem();
+    $pageItem = $pagesManager->createHomepage();
 elseif ($pageItem = new PageItem($id)) {
     
 } else
@@ -23,7 +23,9 @@ elseif ($pageItem = new PageItem($id)) {
 if ($pageItem->type !== PageItem::PAGE)
     $core->error404();
 $action = (isset($_POST['unlock'])) ? 'unlock' : '';
+
 switch ($action) {
+
     case 'unlock':
         // quelques contrôle et temps mort volontaire avant le send...
         sleep(2);

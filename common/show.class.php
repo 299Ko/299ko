@@ -53,7 +53,7 @@ class show {
             return;
         }
         foreach ($_SESSION['flash_msg'] as $msg) {
-            echo '<div class="msg ' . $msg['class'] . '"><p>' . $msg['content'] . '</p><a href="#" class="msg-button-close"><i class="fa-solid fa-xmark"></i></a></div>';
+            echo '<div class="msg ' . $msg['class'] . '"><p>' . $msg['content'] . '</p><a href="#" class="msg-button-close"><i class="bi bi-x"></i></a></div>';
         }
         unset($_SESSION['flash_msg']);
     }
@@ -84,11 +84,11 @@ class show {
         }
         echo '<div id="adminSidebar">';
         foreach (self::$sidebarAdminModules as $module) {
-            echo '<div class="sidebarModule">';
-            echo '<h3>' . $module['title'] . '</h3>';
+            echo '<article class="sidebarModule"><header>';
+            echo '<h5>' . $module['title'] . '</h5></header>';
             echo '<div class="sidebarModuleContent">';
             echo $module['content'];
-            echo '</div></div>';
+            echo '</div></article>';
         }
         echo '</div>';
     }
@@ -152,14 +152,14 @@ class show {
             $core = core::getInstance();
             $pluginsManager = pluginsManager::getInstance();
             foreach ($core->getCss() as $k => $v) {
-                echo '<link href="' . $v . '" rel="stylesheet" type="text/css" />';
+                echo '<link href="' . util::urlBuild($v) . '" rel="stylesheet" type="text/css" />';
             }
             foreach ($pluginsManager->getPlugins() as $k => $plugin)
                 if ($plugin->getConfigval('activate') == 1) {
                     if (ROOT == './' && $plugin->getConfigVal('activate') && $plugin->getPublicCssFile())
-                        echo '<link href="' . $plugin->getPublicCssFile() . '" rel="stylesheet" type="text/css" />';
+                        echo '<link href="' . util::urlBuild($plugin->getPublicCssFile()) . '" rel="stylesheet" type="text/css" />';
                     elseif (ROOT == '../' && $plugin->getConfigVal('activate') && $plugin->getAdminCssFile())
-                        echo '<link href="' . $plugin->getAdminCssFile() . '" rel="stylesheet" type="text/css" />';
+                        echo '<link href="' . util::urlBuild($plugin->getAdminCssFile()) . '" rel="stylesheet" type="text/css" />';
                 }
             if (ROOT == './')
                 echo '<link href="' . $core->getConfigVal('siteUrl') . '/' . 'theme/' . $core->getConfigVal('theme') . '/styles.css" rel="stylesheet" type="text/css" />';
@@ -180,9 +180,9 @@ class show {
             foreach ($pluginsManager->getPlugins() as $k => $plugin)
                 if ($plugin->getConfigval('activate') == 1) {
                     if (ROOT == './' && $plugin->getConfigVal('activate') && $plugin->getPublicJsFile())
-                        echo '<script type="text/javascript" src="' . $plugin->getPublicJsFile() . '"></script>';
+                        echo '<script type="text/javascript" src="' . util::urlBuild($plugin->getPublicJsFile()) . '"></script>';
                     elseif (ROOT == '../' && $plugin->getConfigVal('activate') && $plugin->getAdminJsFile())
-                        echo '<script type="text/javascript" src="' . $plugin->getAdminJsFile() . '"></script>';
+                        echo '<script type="text/javascript" src="' . util::urlBuild($plugin->getAdminJsFile()) . '"></script>';
                 }
             if (ROOT == './')
                 echo '<script type="text/javascript" src="' . $core->getConfigVal('siteUrl') . '/' . 'theme/' . $core->getConfigVal('theme') . '/scripts.js' . '"></script>';
@@ -337,8 +337,7 @@ class show {
         if (function_exists('currentUrl'))
             call_user_func('currentUrl');
         else {
-            $core = core::getInstance();
-            echo 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            echo util::getCurrentURL();
         }
     }
 
@@ -350,7 +349,7 @@ class show {
         $core = core::getInstance();
         $icon = 'theme/' . $core->getConfigVal('theme') . '/icon.png';
         if (file_exists($icon))
-            echo $icon;
+            echo util::urlBuild ($icon);
     }
 
 }

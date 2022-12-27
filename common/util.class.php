@@ -187,6 +187,10 @@ class util {
      * @return string URL
      */
     public static function urlBuild($uri, $admin = false) {
+        if (strpos(strtolower($uri), 'http') === 0 ) {
+            // Absolute URL, no need to modify it
+            return $uri;
+        }
         $base = core::getInstance()->getConfigVal('siteUrl') . '/';
         if ($admin) {
             $base .= 'admin/';

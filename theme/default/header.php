@@ -13,6 +13,7 @@ include_once(THEMES . $core->getConfigVal('theme') . '/functions.php');
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
         <meta name="description" content="<?php show::metaDescriptionTag(); ?>" />
         <link rel="icon" href="<?php show::themeIcon(); ?>" />
+        <link rel="stylesheet" href="<?php show::siteUrl();?>/assets/css/pico.min.css" />
         <?php show::linkTags(); ?>
         <?php show::scriptTags(); ?>
         <?php eval($core->callHook('endFrontHead'));

@@ -71,7 +71,7 @@ function pageEditCategories(Categorie $categorie) {
     }
     echo ' /><label for="pageCategoriesHide">Cacher dans le menu</label></p>';
     
-    echo '<label for="PageCategoriesPosition">Position</label>';
+    echo '<label for="pageCategoriesPosition">Position</label>';
     echo '<p><input type="number" name="pageCategoriesPosition" id="pageCategoriesPosition" value="' .$categorie->pluginArgs['position']. '" />';
 
 }

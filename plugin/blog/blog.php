@@ -40,7 +40,9 @@ function blogEndFrontHead() {
     }
 }
 
-function blogDisplayCategoriesSidebar($pluginId) {
+function blogDisplayCategoriesSidebar() {
+    global $runPlugin;
+    $pluginId = $runPlugin->getName();
     if ($pluginId !== 'blog' || !pluginsManager::getPluginConfVal('blog', 'displayCategories')) {
         return;
     }

@@ -48,3 +48,5 @@ Template::addGlobal('VERSION', VERSION);
 Template::addGlobal('runPlugin', $runPlugin);
 Template::addGlobal('pluginsManager', $pluginsManager);
 Template::addGlobal('CORE', $core);
+Template::addGlobal('POST', $_POST);
+Template::addGlobal('GET', $_GET);

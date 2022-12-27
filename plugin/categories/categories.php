@@ -17,7 +17,7 @@ function categoriesAdminToolsTemplates($params) {
     if (CategoriesManager::isPluginUseCategories($pluginId)) {
         echo '<a title="Gérer les catégories" id="cat_link" '
         . 'href="index.php?p=categories&plugin=' . $pluginId
-        . '"><i class="fa-solid fa-folder-tree"></i></a>';
+        . '"><i class="bi bi-folder2-open"></i></a>';
     }
 }
 

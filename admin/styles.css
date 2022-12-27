@@ -10,24 +10,49 @@
  * @package 299Ko https://github.com/299Ko/299ko
  */
 
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+/* Light-green Light scheme (Default) */
+/* Can be forced with data-theme="light" */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+    --primary: #7cb342;
+    --primary-hover: #689f38;
+    --primary-focus: rgba(124, 179, 66, 0.125);
+    --primary-inverse: #FFF;
+    --alert:#e53935;
+    --alert-hover:#ff6f60;
+}
 
-/*--- RESET/NORMALIZE ---*/
-body, h1, h2, h3, h4, h5, h6, figure, pre, dl, dd, blockquote, input[type="radio"], input[type="checkbox"] {margin:0}
-legend {padding:0}
-fieldset, ul, ol {padding:0;margin:0}
-ul, ol {list-style:none}
-body {line-height:1}
-main, figure, figcaption, img {display:block} /*--- <main> for IE 11 ---*/
-img {max-width:100%;height:auto}
-a {text-decoration:none}
-fieldset {border:0}
-input, textarea, select, button {display:block;max-width:100%;font-family:inherit;font-size:inherit;color:inherit}
-label {display:table}
-input[type="text"], input[type="email"], input[type="password"], input[type="search"] {-webkit-appearance:none} /*--- for Safari (add/remove types as needed) ---*/
-button {line-height:inherit}
-button::-moz-focus-inner {border:0} /*--- for Firefox ---*/
-html {text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:1.25em} /*--- optional base font size ---*/
+/* Light-green Dark scheme (Auto) */
+/* Automatically enabled if user has Dark mode enabled */
+@media only screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --primary: #7cb342;
+        --primary-hover: #8bc34a;
+        --primary-focus: rgba(124, 179, 66, 0.25);
+        --primary-inverse: #FFF;
+        --alert:#e53935;
+        --alert-hover:#ff6f60;
+    }
+}
+
+/* Light-green Dark scheme (Forced) */
+/* Enabled if forced with data-theme="dark" */
+[data-theme="dark"] {
+    --primary: #7cb342;
+    --primary-hover: #8bc34a;
+    --primary-focus: rgba(124, 179, 66, 0.25);
+    --primary-inverse: #FFF;
+    --alert:#e53935;
+    --alert-hover:#ff6f60;
+}
+
+/* Light-green (Common styles) */
+:root {
+    --form-element-active-border-color: var(--primary);
+    --form-element-focus-color: var(--primary-focus);
+    --switch-color: var(--primary-inverse);
+    --switch-checked-background-color: var(--primary);
+}
 
 /* BASIC */
 
@@ -36,153 +61,61 @@ html {text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:1.25em} /*--
     -moz-box-sizing:border-box;
     box-sizing:border-box;
     outline:none;
-    -webkit-tap-highlight-color:transparent
+    -webkit-tap-highlight-color:transparent;
 }
 html{
     height:100%
 }
 body{
-    background:#fff;
     margin:0;
     padding:0;
     height:100%;
-    font-family:'Open Sans',sans-serif;
-    font-size:14px;
-    color:#14161a
 }
 body.login{
-    background:#fff;
-    margin:120px;
+    margin:50px auto;
 }
-a{
-    text-decoration:none;
-    color: #14161a
-}
-h1{
-    font-weight:normal;
-    text-transform:uppercase;
-    margin:0;
-    font-size:22px
-}
-h2{
-    font-weight:normal;
-    text-transform:uppercase;
-    font-size:22px;
-    margin-bottom:60px;
-    margin-top:0px
-}
-h3{
-    font-weight:normal;
-    text-transform:uppercase;
-    font-size:14px;
-    margin-bottom:30px;
-    margin-top:30px;
-    padding:15px;
-    text-align:right;
-    background:#eee;
-    font-style:italic;
-}
-ul,ol{
-    padding-left:0;
-    margin-left:0;
-    list-style-position:inside
-}
+
 img{
     max-width:100%
-}
-table{
-    width:100%;
-    border-spacing:0;
-    border-collapse:collapse;
-    border:1px solid #eee
-}
-td{
-    border-bottom:1px solid #eee;
-    text-align:left;
-    padding:15px
-}
-th{
-    background:#eee;
-    text-align:left;
-    padding:15px;
-    text-transform:uppercase;
-    font-weight:normal
 }
 
 /* FORM */
 
 input[type=text], input[type=email], input[type=password], input[type=url], input[type=number], input[type=date]{
-    font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
-    color: #14161a;
-    background: #fff;
-    box-shadow: inset rgba(0,0,0, 0.1) 0px 0px 8px;
-    border: 1px solid #eee;
-    padding: 5px;
-    width: 100%;
+
 }
 
 textarea{
-    font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
-    color: #14161a;
-    background: #fff;
-    box-shadow: inset rgba(0,0,0, 0.1) 0px 0px 8px;
-    border: 1px solid #eee;
-    padding: 5px;
-    width: 100%;
     min-height: 250px;
 }
 
-input[type=submit], input[type=button], button, .button{
-    font-family: 'Open Sans', sans-serif;
-    font-size: 12px;
-    text-decoration: none;
-    margin: 0;
-    padding: 5px 15px;
-    text-transform: uppercase;
-    border: 0;
-    cursor: pointer;
-    background: #009900;
-    color: #fff;
-    border-radius: 4px;
+input[type=submit], input[type=button], button, .button, .buttons-bar a, .buttons-bar button,
+.tabs a, .tabs button {
+
 }
 
 label {
     margin:5px;
 }
 
-
-button, a.button {
-    display: inline-block;
-    vertical-align: middle;
+input[type=submit].alert, input[type=button].alert, button.alert, .button.alert,
+.buttons-bar a.alert, .buttons-bar button.alert, .tabs a.alert, .tabs button.alert,
+a[role=button].alert{
+    background: var(--alert);
+    border-color: var(--alert);
 }
 
-.buttons-bar button i,.buttons-bar a.button i {
-    padding: 3px;
+input[type=submit].alert:hover, input[type=button].alert:hover, button.alert:hover, .button.alert:hover,
+.buttons-bar a.alert:hover, .buttons-bar button.alert:hover, .tabs a.alert:hover, .tabs button.alert:hover,
+a[role=button].alert:hover{
+    background: var(--alert-hover);
 }
 
-input[type=submit].alert, input[type=button].alert, button.alert, .button.alert{
-    background: #990000;
-}
-
-input[type=submit]:hover, input[type=button]:hover, button:hover, .button:hover{
-    background: #14161a;
-}
-
-input[type=submit].active, input[type=button].active, button.active, .button.active{
-    background: #14161a;
-}
-
-select{
-    font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
-    color: #14161a;
-    background: #fff;
-    box-shadow: inset rgba(0,0,0, 0.1) 0px 0px 8px;
-    border: 1px solid #eee;
-    padding: 5px;
-    width: 100%;
+input[type=submit]:hover, input[type=button]:hover, button:hover, .button:hover,
+.buttons-bar a:hover, .buttons-bar button:hover, .tabs a:hover, .tabs button:hover,
+a[role=button]:hover{
+    /*    color: #eee;
+        background-color: #4c566a;*/
 }
 
 /* UTIL */
@@ -191,36 +124,9 @@ ul.no_bullet{
     list-style: none inside;
 }
 
-.buttons-bar button, .buttons-bar a.button {
-    border-radius: 0;
-    border-right: 1px solid rgba(255,255,255, 0.2);
-}
-
-.buttons-bar button:first-child, .buttons-bar a.button:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-
-.buttons-bar button:last-child, .buttons-bar a.button:last-child {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-right: none;
-}
-/* TABS */
-
-ul.tabs, ul.tabs_style{
-    list-style: none inside;
-    overflow: hidden;
-}
-
-ul.tabs li, ul.tabs_style li{
-    float: left;
-    margin-right: 5px;
-}
-
-ul.tabs a, ul.tabs_style a{
-    display: block;
-    margin-bottom: 15px;
+.rotate-180 {
+    transform: rotate(180deg);
+    transition: transform 0.4s ease;
 }
 
 /* ALERT */
@@ -251,8 +157,8 @@ ul.tabs a, ul.tabs_style a{
 }
 
 #alert-msg .msg:before, #alert-msg .msg.info:before {
-    font: var(--fa-font-solid);
-    content: "\f05a";
+    font-family: bootstrap-icons !important;
+    content: "\F431";
     font-size: 23px;
     display: block;
     position: absolute;
@@ -269,7 +175,7 @@ ul.tabs a, ul.tabs_style a{
     border-left-color: #198345;
 }
 #alert-msg .msg.success:before {
-    content: "\f058";
+    content: "\F26B";
     color: #198345;
 }
 
@@ -278,7 +184,7 @@ ul.tabs a, ul.tabs_style a{
     border-left-color: #8D1310;
 }
 #alert-msg .msg.error:before {
-    content: "\f057";
+    content: "\F623";
     color: #8D1310;
 }
 
@@ -287,7 +193,7 @@ ul.tabs a, ul.tabs_style a{
     border-left-color: #8C5600;
 }
 #alert-msg .msg.warning:before {
-    content: "\f06a";
+    content: "\F333";
     color: #8C5600;
 }
 
@@ -298,8 +204,8 @@ ul.tabs a, ul.tabs_style a{
     position: absolute;
     right: 8px;
     top: 8px;
-    opacity: 0.4;
-    font-size: 15px;
+    opacity: 0.6;
+    font-size: 20px;
     transition: all 0.5s ease-in-out;
 }
 
@@ -307,28 +213,30 @@ ul.tabs a, ul.tabs_style a{
     opacity: 0.7;
 }
 
+.fancybox__container .fancybox__content {
+    padding: 0;
+    background: none;
+    margin:0;
+}
+
 /* STRUCTURE */
 
 #login{
-    background: #fff;
-    width: 100%;
     max-width: 400px;
     margin: 0px auto;
-    border: 1px solid #eee;
-    padding: 60px 30px 30px 30px;
 }
 
 .just_using{
     text-align: center;
-    margin-top: 60px;
+    margin-top: 30px;
+    font-size: 18px;
 }
 
-.just_using a{
-    color: #ccc;
-}
-
-#login .just_using a{
-    color: #14161a;
+#page-title {
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    margin-left: 40px;
 }
 
 #container{
@@ -353,8 +261,8 @@ ul.tabs a, ul.tabs_style a{
 
 #sidebar{
     position: fixed;
-    top: 40px;
-    background: #2c313b;
+    top: 69px;
+    background: #14161a;
     box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
     padding: 15px;
     display: none;
@@ -364,30 +272,40 @@ ul.tabs a, ul.tabs_style a{
 
 #adminSidebar {
     position: fixed;
-    top:40px;
+    top:69px;
     right:0;
     z-index: 2;
     padding: 7px;
     width: 300px;
     overflow-x: hidden;
     overflow-y: scroll;
-    height:calc(100% - 40px);
-    border-left:1px solid #ccc;
-    box-shadow: 0 0 5px #ccc;
-    background: #fff;
+    height:calc(100% - 69px);
+    border-left:1px solid rgba(128,128,128, 0.3);
+    box-shadow: 0 0 25px rgba(128,128,128, 0.2);
+    font-size: 0.75em;
 }
 
 #adminSidebar .sidebarModule {
     margin: 10px 5px;
-    border:1px solid #eee;
+}
+
+#adminSidebar article.sidebarModule  {
+    padding:5px;
+    padding-top: 0;
+}
+
+#adminSidebar article.sidebarModule header {
+    padding:5px 10px;
+    margin:0 -5px;
+}
+
+#adminSidebar article.sidebarModule header h5 {
+    font-size: 1em;
+    margin-bottom: 10px;
 }
 
 #adminSidebar .sidebarModuleContent {
     padding:5px;
-}
-
-#adminSidebar .sidebarModule h3 {
-    margin:0 0 10px 0;
 }
 
 #adminSidebar button[type=submit], #adminSidebar input[type=submit] {
@@ -396,7 +314,6 @@ ul.tabs a, ul.tabs_style a{
 }
 
 #content{
-    background: #fff;
     padding: 100px 20px 100px 20px;
     margin: 0 auto;
     position: relative;
@@ -416,39 +333,23 @@ ul.tabs a, ul.tabs_style a{
     margin: 0;
     padding: 0;
     font-size: 19px;
+    display: flex;
 }
 
-#header li{
-    float: left;
-}
-
-#header li.facebook{
-    padding: 10px;
-    float: right;
+#header li {
+    display: inline-block;
 }
 
 #header a{
     color: #ccc;
     padding: 9px 20px;
     display: block;
-    height: 40px;
+    height: 42px;
+    border-radius: 0;
 }
 
 #header a:hover, #header a.active{
     color: #fff;
-    background: #2c313b;
-}
-
-#header li:first-child a{
-    padding: 0;
-}
-
-#open_nav:after {
-    font: var(--fa-font-solid);
-    content: "\f0c9";
-    font-size: 23px;
-    padding : 9px 10px;
-    display: block;
 }
 
 #sidebar h2{
@@ -458,7 +359,7 @@ ul.tabs a, ul.tabs_style a{
 #navigation{
     text-transform: uppercase;
     list-style: none;
-    margin: 30px 0;
+    margin: 10px 0;
     padding: 0;
 }
 
@@ -471,6 +372,8 @@ ul.tabs a, ul.tabs_style a{
     border-top: 1px solid #14161a;
     display: block;
     color: #ccc;
+    font-size:15px;
+    border-radius: 0;
 }
 
 #navigation a:hover{
@@ -484,11 +387,15 @@ ul.tabs a, ul.tabs_style a{
 
 /* PARAM */
 
+#links-panel {
+    display: flex;
+    justify-content: flex-end;
+}
+
 #param_link, #help_link, #cat_link{
-    float: right;
-    opacity: 0.45;
+    opacity: 0.65;
     transition: opacity 0.5s ease-in-out;
-    font-size: 20px;
+    font-size: 1.8em;
     margin-left: 10px;
 }
 
@@ -547,6 +454,7 @@ ul.list-item-list-sub {
 #categorie-add-form {
     position: relative;
     padding-top: 16px;
+    width: 100%;
 }
 
 #categorie-add-form button#category-child-delete {
@@ -556,26 +464,21 @@ ul.list-item-list-sub {
     top:0;
 }
 
-div#categorie-add-form-container {
-    background-color: #f3f3f3;
-}
-
 div.list-item-list {
     display: flex;
     flex-direction: row;
     position: relative;
     padding:12px;
     padding-left:20px;
-    border:1px solid #f6f6f6;
-    border-top:none;
+    border-bottom:1px solid rgba(128, 128, 128, 0.2);
 }
 
-div.list-item-container > div.list-item-list:first-child {
-    background-color: #eee;
+article header div.list-item-list {
+    border-bottom: none;
 }
 
 div.list-item-list > div:nth-of-type(1){
-    width:40%;
+    width:50%;
 }
 
 div.list-item-list > div:nth-of-type(2){
@@ -590,6 +493,7 @@ div.list-item-list i.list-item-toggle {
     position: absolute;
     transition: all 0.4s;
     cursor: pointer;
+    color: var(--primary);
 }
 
 div.toggle, ul.list-item-list-sub {
@@ -614,18 +518,19 @@ div.toggle, ul.list-item-list-sub {
         text-align: center;
     }
 
-    #header li{
-        display: none;
-    }
-
-    #header li:first-child{
-        display: block;
-    }
-
     #navigation li.site{
         display: block;
     }
 
+    #header ul#header-site-links {
+        display: none;
+    }
+    
+    #page-title {
+        margin-left: 10px;
+        font-size: 18px;
+    }
+    
     #param_panel, #help_panel{
         max-width: 400px;
     }
@@ -649,7 +554,7 @@ div.toggle, ul.list-item-list-sub {
     }
 
     #content, #content.withSidebar {
-        padding:50px 15px;
+        padding:70px 15px;
         max-width: 1200px;
     }
 

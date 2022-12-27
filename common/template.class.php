@@ -284,7 +284,7 @@ class Template {
                 if ($rm->isStatic()) {
                     if ($manyArgs)
                         return forward_static_call_array([$parent, $var], $args);
-                    if ($args)
+                    if (isset($args))
                         return forward_static_call_array([$parent, $var], [$args]);
                     return $parent::$var();
                 }

@@ -91,6 +91,7 @@ switch ($action) {
                     $news[$k]['content'] = $v->getContent();
                     $news[$k]['url'] = $runPlugin->getPublicUrl() . util::strToUrl($v->getName()) . '-' . $v->getId() . '.html';
                     $news[$k]['img'] = $v->getImg();
+                    $news[$k]['imgUrl'] = util::urlBuild(UPLOAD . 'galerie/' . $v->getImg());
                     $news[$k]['commentsOff'] = $v->getcommentsOff();
                 }
                 $i++;
@@ -105,6 +106,9 @@ switch ($action) {
             $runPlugin->setTitleTag($pluginsManager->getPlugin('blog')->getConfigVal('label'));
             $runPlugin->setMetaDescriptionTag($core->getConfigVal('siteDescription'));
         }
+        $tpl->set('pagination', $pagination);
+        $tpl->set('news', $news);
+        $tpl->set('newsManager', $newsManager);
         break;
     case 'read':
         // Mode d'affichage
@@ -160,4 +164,4 @@ switch ($action) {
     default:
         $core->error404();
 }
-?>
+$tpl->set('mode', $mode);
