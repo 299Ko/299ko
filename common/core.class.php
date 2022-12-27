@@ -239,7 +239,7 @@ class core {
      * @param mixed  Params to pass to the callback
      * @return mixed Filtered Content by Hooks
      */
-    public static function executeHookFilter(string $name, &$content, $params = null) {
+    public static function executeHookFilter(string $name, $content, $params = null) {
         if (!isset(self::$hooksFilters[$name]) || !is_array(self::$hooksFilters[$name])) {
             return $content;
         }

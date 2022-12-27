@@ -176,10 +176,22 @@ class Template {
         $name = $parts[1];
         $args = str_replace('[', '', $args);
         $args = str_replace(']', '', $args);
-        if ($action === 'FILTER') {
-            return '<?php echo core::getInstance()->executeHookFilter(\'' . $name . '\',' . '$this->getVar(\'' . $args . '\', $this->data)); ?>';
+        $argsParts = explode(',', $args);
+        $content = '$this->getVar(\'' . $argsParts[0] . '\', $this->data)';
+        if (count($argsParts) === 2) {
+            // Content & Arguments
+            $params = '$this->getVar(\'' . $argsParts[1] . '\', $this->data)';
         } else {
-            return '<?php core::getInstance()->executeHookAction(\'' . $name . '\',' . '$this->getVar(\'' . $args . '\', $this->data)); ?>';
+            $params = null;
+        }
+                
+        if ($action === 'FILTER') {
+            return '<?php echo core::getInstance()->executeHookFilter(\'' . $name . '\',' . $content . ',' . $params .'); ?>';
+        } else {
+            if ($params !== null) {
+                return '<?php core::getInstance()->executeHookAction(\'' . $name . '\',[' . $content . ',' . $params .']); ?>';
+            }
+            return '<?php core::getInstance()->executeHookAction(\'' . $name . '\',' . $content .'); ?>';
         }
     }
 
@@ -275,10 +287,10 @@ class Template {
                 $arrArgs[] = $this->getVar(trim($part), $this->data);
             }
             $args = $arrArgs;
-        } elseif ($args) {
+        } elseif (isset($args) && $args == true) {
             $args = $this->getVar($match[1], $this->data);
-        }        
-        if (is_object($parent) || class_exists($parent)) {
+        }     
+        if (is_object($parent) || (is_string($parent) && class_exists($parent))) {
             if (is_callable([$parent, $var])) {
                 $rm = new \ReflectionMethod($parent, $var);
                 if ($rm->isStatic()) {
