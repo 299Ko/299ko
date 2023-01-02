@@ -351,5 +351,14 @@ class show {
         if (file_exists($icon))
             echo util::urlBuild ($icon);
     }
+    
+    /**
+     * Display Page Execution Time
+     */
+    public static function pageExecutionTime() {
+        global $beginExecutionScript;
+        $endExecutionScript = hrtime(true);
+        echo 'Page générée en ' . (round(($endExecutionScript-$beginExecutionScript)/1000) /1000) . ' ms';
+    }
 
 }

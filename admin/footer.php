@@ -12,6 +12,9 @@
  */
 defined('ROOT') OR exit('No direct script access allowed'); ?>
                     </div>
+                    <div id="footer">
+                        <?php show::pageExecutionTime(); ?>
+                    </div>
                 </div>
             </div>
         </div>

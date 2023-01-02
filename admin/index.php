@@ -10,6 +10,9 @@
  * 
  * @package 299Ko https://github.com/299Ko/299ko
  */
+
+$beginExecutionScript = hrtime(true);
+
 define('ROOT', '../');
 include_once(ROOT . 'common/common.php');
 include_once(COMMON . 'administrator.class.php');

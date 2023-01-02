@@ -77,6 +77,9 @@
                     </div>
                     {{ CONTENT }}
                 </div>
+                <div id="footer">
+                {{ show.pageExecutionTime }}
+                </div>
             </div>
         </div>
         {% HOOK.ACTION.endAdminBody %}

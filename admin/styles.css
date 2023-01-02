@@ -327,6 +327,12 @@ ul.no_bullet{
     max-width: 1500px;
 }
 
+#footer {
+    padding: 50px;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
 /* MENU */
 
 #header ul{

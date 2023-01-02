@@ -172,6 +172,9 @@ class core {
 
     /**
      * Add a Hook
+     * 
+     * @deprecated since version 2.0
+     * @see Action or Filter Hooks
      * @todo Change all Hooks to new Hooks (hooks.php with action and filters)
      * @param string name
      * @param string Callback to Call
@@ -258,6 +261,8 @@ class core {
      * Si un paramètre est fourni, celui-ci sera passé de fonction en fonction Hook de filtre).
      * Sinon, la valeur de retour sera concaténé à chaque fonction (Hook d'action).
      * 
+     * @deprecated since version 2.0
+     * @see Action or Filter Hooks
      * @param   string  Nom du hook
      * @param   mixed   Paramètres
      * @return  mixed
