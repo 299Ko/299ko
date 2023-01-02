@@ -27,8 +27,9 @@ if (!$core->isInstalled()) {
 }
 $pluginsManager = pluginsManager::getInstance();
 foreach ($pluginsManager->getPlugins() as $plugin) {
-    include_once($plugin->getLibFile());
+    
     if ($plugin->getConfigVal('activate')) {
+        include_once($plugin->getLibFile());
         foreach ($plugin->getHooks() as $name => $function) {
             $core->addHook($name, $function);
         }
