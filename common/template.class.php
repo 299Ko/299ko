@@ -222,6 +222,7 @@ class Template {
      */
     protected function getVar($var, $parent) {
         $var = trim($var);
+        if ($var === '') return '';
         $posAcc = strpos($var, '[');
         $args = '';
         if ($posAcc !== false) {
