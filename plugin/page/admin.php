@@ -145,4 +145,3 @@ switch ($action) {
         $mode = 'list';
         $categoriesManager = new CategoriesManager('page');
 }
-?>

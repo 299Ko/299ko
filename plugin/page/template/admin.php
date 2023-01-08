@@ -8,21 +8,16 @@ if ($mode == 'list') {
     <a role="button" href = "index.php?p=page&amp;action=edit&link=1"><i class="bi bi-link-45deg"></i> Ajouter un lien externe</a>
     <?php
     echo $pageManager->output();
-    if ($lost != '') {
-        ?>
-        <p>Des pages "fantômes" pouvant engendrer des dysfonctionnements ont été trouvées. <a href="index.php?p=page&amp;action=maintenance&id=<?php echo $lost; ?>&token=<?php echo administrator::getToken(); ?>">Cliquez ici</a> pour exécuter le script de maintenance.</p>
-    <?php } ?>
-
-<?php } ?>
-
-<?php if ($mode == 'edit' && $pageItem->type === PageItem::PAGE) { ?>
+} 
+if ($mode == 'edit' && $pageItem->type === PageItem::PAGE) {
+    ?>
     <form method="post" action="index.php?p=page&amp;action=save" enctype="multipart/form-data">
-        <?php show::adminTokenField(); ?>
+    <?php show::adminTokenField(); ?>
         <input type="hidden" name="id" value="<?php echo $pageItem->id; ?>" />
         <input type="hidden" name="type" value="<?php echo $pageItem->type; ?>" />
         <?php if ($pluginsManager->isActivePlugin('galerie')) { ?>
             <input type="hidden" name="imgId" value="<?php echo $pageItem->img; ?>" />
-        <?php } ?>
+    <?php } ?>
         <article>
             <header>
                 <h3>Paramètres</h3>
@@ -46,7 +41,7 @@ if ($mode == 'list') {
                         if ($v->type === PageItem::CATEGORIE) {
                             ?>
                             <option <?php if ($v->id === $pageItem->parent) { ?>selected<?php } ?> value="<?php echo $v->id; ?>"><?php echo $v->name; ?></option>
-                        <?php } ?>
+        <?php } ?>
                 </select>
             </p>
             <p>
@@ -61,13 +56,13 @@ if ($mode == 'list') {
                 <label for="_password">Restreindre l'accès avec un mot de passe</label>
                 <input type="password" name="_password" id="_password" value="" />
             </p>
-            <?php if ($pageItem->password != '') { ?>
+    <?php if ($pageItem->password != '') { ?>
                 <p>
                     <label for="resetPassword">
                         <input type="checkbox" name="resetPassword" id="resetPassword" role="switch"/> Retirer la restriction par mot de passe  
                     </label>
                 </p>
-            <?php } ?>
+    <?php } ?>
         </article>
         <article>
             <header>
@@ -105,7 +100,7 @@ if ($mode == 'list') {
                         <option value="">--</option>
                         <?php foreach ($pageManager->listTemplates() as $file) { ?>
                             <option <?php if ($file == $pageItem->file) { ?>selected<?php } ?> value="<?php echo $file; ?>"><?php echo $file; ?></option>
-                        <?php } ?>
+    <?php } ?>
                     </select>
             </p>
             <p>
@@ -132,7 +127,7 @@ if ($mode == 'list') {
             <h3>Paramètres</h3>
         </header>
         <form method="post" action="index.php?p=page&amp;action=save">
-            <?php show::adminTokenField(); ?>
+    <?php show::adminTokenField(); ?>
             <input type="hidden" name="id" value="<?php echo $pageItem->id; ?>" />
             <input type="hidden" name="type" value="<?php echo $pageItem->type; ?>" />
             <p>
@@ -149,24 +144,24 @@ if ($mode == 'list') {
                         if ($v->type === PageItem::CATEGORIE) {
                             ?>
                             <option <?php if ($v->id === $pageItem->parent) { ?>selected<?php } ?> value="<?php echo $v->id; ?>"><?php echo $v->name; ?></option>
-                        <?php } ?>
+        <?php } ?>
                 </select>
             </p>
             <p>
                 <label for="name">Nom</label>
                 <input type="text" name="name" id="name" value="<?php echo $pageItem->name; ?>" required="required" />
             </p>
-            <?php if ($pageItem->type === PageItem::PLUGIN) { ?>
+    <?php if ($pageItem->type === PageItem::PLUGIN) { ?>
                 <p>
                     <label>Cible : <?php echo $pageItem->target; ?></label>
                     <input style="display:none;" type="text" name="target" value="<?php echo $pageItem->target; ?>" />
                 </p>
-            <?php } else { ?>
+    <?php } else { ?>
                 <p>
                     <label for="target">Cible</label>
                     <input placeholder="Example : http://www.google.com" <?php if ($pageItem->type === PageItem::PLUGIN) { ?>readonly<?php } ?> type="url" name="target" id="target" value="<?php echo $pageItem->target; ?>" required="required" />
                 </p>
-            <?php } ?>
+    <?php } ?>
             <p>
                 <label for="targetAttr">Ouverture</label>
                 <select name="targetAttr" id="targetAttr">
