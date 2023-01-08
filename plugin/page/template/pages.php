@@ -70,11 +70,11 @@ switch ($pageDisplay) {
         echo '</div><div role="group">';
         if ($this->type === PageItem::CATEGORIE) {
             echo '<a role="button" class="small" title="Editer la catégorie" href="index.php?p=categories&action=edit&plugin=page&id=' . str_replace('cat-', '', $this->id) . '"><i class="bi bi-pencil"></i></a>';
-            echo '<a role="button" class="small alert" title="Supprimer la catégorie" href="index.php?p=page&action=del&plugin=page&id=' . str_replace('cat-', '', $this->id) . '&token=' . administrator::getToken() . '" onclick="if (!confirm(\'Supprimer cet élément ?\')) return false;"><i class="bi bi-trash2"></i></a>';
+            echo '<a role="button" class="small alert" title="Supprimer la catégorie" href="index.php?p=categories&action=del&plugin=page&id=' . str_replace('cat-', '', $this->id) . '&token=' . administrator::getToken() . '" onclick="if (!confirm(\'Supprimer cet élément ?\')) return false;"><i class="bi bi-trash2"></i></a>';
         } else {
             echo '<a role="button" class="small" title="Editer l\'élément" href="index.php?p=page&amp;action=edit&amp;id=' . $this->id . '"><i class="bi bi-pencil"></i></a>';
             if (!$this->isHomepage && $this->type !== PageItem::PLUGIN) {
-                echo '<a role="button" class="small alert" href="index.php?p=page&action=del&id=' . $this->id . '&token=' . administrator::getToken() . 'onclick="if (!confirm(\'Supprimer cet élément ?\')) return false;"><i class="bi bi-trash2"></i></a>';
+                echo '<a role="button" class="small alert" href="index.php?p=page&action=del&id=' . $this->id . '&token=' . administrator::getToken() . '" onclick="if (!confirm(\'Supprimer cet élément ?\')) return false;"><i class="bi bi-trash2"></i></a>';
             }
         }
 

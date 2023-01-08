@@ -51,7 +51,7 @@ class PagesManager {
             if ($plugin->getConfigVal('activate') && $plugin->getPublicFile() && $plugin->getName() != 'page') {
                 $find = false;
                 foreach ($pageManager->items as $pageItem) {
-                    if ($pageItem->target == $plugin->getName())
+                    if ($pageItem->target === $plugin->getName())
                         $find = true;
                 }
                 if (!$find) {
@@ -73,16 +73,6 @@ class PagesManager {
         foreach ($newPagesManager->nestedItems as $item) {
             $item->addToNavigation();
         }
-//        foreach ($pageManager->items as $k => $pageItem) {
-//            if (!$pageItem->isHidden) {
-//                if ($pageItem->type == PageItem::PLUGIN && !$pluginsManager->isActivePlugin($pageItem->target)) {
-//                    // no item !
-//                } else {
-//                    $url = $pageItem->getUrl();
-//                    $pluginsManager->getPlugin('page')->addToNavigation($pageItem->name, $url, $pageItem->targetAttr, 'page-' . $pageItem->id, 'page' . $pageItem->parent, $pageItem->cssClass);
-//                }
-//            }
-//        }
     }
 
     public function savePageItem(PageItem $pageItem) {
@@ -95,6 +85,28 @@ class PagesManager {
 
         $this->items[$pageItem->id] = $pageItem;
         return $this->savePages();
+    }
+    
+    public function delPage(PageItem $pageItem) {
+        if ($pageItem->isHomepage === false && $this->countPages() > 1) {
+            if ($pageItem->parent !== 0) {
+                $parent = str_replace('cat-', '', $pageItem->parent);
+                CategoriesManager::deleteItemFromCategories('page', $pageItem->id, $parent);
+            }
+            unset($this->items[$pageItem->id]);
+            return $this->savePages();
+        }
+        return false;
+    }
+    
+    public function countPages():int {
+        $nbPages = 0;
+        foreach ($this->items as $item) {
+            if ($item->type === PageItem::PAGE || $item->type === PageItem::PLUGIN) {
+                $nbPages++;
+            }
+        }
+        return $nbPages;
     }
 
     protected function savePages() {

@@ -232,6 +232,24 @@ class CategoriesManager {
         }
         util::writeJsonFile(DATA_PLUGIN . $pluginId . '/categories.json', $categories);
     }
+    
+    
+    public static function deleteItemFromCategories(string $pluginId, $itemId, $categoriesId) {
+        $metas = self::getMetas($pluginId);
+        if (!is_array($categoriesId)) {
+            $categoriesId = [$categoriesId];
+        }
+        $categories = [];
+        foreach ($metas as $cat) {
+            $key = array_search($itemId, $cat['items'], true);
+            if ($key !== false) {
+                // Item is here. We delete it
+                unset($cat['items'][$key]);
+            }
+            $categories[$cat['id']] = $cat;
+        }
+        return util::writeJsonFile(DATA_PLUGIN . $pluginId . '/categories.json', $categories);
+    }
 
     protected static function getMetas($pluginId) {
         $file = DATA_PLUGIN . $pluginId . '/categories.json';

@@ -15,7 +15,7 @@ defined('ROOT') OR exit('No direct script access allowed');
 $mode = '';
 $action = (isset($_GET['action'])) ? urldecode($_GET['action']) : '';
 $error = false;
-//$page = new page();
+
 $pageManager = new PagesManager();
 $categoriesManager = new CategoriesManager('page');
 
@@ -51,7 +51,7 @@ switch ($action) {
             $pageItem->target = $_POST['target'] ?? '';
             $pageItem->targetAttr = $_POST['targetAttr'] ?? '';
             $pageItem->noIndex = $_POST['noIndex'] ?? false;
-            $pageItem->parent = $_POST['categorie-one'] ? 'cat-' . $_POST['categorie-one'] : '';
+            $pageItem->parent = $_POST['parent'] ?? '';
             $pageItem->cssClass = $_POST['cssClass'];
             $pageItem->type = $_POST['type'];
             $pageItem->img = $imgId;
@@ -84,8 +84,8 @@ switch ($action) {
         break;
     case 'del':
         if ($administrator->isAuthorized()) {
-            $pageItem = $page->create($_GET['id']);
-            if ($page->del($pageItem))
+            $pageItem = new PageItem($_GET['id']);
+            if ($pageManager->delPage($pageItem))
                 show::msg("Les modifications ont été enregistrées", 'success');
             else
                 show::msg("Une erreur est survenue", 'error');
@@ -140,21 +140,8 @@ switch ($action) {
         die();
         break;
     default:
-        // Recherche des pages perdues
-//        $parents = array();
-//        $lost = '';
-//        foreach ($page->getItems() as $k => $v)
-//            if ($v->getParent() == 0) {
-//                $parents[] = $v->getId();
-//            }
-//        foreach ($page->getItems() as $k => $v)
-//            if ($v->getParent() > 0) {
-//                if (!in_array($v->getParent(), $parents))
-//                    $lost .= $v->getId() . ',';
-//            }
-//        // Suite...
-//        if (!$page->createHomepage() && $pluginsManager->getPlugin('page')->getIsDefaultPlugin())
-//            show::msg("Aucune page d'accueil n'a été définie", 'warning');
+        if (!$pageManager->createHomepage() && $pluginsManager->getPlugin('page')->getIsDefaultPlugin())
+            show::msg("Aucune page d'accueil n'a été définie", 'warning');
         $mode = 'list';
         $categoriesManager = new CategoriesManager('page');
 }
