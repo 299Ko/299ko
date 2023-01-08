@@ -73,7 +73,7 @@ class Template {
         $this->addGlobalsToVars();
         $this->parse();
         // Uncomment the next line to see parsed template
-         file_put_contents($this->file . '.cache.php', $this->content);
+        file_put_contents($this->file . '.cache.php', $this->content);
         eval('?>' . $this->content);
         return ob_get_clean();
     }
@@ -102,6 +102,7 @@ class Template {
         $this->content = preg_replace_callback('#\{\% *IF +([0-9a-z_\.\-\[\]\,]+) *([\=|\<|\>|\!&]{1,3}) *([0-9a-z_\.\-\[\]\,]+) *\%\}#iU', 'self::_complexe_if_replace', $this->content);
         $this->content = preg_replace_callback('#\{\% *IF +([0-9a-z_\.\-\[\]\,]+) *\%\}#iU', 'self::_simple_if_replace', $this->content);
         $this->content = preg_replace_callback('#\{\% *HOOK.(.+) *\%\}#iU', 'self::_callHook', $this->content);
+        $this->content = preg_replace_callback('#\{\% *Lang.(.+) *\%\}#iU', 'self::_getLang', $this->content);
         $this->content = preg_replace_callback('#\{\% *INCLUDE +([0-9a-z_\.\-\[\]\,\/]+) *\%\}#iU', 'self::_include', $this->content);
         $this->content = preg_replace('#\{\{ *(.+) *\}\}#iU', '<?php $this->_show_var(\'$1\'); ?>', $this->content);
         $this->content = preg_replace_callback('#\{\% *FOR +([0-9a-z_\.\-\[\]\,\ ]+) +IN +([0-9a-z_\.\-\[\]\,]+) *\%\}#i', 'self::_replace_for', $this->content);
@@ -193,6 +194,25 @@ class Template {
             }
             return '<?php core::getInstance()->executeHookAction(\'' . $name . '\',' . $content .'); ?>';
         }
+    }
+    
+    protected function _getLang($matches) {
+        $posAcc = strpos($matches[1], '[');
+        $args = '';
+        $name = $matches[1];
+        if ($posAcc !== false) {
+            $args = substr($name, $posAcc);
+            $name = substr($name, 0, $posAcc);
+        }
+        $args = str_replace('[', '', $args);
+        $args = str_replace(']', '', $args);
+        if ($args !== '') {
+            $params = '$this->getVar(\'' . $args . '\', $this->data)';
+            return '<?php echo lang::get(\'' . $name . '\', ...' . $params .'); ?>';
+        } else {
+            return '<?php echo lang::get(\'' . $name . '\'); ?>';
+        }
+       
     }
 
     protected function _replace_for($matches) {

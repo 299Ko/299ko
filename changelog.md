@@ -4,8 +4,35 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+- Nested Categories system (Page plugin)
+- Lang class
+- Picocss as CSS framework
+
+### Changed
+- End of CDN
+- Menus are now on many levels
+
+### Fixed
+
+
+## V1.0.2
+
+### Added
+- Delete automatically install.php file on admin if exist
+
 ### Changed
 - Possibility to use icon on menu item (page)
+- Use Vanilla JS instead jQuery
+
+### Fixed
+- Issue with Pages menu on Admin
+
+## V1.0.1
+
+### Fixed
+
+- Rights on install
 
 ## V1.0
 

@@ -20,10 +20,11 @@ include_once(COMMON . 'plugin.class.php');
 include_once(COMMON . 'show.class.php');
 include_once(COMMON . 'template.class.php');
 include_once(COMMON . 'menus.class.php');
+include_once(COMMON . 'lang.class.php');
 $core = core::getInstance();
 if (!$core->isInstalled()) {
     header('location:' . ROOT . 'install.php');
-    die();
+    die(); 
 }
 $pluginsManager = pluginsManager::getInstance();
 foreach ($pluginsManager->getPlugins() as $plugin) {

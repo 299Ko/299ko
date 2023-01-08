@@ -30,6 +30,11 @@ class core {
      * @var array Action Hook
      */
     protected static $hooksAction = [];
+    
+    /**
+     * @var \lang lang object
+     */
+    protected $lang;
 
     /**
      * Core Constructor (singleton)
@@ -64,6 +69,12 @@ class core {
                 $this->pluginToCall = $this->getConfigVal('defaultAdminPlugin');
             }
         }
+        $lang = $this->getConfigVal('lang');
+        if (!$lang) {
+            $lang = 'fr';
+        }
+        lang::setLocale($lang);
+        lang::loadLanguageFile(COMMON  . '/langs/');
         $this->css[] = FONTICON;
         $this->css[] = FANCYCSS;
         $this->js[] = FANCYJS;
