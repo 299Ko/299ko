@@ -119,7 +119,7 @@ class ParentItem extends MenuItem {
      * @return empty if not child
      */
     public function output() {
-        if (empty($this->items)) {
+        if ($this->isEmpty()) {
             return;
         }
         echo '<li class="parent"><a href="javascript:" ';
@@ -134,6 +134,28 @@ class ParentItem extends MenuItem {
             $item->output();
         }
         echo '</ul></li>';
+    }
+    
+    /**
+     * Get if the ParentItem have Items
+     * If It have only SubParent, it will return true, considered as empty
+     * @return bool
+     */
+    public function isEmpty():bool {
+        $haveItems = false;
+        foreach ($this->items as $item) {
+            if (get_class($item) === get_class($this)) {
+                // ParentItem
+                $sub = $item->isEmpty();
+                if ($sub === false) {
+                    $haveItems = true;
+                }
+            }
+            elseif (get_class($item) === 'Item') {
+                $haveItems = true;
+            }
+        }
+        return !$haveItems;
     }
 
 }
