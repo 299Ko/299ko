@@ -18,8 +18,8 @@ define('DATA_PLUGIN', ROOT . 'data/plugin/');
 define('THEMES', ROOT . 'theme/');
 define('PLUGINS', ROOT . 'plugin/');
 define('ADMIN_PATH', ROOT . 'admin/');
-define('FONTICON', ROOT . 'assets/bootstrap-icons/bootstrap-icons.css');
-define('FANCYCSS', ROOT . "assets/fancyapps/fancybox.css");
-define("FANCYJS", ROOT . "assets/fancyapps/fancybox.umd.js");
+define('FONTICON', 'assets/bootstrap-icons/bootstrap-icons.css');
+define('FANCYCSS', "assets/fancyapps/fancybox.css");
+define("FANCYJS", "assets/fancyapps/fancybox.umd.js");
 if (file_exists(DATA . 'key.php'))
     include(DATA . 'key.php');
