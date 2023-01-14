@@ -29,6 +29,7 @@ if (!$core->isInstalled()) {
 $pluginsManager = pluginsManager::getInstance();
 foreach ($pluginsManager->getPlugins() as $plugin) {
     if ($plugin->getConfigVal('activate')) {
+        lang::loadLanguageFile(PLUGINS . $plugin->getName() . '/langs/');
         include_once($plugin->getLibFile());
         foreach ($plugin->getHooks() as $name => $function) {
             $core->addHook($name, $function);
