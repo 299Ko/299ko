@@ -23,12 +23,6 @@ function galerieInstall() {
     }
 }
 
-## Hooks
-
-function galerieEndFrontHead() {
-    
-}
-
 /**
  * Add a module in the admin sidebar to choose a featured image
  * 

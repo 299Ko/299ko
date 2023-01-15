@@ -14,7 +14,7 @@ defined('ROOT') OR exit('No direct script access allowed');
 <!doctype html>
 <html lang="fr">
     <head>
-        <?php $core->callHook('adminHead'); ?>
+        <?php core::executeHookAction('adminHead'); ?>
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>299ko - Administration</title>	
@@ -25,7 +25,7 @@ defined('ROOT') OR exit('No direct script access allowed');
         <script type="text/javascript" src="scripts.js"></script>
         <script type="text/javascript" src="<?php show::siteUrl(); ?>/assets/js/common.js"></script>
         <?php show::scriptTags(); ?>
-        <?php $core->callHook('endAdminHead'); ?>	
+        <?php core::executeHookAction('endAdminHead'); ?>	
     </head>
     <body>
         <div id="container">
@@ -76,10 +76,10 @@ defined('ROOT') OR exit('No direct script access allowed');
                             <?php if ($runPlugin->getParamTemplate()) { ?>
                                 <a title="Paramètres" data-fancybox id="param_link" href="#" data-src="#param_panel"><i class="bi bi-sliders"></i></a>
                                 <div id="param_panel">
-                                    <div class="content">
-                                        <h2>Paramètres</h2>
+                                    <article>
+                                        <header><h3>Paramètres</h3></header>
                                         <?php include($runPlugin->getParamTemplate()); ?>
-                                    </div>
+                                    </article>
                                 </div>
                             <?php } ?>
                             <?php if ($runPlugin->getHelpTemplate()) { ?>

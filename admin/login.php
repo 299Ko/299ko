@@ -14,7 +14,7 @@ defined('ROOT') OR exit('No direct script access allowed');
 <!doctype html>
 <html lang="fr">
     <head>
-        <?php $core->callHook('adminHead'); ?>
+        <?php core::executeHookAction('adminHead'); ?>
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>299ko - Administration</title>	
@@ -25,7 +25,7 @@ defined('ROOT') OR exit('No direct script access allowed');
         <script type="text/javascript" src="scripts.js"></script>
         <script type="text/javascript" src="<?php show::siteUrl(); ?>/assets/js/common.js"></script>
         <?php show::scriptTags(); ?>
-        <?php $core->callHook('endAdminHead'); ?>	
+        <?php core::executeHookAction('endAdminHead'); ?>	
     </head>
     <body class="login">
         <div class="container">

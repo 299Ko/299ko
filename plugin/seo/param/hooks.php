@@ -9,5 +9,8 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
+// Scripts
+core::registerHookAction("endFrontHead", "seoEndFrontHead");
+
 // Open Graph
 core::registerHookAction("endFrontHead", "seoAddMetaOpenGraph");

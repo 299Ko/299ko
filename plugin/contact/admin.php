@@ -21,8 +21,8 @@ switch ($action) {
                 $runPlugin->setConfigVal('copy', $_POST['copy']);
                 $runPlugin->setConfigVal('acceptation', $_POST['acceptation']);
             } else {
-                $runPlugin->setConfigVal('content1', $core->callHook('beforeSaveEditor', $_POST['content1']));
-                $runPlugin->setConfigVal('content2', $core->callHook('beforeSaveEditor', $_POST['content2']));
+                $runPlugin->setConfigVal('content1', core::executeHookFilter('beforeSaveEditor', $_POST['content1']));
+                $runPlugin->setConfigVal('content2', core::executeHookFilter('beforeSaveEditor', $_POST['content2']));
             }
             if ($pluginsManager->savePluginConfig($runPlugin))
                 show::msg("Les modifications ont été enregistrées", 'success');

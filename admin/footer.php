@@ -18,6 +18,6 @@ defined('ROOT') OR exit('No direct script access allowed'); ?>
                 </div>
             </div>
         </div>
-        <?php $core->callHook('endAdminBody'); ?>
+        <?php core::executeHookAction('endAdminBody'); ?>
     </body>
 </html>

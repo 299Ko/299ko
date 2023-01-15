@@ -18,7 +18,6 @@ function antispamInstall() {
     
 }
 
-## Hooks
 ## Code relatif au plugin
 
 class antispam {

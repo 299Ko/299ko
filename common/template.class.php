@@ -187,12 +187,12 @@ class Template {
         }
                 
         if ($action === 'FILTER') {
-            return '<?php echo core::getInstance()->executeHookFilter(\'' . $name . '\',' . $content . ',' . $params .'); ?>';
+            return '<?php echo core::executeHookFilter(\'' . $name . '\',' . $content . ',' . $params .'); ?>';
         } else {
             if ($params !== null) {
-                return '<?php core::getInstance()->executeHookAction(\'' . $name . '\',[' . $content . ',' . $params .']); ?>';
+                return '<?php core::executeHookAction(\'' . $name . '\',[' . $content . ',' . $params .']); ?>';
             }
-            return '<?php core::getInstance()->executeHookAction(\'' . $name . '\',' . $content .'); ?>';
+            return '<?php core::executeHookAction(\'' . $name . '\',' . $content .'); ?>';
         }
     }
     

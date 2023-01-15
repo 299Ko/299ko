@@ -59,7 +59,7 @@ include_once(ROOT . 'admin/header.php');
 
         <p>
             <label>Contenu</label><br>
-            <textarea name="content" class="editor"><?php echo $core->callHook('beforeEditEditor', $news->getContent()); ?></textarea>
+            <textarea name="content" class="editor"><?php echo core::executeHookFilter('beforeEditEditor', $news->getContent()); ?></textarea>
         </p>
 
         <?php

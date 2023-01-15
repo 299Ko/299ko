@@ -45,7 +45,7 @@ switch ($action) {
             }
             $news = ($_REQUEST['id']) ? $newsManager->create($_REQUEST['id']) : new news();
             $news->setName($_REQUEST['name']);
-            $news->setContent($core->callHook('beforeSaveEditor', $_REQUEST['content']));
+            $news->setContent(core::executeHookFilter('beforeSaveEditor', $_REQUEST['content']));
             $newsUrl = util::urlBuild($runPlugin->getName() . '/'. $news->getName() . '-' . $news->getId() . '.html');
             $news->setDraft((isset($_POST['draft']) ? 1 : 0));
             if (!isset($_REQUEST['date']) || $_REQUEST['date'] == "")
@@ -68,6 +68,8 @@ switch ($action) {
         $mode = 'edit';
         $news = (isset($_REQUEST['id'])) ? $newsManager->create($_GET['id']) : new news();
         $showDate = (isset($_REQUEST['id'])) ? true : false;
+        $tpl->set('news', $news);
+        $tpl->set('showDate', $showDate);
         break;
     case 'del':
         if ($administrator->isAuthorized()) {
@@ -116,3 +118,5 @@ switch ($action) {
     default:
         $mode = 'list';
 }
+$tpl->set('newsManager', $newsManager);
+$tpl->set('mode', $mode);

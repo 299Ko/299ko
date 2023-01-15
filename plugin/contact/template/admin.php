@@ -8,11 +8,11 @@ include_once(ROOT . 'admin/header.php');
     <h3>Contenu</h3>
     <p>
         <label>Avant le formulaire</label><br>
-        <textarea class="editor" name="content1"><?php echo $core->callHook('beforeEditEditor', $runPlugin->getConfigVal('content1')); ?></textarea>
+        <textarea class="editor" name="content1"><?php echo core::executeHookFilter('beforeEditEditor', $runPlugin->getConfigVal('content1')); ?></textarea>
     </p>
     <p>
         <label>Après le formulaire</label><br>
-        <textarea class="editor" name="content2"><?php echo $core->callHook('beforeEditEditor', $runPlugin->getConfigVal('content2')); ?></textarea>
+        <textarea class="editor" name="content2"><?php echo core::executeHookFilter('beforeEditEditor', $runPlugin->getConfigVal('content2')); ?></textarea>
     </p>
     <p><button type="submit" class="button">Enregistrer</button></p>
     <h3>Adresses email récoltées</h3>

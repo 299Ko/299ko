@@ -27,7 +27,7 @@ class PageItem implements JsonSerializable {
     public $parent = 0;
     public string $cssClass = '';
     public string $password = '';
-    public string $img = '';
+    public ?string $img = '';
     public string $type = '';
     public array $children = [];
     public int $depth = 0;

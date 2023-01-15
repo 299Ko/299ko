@@ -17,7 +17,6 @@ class plugin {
     private $infos;
     private $config;
     private $name;
-    private $hooks;
     private $isValid;
     private $isDefaultPlugin;
     private $titleTag;
@@ -42,7 +41,7 @@ class plugin {
 
     ## Constructeur
 
-    public function __construct($name, $config = array(), $infos = array(), $hooks = array(), $initConfig = array()) {
+    public function __construct($name, $config = array(), $infos = array(), $initConfig = array()) {
         $core = core::getInstance();
         // Identifiant du plugin
         $this->name = $name;
@@ -50,8 +49,6 @@ class plugin {
         $this->config = $config;
         // Tableau d'informations
         $this->infos = $infos;
-        // Liste des hooks
-        $this->hooks = $hooks;
         // Validité du plugin
         $this->isValid = true;
         // On détermine si il s'agit du plugin par défaut en mode public
@@ -144,10 +141,6 @@ class plugin {
 
     public function getName() {
         return $this->name;
-    }
-
-    public function getHooks() {
-        return $this->hooks;
     }
 
     public function getIsDefaultPlugin() {
@@ -271,7 +264,7 @@ class plugin {
     ## Initialise la navigation
 
     public function initNavigation() {
-        $this->navigation = array();
+        $this->navigation = [];
     }
 
     ## Détermine si le plugin est installé
@@ -295,7 +288,15 @@ class plugin {
             return true;
         return false;
     }
+    
+    /**
+     * Load Hooks plugin file if exist
+     */
+    public function loadHooks() {
+        if (file_exists(PLUGINS . $this->name . '/param/hooks.php')) {
+            // Hooks du plugin
+            require_once PLUGINS . $this->name . '/param/hooks.php';
+        }
+    }
 
 }
-
-?>

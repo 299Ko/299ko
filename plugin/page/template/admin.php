@@ -3,9 +3,9 @@ defined('ROOT') OR exit('No direct script access allowed');
 include_once(ROOT . 'admin/header.php');
 if ($mode == 'list') {
     ?>
-    <a role="button" href = "index.php?p=page&amp;action=edit"><i class="bi bi-file-earmark-plus"></i> Ajouter une page</a>
-    <a role="button" href = "index.php?p=categories&plugin=page"><i class="bi bi-folder-plus"></i> Ajouter une catégorie</a>
-    <a role="button" href = "index.php?p=page&amp;action=edit&link=1"><i class="bi bi-link-45deg"></i> Ajouter un lien externe</a>
+    <a role="button" href= "index.php?p=page&amp;action=edit"><i class="bi bi-file-earmark-plus"></i> Ajouter une page</a>
+    <a role="button" href= "index.php?p=categories&plugin=page"><i class="bi bi-folder-plus"></i> Ajouter une catégorie</a>
+    <a role="button" href= "index.php?p=page&amp;action=edit&link=1"><i class="bi bi-link-45deg"></i> Ajouter un lien externe</a>
     <?php
     echo $pageManager->output();
 } 
@@ -105,7 +105,7 @@ if ($mode == 'edit' && $pageItem->type === PageItem::PAGE) {
             </p>
             <p>
                 <label for="content">Contenu</label>
-                <textarea name="content" id="content" class="editor"><?php echo $core->callHook('beforeEditEditor', $pageItem->content); ?></textarea>
+                <textarea name="content" id="content" class="editor"><?php echo core::executeHookFilter('beforeEditEditor', $pageItem->content); ?></textarea>
             </p>
         </article>
         <?php

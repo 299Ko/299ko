@@ -5,19 +5,16 @@ include_once(THEMES . $core->getConfigVal('theme') . '/functions.php');
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <?php eval($core->callHook('frontHead')); 
-        core::executeHookAction('frontHead', $runPlugin->getName()); ?>
+        <?php core::executeHookAction('frontHead'); ?>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><?php show::titleTag(); ?></title>
-        <base href="<?php show::siteUrl(); ?>/" />
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
         <meta name="description" content="<?php show::metaDescriptionTag(); ?>" />
         <link rel="icon" href="<?php show::themeIcon(); ?>" />
         <link rel="stylesheet" href="<?php show::siteUrl();?>/assets/css/pico.min.css" />
         <?php show::linkTags(); ?>
         <?php show::scriptTags(); ?>
-        <?php eval($core->callHook('endFrontHead'));
-        core::executeHookAction('endFrontHead'); ?>
+        <?php core::executeHookAction('endFrontHead'); ?>
     </head>
     <body>
         <div id="container">
@@ -28,7 +25,7 @@ include_once(THEMES . $core->getConfigVal('theme') . '/functions.php');
                     <ul id="navigation">
                         <?php
                         show::mainNavigation();
-                        eval($core->callHook('endMainNavigation'));
+                        core::executeHookAction('endMainNavigation');
                         ?>
                     </ul>
                 </div>

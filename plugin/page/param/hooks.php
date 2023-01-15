@@ -9,5 +9,9 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
+// Meta 
+core::registerHookFilter("endFrontHead", "pageEndFrontHead");
+
+// Categories for pages
 core::registerHookAction("categoriesEditCategorie", "pageEditCategories");
 core::registerHookFilter("categoriesBeforeSaveCategorie", "pageBeforeSaveCategorie");

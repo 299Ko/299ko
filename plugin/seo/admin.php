@@ -16,7 +16,6 @@ switch ($action) {
     case 'save':
         if ($administrator->isAuthorized()) {
             $pos = $_POST['position'];
-            seoSavePositionMenu($pos);
 
             $runPlugin->setConfigVal('position', $pos);
             $runPlugin->setConfigVal('trackingId', trim($_POST['trackingId']));
@@ -38,26 +37,4 @@ switch ($action) {
         }
         break;
     default:
-}
-
-function seoSavePositionMenu($position) {
-    $arr = ['endFrontHead' => 'seoEndFrontHead'];
-    switch ($position) {
-        case 'menu':
-            $tmp = ['endMainNavigation' => 'seoMainNavigation'];
-            break;
-        case 'footer':
-            $tmp = ['footer' => 'seoFooter'];
-            break;
-        case 'endfooter':
-            $tmp = ['endFooter' => 'seoFooter'];
-            break;
-        case 'float':
-            $tmp = ['endFrontBody' => 'seoEndFrontBody'];
-            break;
-        default:
-            $tmp = [];
-    }
-    $data = array_merge($arr, $tmp);
-    util::writeJsonFile(PLUGINS . 'seo/param/hooks.json', $data);
 }

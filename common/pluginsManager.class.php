@@ -54,7 +54,7 @@ class pluginsManager {
     ## Installe un plugin ciblé
 
     public function installPlugin($name, $activate = false) {
-        core::getInstance()->callHook('beforePluginInstall', $name);
+        core::executeHookAction('beforePluginInstall', $name);
         // Create data plugin folder
         @mkdir(DATA_PLUGIN . $name, 0755, true);
         @chmod(DATA_PLUGIN . $name, 0755);
@@ -74,7 +74,7 @@ class pluginsManager {
         if (function_exists($name . 'Install'))
             call_user_func($name . 'Install');
 
-        core::getInstance()->callHook('afterPluginInstall', $name);
+        core::executeHookAction('afterPluginInstall', $name);
         // Check du fichier config
         if (!file_exists(DATA_PLUGIN . $name . '/config.json'))
             return false;
@@ -153,19 +153,13 @@ class pluginsManager {
         $infos = util::readJsonFile(PLUGINS . $name . '/param/infos.json');
         // Configuration du plugin
         $config = util::readJsonFile(DATA_PLUGIN . $name . '/config.json');
-        // Hooks du plugin
-        @include PLUGINS . $name . '/param/hooks.php';
-        $hooks = util::readJsonFile(PLUGINS . $name . '/param/hooks.json');
-        //
         // Config usine
         $initConfig = util::readJsonFile(PLUGINS . $name . '/param/config.json');
         // Derniers checks
         if (!is_array($config))
-            $config = array();
-        if (!is_array($hooks))
-            $hooks = array();
+            $config = [];
         // Création de l'objet
-        $plugin = new plugin($name, $config, $infos, $hooks, $initConfig);
+        $plugin = new plugin($name, $config, $infos, $initConfig);
         return $plugin;
     }
 

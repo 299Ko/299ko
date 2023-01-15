@@ -42,7 +42,7 @@ switch ($action) {
             $pageItem->name = $_POST['name'];
             $pageItem->position = $_POST['position'];
             $pageItem->isHomepage = $_POST['isHomepage'] ?? false;
-            $pageItem->content = isset($_POST['content']) ? $core->callHook('beforeSaveEditor', $_POST['content']) : '';
+            $pageItem->content = isset($_POST['content']) ? core::executeHookFilter('beforeSaveEditor', $_POST['content']) : '';
             $pageItem->file = $_POST['file'] ?? '';
             $pageItem->isHidden = $_POST['isHidden'] ?? false;
             $pageItem->mainTitle = $_POST['mainTitle'] ?? '';

@@ -22,21 +22,24 @@ function seoInstall() {
 
 function seoEndFrontHead() {
     $plugin = pluginsManager::getInstance()->getPlugin('seo');
-    if (!$plugin->getConfigVal('wt') || $plugin->getConfigVal('wt') == '') {
+    if ($plugin->getConfigVal('wt') && $plugin->getConfigVal('wt') !== '') {
+        $temp = "<script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', '" . $plugin->getConfigVal('trackingId') . "', 'auto');
+            ga('send', 'pageview');
+          </script>";
+        $temp .= '<meta name="google-site-verification" content="' . $plugin->getConfigVal('wt') . '" />';
+        echo $temp;
+    }
+    // Social Bar
+    $position = $plugin->getConfigVal('position');
+    if (!$position || $position == '') {
         return;
     }
-    $temp = "<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', '" . $plugin->getConfigVal('trackingId') . "', 'auto');
-  ga('send', 'pageview');
-
-</script>";
-    $temp .= '<meta name="google-site-verification" content="' . $plugin->getConfigVal('wt') . '" />';
-    echo $temp;
+    seoRegisterHookToSocialButtons($position);
 }
 
 function seoEndFrontBody() {
@@ -88,36 +91,58 @@ function seoGetSocialVars() {
  * Display Open Graph to socials networks and Google
  * 
  * @global plugin $runPlugin
+ * @todo Delete from here, add in each plugin if possible
  */
 function seoAddMetaOpenGraph() {
     global $runPlugin;
     $core = core::getInstance();
     // Facebook, Pinterest
-    echo '<meta property="og:title" content="'. $runPlugin->getMainTitle() .'" />
-    <meta property="og:url" content="'.util::getCurrentURL() . '" />
-    <meta property="og:image" content="'.show::getFeaturedImage() . '" />
-    <meta property="og:description" content="'.$runPlugin->getMetaDescriptionTag() . '" />
-    <meta property="og:site_name" content="'.$core->getConfigVal('siteName') . '" />
+    echo '<meta property="og:title" content="' . $runPlugin->getMainTitle() . '" />
+    <meta property="og:url" content="' . util::getCurrentURL() . '" />
+    <meta property="og:image" content="' . show::getFeaturedImage() . '" />
+    <meta property="og:description" content="' . $runPlugin->getMetaDescriptionTag() . '" />
+    <meta property="og:site_name" content="' . $core->getConfigVal('siteName') . '" />
     <meta property="og:type" content="article" />';
-    
+
     // Google
     echo '<script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "NewsArticle",
-      "headline": "'.$runPlugin->getMainTitle(). '",
-      "image": "' .show::getFeaturedImage().'"
+      "headline": "' . $runPlugin->getMainTitle() . '",
+      "image": "' . show::getFeaturedImage() . '"
     }
     </script>';
-    
+
     // Twitter
     $twitterUser = pluginsManager::getPluginConfVal('seo', 'twitter');
     echo '<meta name="twitter:card" content="summary_large_image" />';
     if ($twitterUser && $twitterUser !== '') {
         $user = basename($twitterUser);
-        echo '<meta name="twitter:site" content="@' . $user .'">';
+        echo '<meta name="twitter:site" content="@' . $user . '">';
     }
-    echo '<meta name="twitter:title" content="'. $runPlugin->getMainTitle() .'" />
-    <meta name="twitter:description" content="'.$runPlugin->getMetaDescriptionTag() . '" />
-    <meta name="twitter:image:src" content="'.show::getFeaturedImage() . '" />';
+    echo '<meta name="twitter:title" content="' . $runPlugin->getMainTitle() . '" />
+    <meta name="twitter:description" content="' . $runPlugin->getMetaDescriptionTag() . '" />
+    <meta name="twitter:image:src" content="' . show::getFeaturedImage() . '" />';
+}
+
+/**
+ * Register the Hook to display the social Bar function the given position
+ * @param string $position
+ */
+function seoRegisterHookToSocialButtons($position) {
+    switch ($position) {
+        case 'menu':
+            core::registerHookAction('endMainNavigation', 'seoMainNavigation');
+            break;
+        case 'footer':
+            core::registerHookAction('footer', 'seoFooter');
+            break;
+        case 'endfooter':
+            core::registerHookAction('endFooter', 'seoFooter');
+            break;
+        case 'float':
+            core::registerHookAction('endFrontBody', 'seoEndFrontBody');
+            break;
+    }
 }

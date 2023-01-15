@@ -9,8 +9,5 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
-// Sidebar Public
-core::registerHookAction("frontHead", "blogDisplayCategoriesSidebar");
-
-// RSS & meta image
-core::registerHookAction("endFrontHead", "blogEndFrontHead");
+// Scripts
+core::registerHookAction("adminHead", "tinymceAdminHead");
