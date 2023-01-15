@@ -20,6 +20,7 @@ define('PLUGINS', ROOT . 'plugin/');
 define('ADMIN_PATH', ROOT . 'admin/');
 define('FONTICON', 'assets/bootstrap-icons/bootstrap-icons.css');
 define('FANCYCSS', "assets/fancyapps/fancybox.css");
+define('COMMONJS', "assets/js/common.js");
 define("FANCYJS", "assets/fancyapps/fancybox.umd.js");
 if (file_exists(DATA . 'key.php'))
     include(DATA . 'key.php');

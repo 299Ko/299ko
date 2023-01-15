@@ -37,15 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector('#adminSidebar').append(par.querySelector('[type="submit"]'));
         }
     }
-
-    document.querySelectorAll('.msg').forEach(function (item, index) {
-        item.querySelector('.msg-button-close').addEventListener('click', function () {
-            fadeOut(item);
-        });
-        setTimeout(function () {
-            fadeOut(item);
-        }, 5000 + index * 5000);
-    });
+    
     // Login : btn Quitter redirection
     if (document.querySelector('#login input.alert')) {
         document.querySelector('#login input.alert').addEventListener('click', function () {

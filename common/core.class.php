@@ -77,6 +77,7 @@ class core {
         lang::loadLanguageFile(COMMON  . '/langs/');
         $this->css[] = FONTICON;
         $this->css[] = FANCYCSS;
+        $this->js[] = COMMONJS;
         $this->js[] = FANCYJS;
     }
 
@@ -182,19 +183,6 @@ class core {
     }
 
     /**
-     * Add a Hook
-     * 
-     * @deprecated since version 2.0
-     * @see Action or Filter Hooks
-     * @todo Change all Hooks to new Hooks (hooks.php with action and filters)
-     * @param string name
-     * @param string Callback to Call
-     */
-    public function addHook($name, $function) {
-        $this->hooks[$name][] = $function;
-    }
-
-    /**
      * Add an Action Hook
      * 
      * @param string Hook Name
@@ -265,37 +253,6 @@ class core {
             }
         }
         return $content;
-    }
-
-    /**
-     * Permet d'appeler un hook
-     * Si un paramètre est fourni, celui-ci sera passé de fonction en fonction Hook de filtre).
-     * Sinon, la valeur de retour sera concaténé à chaque fonction (Hook d'action).
-     * 
-     * @deprecated since version 2.0
-     * @see Action or Filter Hooks
-     * @param   string  Nom du hook
-     * @param   mixed   Paramètres
-     * @return  mixed
-     */
-    public function callHook($name, $params = null) {
-        if ($params === null) {
-            // Action
-            $return = '';
-            if (isset($this->hooks[$name])) {
-                foreach ($this->hooks[$name] as $function) {
-                    $return .= call_user_func($function);
-                }
-            }
-            return $return;
-        }
-        // Filter
-        if (isset($this->hooks[$name])) {
-            foreach ($this->hooks[$name] as $function) {
-                $params = call_user_func($function, $params);
-            }
-        }
-        return $params;
     }
 
     ## Detecte le mode de l'administration
