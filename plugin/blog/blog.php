@@ -55,7 +55,7 @@ function blogDisplayCategoriesSidebar() {
 }
 
 function blogCreateCategorieUrl(Categorie $categorie) {
-    return "blog/cat-" . $categorie->id . "/" . util::strToUrl($categorie->label) .".html";
+    return util::urlBuild("blog/cat-" . $categorie->id . "/" . util::strToUrl($categorie->label) .".html");
 }
 
 ## Code relatif au plugin
@@ -248,8 +248,8 @@ class news {
     private $date;
     private $content;
     private $draft;
-    private $img;
-    private $commentsOff;
+    private string $img = '';
+    private bool $commentsOff = false;
 
     public function __construct($val = array()) {
         if (count($val) > 0) {
@@ -259,7 +259,7 @@ class news {
             $this->date = $val['date'];
             $this->draft = $val['draft'];
             $this->img = (isset($val['img']) ? $val['img'] : '');
-            $this->commentsOff = (isset($val['commentsOff']) ? $val['commentsOff'] : 0);
+            $this->commentsOff = (isset($val['commentsOff']) ? $val['commentsOff'] : false);
         }
     }
 
@@ -317,9 +317,21 @@ class news {
     public function getImg() {
         return $this->img;
     }
+    
+    public function getImgUrl() {
+        return util::urlBuild(UPLOAD . 'galerie/' . $this->getImg());
+    }
 
     public function getCommentsOff() {
         return $this->commentsOff;
+    }
+    
+    /**
+     * Get the Comments are active on this item
+     * @return bool
+     */
+    public function getCommentsOn() {
+        return !$this->commentsOff;
     }
 
 }

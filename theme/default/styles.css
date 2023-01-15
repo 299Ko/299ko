@@ -349,12 +349,14 @@ code{
     position: relative;
     background-color: var(--header-bg-color);
     white-space: nowrap;
+    margin-bottom: 0;
 }
 
 #navigation li a {
     text-decoration: none;
     padding: 15px;
     display: block;
+    position: relative;
 }
 
 #navigation li.parent > a:after {

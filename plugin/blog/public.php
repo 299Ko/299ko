@@ -91,7 +91,7 @@ switch ($action) {
                     $news[$k]['content'] = $v->getContent();
                     $news[$k]['url'] = $runPlugin->getPublicUrl() . util::strToUrl($v->getName()) . '-' . $v->getId() . '.html';
                     $news[$k]['img'] = $v->getImg();
-                    $news[$k]['imgUrl'] = util::urlBuild(UPLOAD . 'galerie/' . $v->getImg());
+                    $news[$k]['imgUrl'] = $v->getImgUrl();
                     $news[$k]['commentsOff'] = $v->getcommentsOff();
                 }
                 $i++;
@@ -135,6 +135,10 @@ switch ($action) {
         if ($pluginsManager->isActivePlugin('galerie') && galerie::searchByfileName($item->getImg())) {
             show::setFeaturedImage(util::urlBuild(UPLOAD . 'galerie/' . $item->getImg()));
         }
+        $tpl->set('cats', $cats);
+        $tpl->set('item', $item);
+        $tpl->set('newsManager', $newsManager);
+        $tpl->set('antispamField', $antispamField);
         break;
     case 'rss':
         echo $newsManager->rss();
