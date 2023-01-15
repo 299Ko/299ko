@@ -58,19 +58,19 @@
                         {% IF runPlugin.getParamTemplate %}
                             <a title="Paramètres" data-fancybox id="param_link" href="#" data-src="#param_panel"><i class="bi bi-sliders"></i></a>
                             <div id="param_panel">
-                                <div class="content">
-                                    <h2>Paramètres</h2>
+                                <article>
+                                        <header><h3>Paramètres</h3></header>
                                     {% INCLUDE runPlugin.getParamTemplate %}
-                                </div>
+                                </article>
                             </div>
                         {% ENDIF %}
                         {% IF runPlugin.getHelpTemplate %}
                             <a title="Aide" data-fancybox id="help_link" href="#" data-src="#help_panel"><i class="bi bi-info-lg"></i></a>
                             <div id="help_panel">   
-                                <div class="content">
-                                    <h2>Aide</h2>
+                                <article>
+                                        <header><h3>Aide</h3></header>
                                     {% INCLUDE runPlugin.getHelpTemplate %}
-                                </div>
+                                </article>
                             </div>
                         {% ENDIF %}
                         {% HOOK.ACTION.adminToolsTemplates[runPlugin.getName] %}
