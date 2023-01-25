@@ -94,6 +94,27 @@ function pageBeforeSaveCategorie(Categorie &$categorie) {
     return $categorie;
 }
 
+/**
+ * Called when a categorie is deleted, to delete the parent where items have
+ * this categorie for parent
+ * 
+ * @param string $categorieId
+ * @param string $pluginId
+ */
+function pageCategoriesDeleteCategorie($categorieId, $pluginId) {
+    if ($pluginId !== 'page') {
+        return;
+    }
+    $pageManager = new PagesManager();
+    foreach ($pageManager->getItems() as $item) {
+        if ($item->parent === 'cat-' . $categorieId) {
+            // Our Page is a child of the deleted categorie
+            $item->parent = '';
+            $pageManager->savePageItem($item);
+        }
+    }
+}
+
 ## Code relatif au plugin
 
 PagesManager::addToNavigation();

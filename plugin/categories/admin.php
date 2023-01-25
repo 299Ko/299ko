@@ -84,7 +84,7 @@ switch ($action) {
         $categorie = $categoriesManager->getCategorie($id);
         $categorie->parentId = $parentId;
         $categorie->label = $label;
-        core::executeHookFilter('categoriesBeforeSaveCategorie', $categorie);
+        $categorie = core::executeHookFilter('categoriesBeforeSaveCategorie', $categorie);
         $categoriesManager->saveCategorie($categorie);
         show::msg('La catégorie a bien été modifiée', 'success');
         header('location:index.php?p=categories&plugin=' . $pluginId);

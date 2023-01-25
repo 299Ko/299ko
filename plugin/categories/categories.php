@@ -21,9 +21,7 @@ function categoriesAdminToolsTemplates($params) {
     }
 }
 
-function categoriesAdminEditingAnItem($params) {
-    $pluginId = $params[0];
-    $itemId = $params[1] ?? -1;
+function categoriesAdminEditingAnItem($pluginId, $itemId) {
     if (CategoriesManager::isPluginUseCategories($pluginId)) {
         $catManager = new CategoriesManager($pluginId);
         $title = 'Categories';

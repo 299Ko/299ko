@@ -106,6 +106,7 @@ class CategoriesManager {
                 $this->categories[$cat->parentId]->childrenId = array_values(array_unique($this->categories[$cat->parentId]->childrenId));
             }
         }
+        core::executeHookAction('categoriesDeleteCategorie', [$id, $this->pluginId]);
         //Delete the categorie
         unset($this->categories[$id]);
         $this->imbricateCategories();

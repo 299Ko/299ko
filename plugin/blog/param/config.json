@@ -4,5 +4,7 @@
     "itemsByPage" : "5",
     "hideContent" : "0",
     "comments" : "1",
-    "displayCategories": 1
+    "displayCategories": 1,
+    "useCategories" : true,
+    "typeCategories" : "multi"
 }

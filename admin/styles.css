@@ -429,13 +429,14 @@ ul.no_bullet{
 /* Categories */
 
 ul.list-item-list {
-    list-style-type: none;
-    font-size: 14px;
+    padding: 0;
+    font-size: 12px;
 }
 
 ul.list-item-list li {
     position: relative;
-    padding-top: 9px;
+    padding:0;
+    list-style-type: none;
 }
 
 ul.list-item-list li input{
@@ -454,6 +455,7 @@ ul.list-item-list li.list-item-hasChildren > i {
 ul.list-item-list-sub {
     list-style-type: none;
     margin-left:15px;
+    font-size: 12px;
 }
 
 #categorie-add-form {
@@ -521,6 +523,12 @@ div.toggle, ul.list-item-list-sub {
         margin: 1px 0;
         width: 100%;
         text-align: center;
+    }
+    
+    #sidebar {
+        top:62px;
+        bottom:0;
+        overflow-y: scroll;
     }
 
     #navigation li.site{

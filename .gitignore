@@ -4,3 +4,4 @@
 /plugin/sandbox/
 /plugin/mdeditor/
 *.tpl.cache.php
+/nbproject/

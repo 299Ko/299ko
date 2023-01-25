@@ -294,6 +294,15 @@ code{
     padding: 15px;
 }
 
+.sidebarModule ul {
+    margin:0;
+}
+
+.sidebarModule li {
+    margin:0;
+    padding: 0;
+}
+
 #content{
     flex: 1 0 auto;
     max-width: 1000px;

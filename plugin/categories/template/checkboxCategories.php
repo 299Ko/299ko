@@ -42,7 +42,7 @@ switch ($catDisplay) {
         }
         echo "/><label for='cat_" . $this->id . "'>" . $this->label . "</label>";
         if ($this->hasChildren) {
-            echo "<i class='fa-solid fa-caret-down'></i>";
+            echo "<i class='bi bi-caret-down'></i>";
             echo "<ul class='list-item-list-sub'>";
             foreach ($this->children as $child) {
                 $child->outputAsCheckbox($itemId);

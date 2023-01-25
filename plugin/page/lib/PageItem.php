@@ -16,7 +16,7 @@ class PageItem implements JsonSerializable {
     public float $position = 0;
     public bool $isHomepage = false;
     public $content = '';
-    public bool $isHidden = false;
+    public ?bool $isHidden = false;
     public string $file = '';
     public string $mainTitle = '';
     public string $metaDescriptionTag = '';
@@ -24,7 +24,7 @@ class PageItem implements JsonSerializable {
     public string $target = '';
     public string $targetAttr = '';
     public bool $noIndex = false;
-    public $parent = 0;
+    public $parent = '';
     public string $cssClass = '';
     public string $password = '';
     public ?string $img = '';

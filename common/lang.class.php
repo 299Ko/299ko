@@ -13,6 +13,11 @@
 defined('ROOT') OR exit('No direct script access allowed');
 
 class lang {
+    
+    const _LANGS = [
+        'fr' => 'Français',
+        'en' => 'English'
+    ];
 
     /**
      * Translation name, like 'en' or 'fr'
@@ -71,7 +76,7 @@ class lang {
      */
     public static function get($name) {        
         if (!isset(self::$data[$name])) {
-            return '';
+            return $name;
         }
         $nbArgs = func_num_args();
         if ($nbArgs === 1) {

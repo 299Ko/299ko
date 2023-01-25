@@ -15,3 +15,4 @@ core::registerHookFilter("endFrontHead", "pageEndFrontHead");
 // Categories for pages
 core::registerHookAction("categoriesEditCategorie", "pageEditCategories");
 core::registerHookFilter("categoriesBeforeSaveCategorie", "pageBeforeSaveCategorie");
+core::registerHookAction("categoriesDeleteCategorie", "pageCategoriesDeleteCategorie");
