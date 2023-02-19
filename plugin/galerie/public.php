@@ -19,4 +19,3 @@ if($runPlugin->getIsDefaultPlugin()){
     $runPlugin->setMetaDescriptionTag($core->getConfigVal('siteDescription'));
 }
 $runPlugin->setMainTitle($runPlugin->getConfigVal('label'));
-?>

@@ -12,6 +12,173 @@ defined('ROOT') OR exit('No direct script access allowed');
 /**
  * Simple lightweight template parser.
  */
+class Templatee {
+
+    /** @var array  Constants */
+    protected static $const = [];
+
+    /** @var string Template path */
+    protected $file;
+
+    /** @var string Template content */
+    protected $content;
+
+    /** @var array  Assigned datas to replace */
+    protected $data = [];
+    static $cache_enabled = FALSE;
+
+    /**
+     * Constructor
+     * Check if the template exist in the current theme, else template will be
+     * taken from 'default' theme
+     *
+     * @param string Template name with extension
+     */
+    public function __construct($file) {
+        $this->file = $file;
+    }
+
+    /**
+     * Add a var who will be added to all templates
+     *
+     * @static
+     * @param string Var key
+     * @param string Value
+     */
+    public static function addGlobal($key, $value) {
+        self::$const[$key] = $value;
+    }
+
+    /**
+     * Assign datas to this template
+     * Datas can be string, numeric... or array and objects
+     *
+     * @param string Var key
+     * @param string Value
+     */
+    public function set($key, $value) {
+        $this->data[$key] = $value;
+    }
+
+    /**
+     * Return the parsed template content
+     *
+     * @return string Parsed content
+     */
+    public function output() {
+        if (!file_exists($this->file)) {
+            return "Error loading template file ($this->file).<br/>";
+        }
+        ob_start();
+        $this->get_content();
+        $this->addGlobalsToVars();
+        extract($this->data, EXTR_SKIP);
+        $this->content = $this->parse($this->content);
+        // Uncomment the next line to see parsed template
+        file_put_contents($this->file . '.cache.php', $this->content);
+        eval('?>' . $this->content);
+        return ob_get_clean();
+    }
+
+    /**
+     * Get template content
+     */
+    protected function get_content() {
+        $this->content = file_get_contents($this->file);
+    }
+
+    /**
+     * Parse template
+     * Allowed tags :
+     * {# This is multiline allowed comments #}
+     * {% NOPARSE %} ... {% ENDNOPARSE %}
+     * {% HOOK.ACTION.hookName[parameters] %}
+     * {% INCLUDE My_Page %}
+     * {% IF MY_VAR %} {% IF MY_VAR !== 25 %} ... {% ELSEIF MY_VAR == plop %} ... {% ELSE %} ... {% ENDIF %}
+     * {{ MY_VAR }}, {{ PARENT.VAR}}, {{ [ArrayVar, ArrayVar2] }}, {{Object.method}}, ...
+     * {% FOR MY_VAR IN MY_VARS %} ... {{MY_VAR.name}} ... {% ENDFOR %}
+     */
+    protected function parse($code) {
+        $code = preg_replace_callback('#\{\% *NOPARSE *\%\}(.*)\{\% *ENDNOPARSE *\%\}#isU', [$this, 'compileNoParse'], $code);
+        $code = $this->compileComments($code);
+        $code = $this->compileActionHooks($code);
+        $code = $this->compileEscapedEchos($code);
+
+        $code = $this->compileEchos($code);
+        $code = $this->compilePHP($code);
+        $code = str_replace('#/§&µ&§;#', '{', $code);
+        return $code;
+    }
+
+    protected function compileComments($code) {
+        return preg_replace('#\{\#(.*)\#\}#isU', '<?php /* $1 */ ?>', $code);
+    }
+
+    protected function includeFiles($code) {
+        preg_match_all('/{% ?include ?\'?(.*?)\'? ?%}/i', $code, $matches, PREG_SET_ORDER);
+        foreach ($matches as $value) {
+            $code = str_replace($value[0], $this->includeFiles($value[2]), $code);
+        }
+        $code = preg_replace('/{% ?include ?\'?(.*?)\'? ?%}/i', '', $code);
+        return $code;
+    }
+
+    protected function compilePHP($code) {
+        return preg_replace('~\{%\s*(.+?)\s*\%}~is', '<?php $1 ?>', $code);
+    }
+
+    protected function compileEchos($code) {
+        return preg_replace('~\{{\s*(.+?)\s*\}}~is', '<?php echo $1 ?>', $code);
+    }
+
+    protected function compileEscapedEchos($code) {
+        return preg_replace('~\{{{\s*(.+?)\s*\}}}~is', '<?php echo htmlentities($1, ENT_QUOTES, \'UTF-8\') ?>', $code);
+    }
+
+    protected function compileActionHooks($code) {
+        return preg_replace('/{% ?hook.action\((.+?)\s*\%}/is', '<?php core::executeHookAction($1 ?>', $code);
+    }
+
+    protected function compileNoParse($matches) {
+        return str_replace('{', '#/§&µ&§;#', htmlentities($matches[1]));
+    }
+
+    /**
+     * Add Globals vars to datas template
+     */
+    protected function addGlobalsToVars() {
+        foreach (self::$const as $key => $value) {
+            $this->data[$key] = $value;
+        }
+    }
+
+    static function view($file, $data = array()) {
+        $cached_file = self::cache($file);
+        extract($data, EXTR_SKIP);
+        require $cached_file;
+    }
+
+    static function cache($file) {
+        if (!file_exists(self::$cache_path)) {
+            mkdir(self::$cache_path, 0744);
+        }
+        $cached_file = self::$cache_path . str_replace(array('/', '.html'), array('_', ''), $file . '.php');
+        if (!self::$cache_enabled || !file_exists($cached_file) || filemtime($cached_file) < filemtime($file)) {
+            $code = self::includeFiles($file);
+            $code = self::compileCode($code);
+            file_put_contents($cached_file, '<?php class_exists(\'' . __CLASS__ . '\') or exit; ?>' . PHP_EOL . $code);
+        }
+        return $cached_file;
+    }
+
+    static function clearCache() {
+        foreach (glob(self::$cache_path . '*') as $file) {
+            unlink($file);
+        }
+    }
+
+}
+
 class Template {
 
     /** @var array  Constants */
@@ -31,7 +198,7 @@ class Template {
      * Check if the template exist in the current theme, else template will be
      * taken from 'default' theme
      *
-     * @param string Template name with extension
+     * @param string $file name with extension
      */
     public function __construct($file) {
         $this->file = $file;
@@ -90,7 +257,7 @@ class Template {
      * Allowed tags :
      * {# This is multiline allowed comments #}
      * {% NOPARSE %} ... {% ENDNOPARSE %}
-     * {% HOOK.ACTION.hookName[parameters] %}
+     * {% HOOK.ACTION.hookName(parameters) %}
      * {% INCLUDE My_Page %}
      * {% IF MY_VAR %} {% IF MY_VAR !== 25 %} ... {% ELSEIF MY_VAR == plop %} ... {% ELSE %} ... {% ENDIF %}
      * {{ MY_VAR }}, {{ PARENT.VAR}}, {{ [ArrayVar, ArrayVar2] }}, {{Object.method}}, ...
@@ -99,18 +266,18 @@ class Template {
     protected function parse() {
         $this->content = preg_replace_callback('#\{\% *NOPARSE *\%\}(.*)\{\% *ENDNOPARSE *\%\}#isU', 'self::_no_parse', $this->content);
         $this->content = preg_replace('#\{\#(.*)\#\}#isU', '<?php /* $1 */ ?>', $this->content);
-        $this->content = preg_replace_callback('#\{\% *IF +([0-9a-z_\.\-\[\]\,]+) *([\=|\<|\>|\!&]{1,3}) *([0-9a-z_\.\-\[\]\,]+) *\%\}#iU', 'self::_complexe_if_replace', $this->content);
-        $this->content = preg_replace_callback('#\{\% *IF +([0-9a-z_\.\-\[\]\,]+) *\%\}#iU', 'self::_simple_if_replace', $this->content);
+        $this->content = preg_replace_callback('#\{\% *IF +(.+) *([\=|\<|\>|\!&]{1,3}) +(.+) *\%\}#iU', 'self::_complexe_if_replace', $this->content);
+        $this->content = preg_replace_callback('#\{\% *IF +(.+) *\%\}#iU', 'self::_simple_if_replace', $this->content);
         $this->content = preg_replace_callback('#\{\% *HOOK.(.+) *\%\}#iU', 'self::_callHook', $this->content);
         $this->content = preg_replace_callback('#\{\% *Lang.(.+) *\%\}#iU', 'self::_getLang', $this->content);
-        $this->content = preg_replace_callback('#\{\% *INCLUDE +([0-9a-z_\.\-\[\]\,\/]+) *\%\}#iU', 'self::_include', $this->content);
+        $this->content = preg_replace_callback('#\{\% *INCLUDE +(.+) *\%\}#iU', 'self::_include', $this->content);
         $this->content = preg_replace('#\{\{ *(.+) *\}\}#iU', '<?php $this->_show_var(\'$1\'); ?>', $this->content);
-        $this->content = preg_replace_callback('#\{\% *FOR +([0-9a-z_\.\-\[\]\,\ ]+) +IN +([0-9a-z_\.\-\[\]\,]+) *\%\}#i', 'self::_replace_for', $this->content);
+        $this->content = preg_replace_callback('#\{\% *FOR +(.+) +IN +(.+) *\%\}#i', 'self::_replace_for', $this->content);
         $this->content = preg_replace('#\{\% *ENDFOR *\%\}#i', '<?php endforeach; ?>', $this->content);
         $this->content = preg_replace('#\{\% *ENDIF *\%\}#i', '<?php } ?>', $this->content);
         $this->content = preg_replace('#\{\% *ELSE *\%\}#i', '<?php }else{ ?>', $this->content);
-        $this->content = preg_replace_callback('#\{\% *ELSEIF +([0-9a-z_\.\-\[\]\,]+) *([\=|\<|\>|\!&]{1,3}) *([0-9a-z_\.\-\[\]\,]+) *\%\}#iU', 'self::_complexe_elseif_replace', $this->content);
-        $this->content = preg_replace_callback('#\{\% *ELSEIF +([0-9a-z_\.\-\[\]\,]+) *\%\}#iU', 'self::_simple_elseif_replace', $this->content);
+        $this->content = preg_replace_callback('#\{\% *ELSEIF +(.+) *([\=|\<|\>|\!&]{1,3}) +(.+) *\%\}#iU', 'self::_complexe_elseif_replace', $this->content);
+        $this->content = preg_replace_callback('#\{\% *ELSEIF +(.+) *\%\}#iU', 'self::_simple_elseif_replace', $this->content);
         $this->content = str_replace('#/§&µ&§;#', '{', $this->content);
     }
 
@@ -165,7 +332,7 @@ class Template {
     }
 
     protected function _callHook($matches) {
-        $posAcc = strpos($matches[1], '[');
+        $posAcc = strpos($matches[1], '(');
         $args = '';
         $name = $matches[1];
         if ($posAcc !== false) {
@@ -175,8 +342,8 @@ class Template {
         $parts = explode('.', $name);
         $action = ($parts[0] === strtoupper('FILTER')) ? 'FILTER' : 'ACTION';
         $name = $parts[1];
-        $args = str_replace('[', '', $args);
-        $args = str_replace(']', '', $args);
+        $args = str_replace('(', '', $args);
+        $args = str_replace(')', '', $args);
         $argsParts = explode(',', $args);
         $content = '$this->getVar(\'' . $argsParts[0] . '\', $this->data)';
         if (count($argsParts) === 2) {
@@ -185,54 +352,52 @@ class Template {
         } else {
             $params = null;
         }
-                
+
         if ($action === 'FILTER') {
-            return '<?php echo core::executeHookFilter(\'' . $name . '\',' . $content . ',' . $params .'); ?>';
+            return '<?php echo core::executeHookFilter(\'' . $name . '\',' . $content . ',' . $params . '); ?>';
         } else {
             if ($params !== null) {
-                return '<?php core::executeHookAction(\'' . $name . '\',[' . $content . ',' . $params .']); ?>';
+                return '<?php core::executeHookAction(\'' . $name . '\',[' . $content . ',' . $params . ']); ?>';
             }
-            return '<?php core::executeHookAction(\'' . $name . '\',' . $content .'); ?>';
+            return '<?php core::executeHookAction(\'' . $name . '\',' . $content . '); ?>';
         }
     }
-    
+
     protected function _getLang($matches) {
-        $posAcc = strpos($matches[1], '[');
+        $posAcc = strpos($matches[1], '(');
         $args = '';
         $name = $matches[1];
         if ($posAcc !== false) {
             $args = substr($name, $posAcc);
             $name = substr($name, 0, $posAcc);
         }
-        $args = str_replace('[', '', $args);
-        $args = str_replace(']', '', $args);
+        $args = str_replace('(', '', $args);
+        $args = str_replace(')', '', $args);
         if ($args !== '') {
             $params = '$this->getVar(\'' . $args . '\', $this->data)';
-            return '<?php echo lang::get(\'' . $name . '\', ...' . $params .'); ?>';
+            return '<?php echo lang::get(\'' . $name . '\', ...' . $params . '); ?>';
         } else {
             return '<?php echo lang::get(\'' . $name . '\'); ?>';
         }
-       
     }
 
     protected function _replace_for($matches) {
         $parts = explode(',', $matches[1]);
         if (count($parts) === 1) {
             return '<?php foreach ($this->getVar(\'' . $matches[2] . '\', $this->data) as $' . $matches[1] . '): $this->data[\'' . $matches[1] . '\' ] = $' . $matches[1] .
-                '; ?>';
+                    '; ?>';
         } else {
             $parts[0] = trim($parts[0]);
             $parts[1] = trim($parts[1]);
             return '<?php foreach ($this->getVar(\'' . $matches[2] . '\', $this->data) as $' . $parts[0] . ' => $' . $parts[1] . ' ): $this->data[\'' . $parts[0] . '\' ] = $' . $parts[0] .
-                '; $this->data[\'' . $parts[1] . '\' ] = $' . $parts[1] . '; ?>';
+                    '; $this->data[\'' . $parts[1] . '\' ] = $' . $parts[1] . '; ?>';
         }
-        
     }
 
     /**
      * Recursive method to get asked var, with capacity to determine children
      * like : parent.child.var
-     * or : object.method[parameter1, parameter2]
+     * or : object.method(parameter1, parameter2)
      * or : array.object.propertie
      * ....
      *
@@ -241,16 +406,26 @@ class Template {
      * @return mixed    Asked var
      */
     protected function getVar($var, $parent) {
+
         $var = trim($var);
-        if ($var === '') return '';
-        $posAcc = strpos($var, '[');
+        if ($var === '')
+            return '';
+        if (preg_match('#\[ *(.+) *\]#iU', $var, $matches)) {
+            $parts = explode(',', $matches[1]);
+            $arr = [];
+            foreach ($parts as $part) {
+                $arr[] = $this->getVar($part, $this->data);
+            }
+            return $arr;
+        }
+        $posAcc = strpos($var, '(');
         $args = '';
         if ($posAcc !== false) {
             $args = substr($var, $posAcc);
             $var = substr($var, 0, $posAcc);
         }
         $vars = explode(',', $var);
-        if (count($vars)===1) {
+        if (count($vars) === 1) {
             // One var only
         } else {
             $arr = [];
@@ -259,7 +434,7 @@ class Template {
             }
             return $arr;
         }
-        
+
         $parts = explode('.', $var);
         if (count($parts) === 1) {
             // No child
@@ -294,7 +469,7 @@ class Template {
         }
         // Test if var contain parameters
         $manyArgs = false;
-        preg_match('#\[(.+)\]#i', $var, $match);
+        preg_match('#\((.+)\)#i', $var, $match);
         if (isset($match[1])) {
             $var = str_replace($match[0], "", $var);
             $args = true;
@@ -310,7 +485,7 @@ class Template {
             $args = $arrArgs;
         } elseif (isset($args) && $args == true) {
             $args = $this->getVar($match[1], $this->data);
-        }     
+        }
         if (is_object($parent) || (is_string($parent) && class_exists($parent))) {
             if (is_callable([$parent, $var])) {
                 $rm = new \ReflectionMethod($parent, $var);

@@ -19,21 +19,34 @@ include_once(THEMES . $core->getConfigVal('theme') . '/functions.php');
     <body>
         <div id="container">
             <div id="header">
-                <div id="header_content">
+                <nav id="header_content">
                     <div id="mobile_menu"></div>
-                    <p id="siteName"><a href="<?php show::siteUrl(); ?>"><?php show::siteName(); ?></a></p>
+                    <ul id="siteName">
+                        <li>
+                            <a href="<?php show::siteUrl(); ?>"><?php show::siteName(); ?></a>
+                        </li>
+                    </ul>
                     <ul id="navigation">
                         <?php
                         show::mainNavigation();
+                        ?>
+                    </ul>
+                    <ul id="end-navigation">
+                        <?php
                         core::executeHookAction('endMainNavigation');
                         ?>
                     </ul>
-                </div>
+                </nav>
             </div>
             <div id="alert-msg">
                 <?php show::displayMsg(); ?>
             </div>
-            <div id="banner"></div>
+            <div id="banner">
+                <?php
+                core::executeHookAction('topBanner');
+                core::executeHookAction('bottomBanner');
+                ?>
+            </div>
             <div id="body">
                 <div id="content" class="<?php show::pluginId(); ?>">
                     <?php show::mainTitle(); ?>

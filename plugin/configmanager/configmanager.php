@@ -21,7 +21,8 @@ function configmanagerInstall() {
 ## Hooks
 
 function ConfigManagerCheckInstallFile() {
-    if (file_exists(ROOT . 'install.php')) {
+    global $administrator;
+    if (file_exists(ROOT . 'install.php') && $administrator->isLogged()) {
         show::msg("<p>Le fichier install.php est toujours présent. Pour plus de sécurité, il est conseillé de le supprimer.<br/>
                 Si l'installation de 299ko s'est déroulée correctement, cliquez sur le bouton ci-dessous pour le supprimer.</p>
                 <a role='button' class='alert' href='index.php?p=configmanager&action=del_install&token=" . administrator::getToken() . "'>Supprimer le fichier install</a>", 'warning');

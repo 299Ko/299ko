@@ -35,17 +35,6 @@
     }
 }
 
-/* Light-green Dark scheme (Forced) */
-/* Enabled if forced with data-theme="dark" */
-[data-theme="dark"] {
-    --primary: #7cb342;
-    --primary-hover: #8bc34a;
-    --primary-focus: rgba(124, 179, 66, 0.25);
-    --primary-inverse: #FFF;
-    --alert:#e53935;
-    --alert-hover:#ff6f60;
-}
-
 /* Light-green (Common styles) */
 :root {
     --form-element-active-border-color: var(--primary);
@@ -156,6 +145,11 @@ ul.no_bullet{
     z-index: 996;
 }
 
+@media only screen and (prefers-color-scheme: dark) {
+    #alert-msg .msg p {
+        color:#444;
+    }
+}
 #alert-msg .msg:before, #alert-msg .msg.info:before {
     font-family: bootstrap-icons !important;
     content: "\F431";
@@ -507,6 +501,10 @@ div.toggle, ul.list-item-list-sub {
     /** Uncomment to hide by default
     display: none;
     */
+}
+
+tr td input.small {
+    margin-bottom: 0;
 }
 
 /* MOBILE */

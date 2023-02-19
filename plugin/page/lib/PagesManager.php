@@ -200,7 +200,7 @@ class PagesManager {
             /** @var Categorie $cat */
             $p = new pageItem();
             $p->name = $cat->label;
-            $p->isHidden = $cat->pluginArgs['hide'];
+            $p->isHidden = $cat->pluginArgs['hide'] ?? false;
             $p->id = 'cat-' . $cat->id;
             $p->type = PageItem::CATEGORIE;
             $p->position = $cat->pluginArgs['position'] ?? 99999999999999;

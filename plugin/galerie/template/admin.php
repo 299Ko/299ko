@@ -4,37 +4,41 @@ include_once(ROOT . 'admin/header.php');
 ?>
 
 <?php if ($mode == 'list') { ?>
-    <ul class="tabs_style">
-        <li><a class="button" href="index.php?p=galerie&action=edit">Ajouter</a></li>
-        <li><a class="button showall" href="javascript:">Afficher / masquer les éléments invisibles</a></li>
-    </ul>
+    <a role="button" class="button" href="index.php?p=galerie&action=edit">Ajouter</a>
+    <a role="button" class="button showall" href="javascript:">Afficher / masquer les éléments invisibles</a>
     <table>
-        <tr>
-            <th></th>
-            <th>Titre</th>
-            <th>Adresse</th>
-            <th></th>
-        </tr>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Titre</th>
+                <th>Adresse</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
         <?php foreach ($galerie->getItems() as $k => $v) { ?>
             <tr class="<?php if ($v->getHidden()) { ?>hidden<?php } else { ?>visible<?php } ?>">
                 <td><img width="128" src="<?php echo UPLOAD . 'galerie/' . $v->getImg(); ?>" alt="<?php echo $v->getImg(); ?>" /></td>
-                <td><?php echo $v->getTitle(); ?><br><?php if ($v->getCategory() != '') {
-            echo '<i>' . $v->getCategory() . '</i>';
-        } ?></td>
-                <td><input readonly="readonly" type="text" value="<?php echo $core->getConfigVal('siteUrl') . str_replace('..', '', UPLOAD) . 'galerie/' . $v->getImg(); ?>" /></td>
+                <td><?php echo $v->getTitle(); ?><br><?php
+                    if ($v->getCategory() != '') {
+                        echo '<i>' . $v->getCategory() . '</i>';
+                    }
+                    ?></td>
+                <td><input class="small" readonly="readonly" type="text" value="<?php echo $core->getConfigVal('siteUrl') . str_replace('..', '', UPLOAD) . 'galerie/' . $v->getImg(); ?>" /></td>
                 <td>
-                    <a href="index.php?p=galerie&action=edit&id=<?php echo $v->getId(); ?>" class="button">Modifier</a>
-                    <a href="index.php?p=galerie&action=del&id=<?php echo $v->getId(); ?>&token=<?php echo administrator::getToken(); ?>" onclick = "if (!confirm('Supprimer cet élément ?'))
-                                return false;" class="button alert">Supprimer</a>
+                    <div role="group">
+                        <a role="button" class="small" href="index.php?p=galerie&action=edit&id=<?php echo $v->getId(); ?>">Modifier</a>
+                        <a role="button" class="small alert" href="index.php?p=galerie&action=del&id=<?php echo $v->getId(); ?>&token=<?php echo administrator::getToken(); ?>" onclick = "if (!confirm('Supprimer cet élément ?'))
+                                            return false;">Supprimer</a>
+                    </div>
                 </td>
             </tr>
-    <?php } ?>
+        <?php } ?>
     </table>
-    <?php } ?>
+<?php } ?>
 
 <?php if ($mode == 'edit') { ?>
     <form method="post" action="index.php?p=galerie&action=save" enctype="multipart/form-data">
-    <?php show::adminTokenField(); ?>
+        <?php show::adminTokenField(); ?>
         <input type="hidden" name="id" value="<?php echo $item->getId(); ?>" />
         <h3>Paramètres</h3>
         <p>
@@ -44,9 +48,9 @@ include_once(ROOT . 'admin/header.php');
         <p>
             <label>
                 Catégorie
-    <?php foreach ($galerie->listCategories() as $k => $v) { ?>
+                <?php foreach ($galerie->listCategories() as $k => $v) { ?>
                     &nbsp;&nbsp;&#8594; <a class="category" href="javascript:"><?php echo $v; ?></a>
-    <?php } ?>
+                <?php } ?>
             </label><br>
             <input type="text" name="category" id="category" value="<?php echo $item->getCategory(); ?>" />
         </p>
@@ -69,7 +73,7 @@ include_once(ROOT . 'admin/header.php');
             <label>Fichier (jpg)</label><br>
             <input type="file" name="file" accept="image/*" <?php if ($item->getImg() == '') { ?>required="required"<?php } ?> />
             <br>
-    <?php if ($item->getImg() != '') { ?><img src="<?php echo UPLOAD; ?>galerie/<?php echo $item->getImg(); ?>" alt="<?php echo $item->getImg(); ?>" /><?php } ?>
+            <?php if ($item->getImg() != '') { ?><img src="<?php echo UPLOAD; ?>galerie/<?php echo $item->getImg(); ?>" alt="<?php echo $item->getImg(); ?>" /><?php } ?>
         </p>
 
         <p><button type="submit" class="button">Enregistrer</button></p>

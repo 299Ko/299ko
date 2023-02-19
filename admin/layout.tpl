@@ -30,7 +30,7 @@
                 <nav id="header_content">	
                     <ul>
                         <li><a href="javascript:" id="open_nav"><i class="bi bi-list"></i></a></li>
-                        <li><span id="page-title">{{ runPlugin.getInfoVal[name] }}</span></li>
+                        <li><span id="page-title">{{ runPlugin.getInfoVal(name) }}</span></li>
                     </ul>
                     <ul id="header-site-links">
                         <li><a target="_blank" href="../">Voir le site</a></li>
@@ -73,7 +73,7 @@
                                 </article>
                             </div>
                         {% ENDIF %}
-                        {% HOOK.ACTION.adminToolsTemplates[runPlugin.getName] %}
+                        {% HOOK.ACTION.adminToolsTemplates(runPlugin.getName) %}
                     </div>
                     {{ CONTENT }}
                 </div>

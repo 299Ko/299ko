@@ -15,19 +15,28 @@
     <body>
         <div id="container">
             <div id="header">
-                <div id="header_content">
+                <nav id="header_content">
                     <div id="mobile_menu"></div>
-                    <p id="siteName"><a href="{{ show.siteUrl }}">{{ show.siteName }}</a></p>
+                    <ul id="siteName">
+                        <li>
+                            <a href="{{ show.siteUrl }}">{{ show.siteName }}</a>
+                        </li>
+                    </ul>
                     <ul id="navigation">
                         {{ show.mainNavigation }}
+                    </ul>
+                    <ul id="end-navigation">
                         {% HOOK.ACTION.endMainNavigation %}
                     </ul>
-                </div>
+                </nav>
             </div>
             <div id="alert-msg">
                 {{ show.displayMsg }}
             </div>
-            <div id="banner"></div>
+            <div id="banner">
+                {% HOOK.ACTION.topBanner %}
+                {% HOOK.ACTION.bottomBanner %}
+            </div>
             <div id="body">
                 <div id="content" class="{{ show.pluginId }}">
                     {{ show.mainTitle }}
@@ -39,16 +48,16 @@
                     </aside>
                 {% ENDIF %}
             </div>
-        <div id="footer">
-            <div id="footer_content">
-                {% HOOK.ACTION.footer %}
-                <p>
-                    <a target='_blank' href='https://github.com/299ko/'>Just using 299ko</a> - Thème {{ show.theme }} - <a rel="nofollow" href="{{ util.urlBuild[ , 1] }}">Administration</a>
-                </p>
-                {% HOOK.ACTION.endFooter %}
+            <div id="footer">
+                <div id="footer_content">
+                    {% HOOK.ACTION.footer %}
+                    <p>
+                        <a target='_blank' href='https://github.com/299ko/'>Just using 299ko</a> - Thème {{ show.theme }} - <a rel="nofollow" href="{{ util.urlBuild( , 1) }}">Administration</a>
+                    </p>
+                    {% HOOK.ACTION.endFooter %}
+                </div>
             </div>
         </div>
-    </div>
-{% HOOK.ACTION.endFrontBody %}
-</body>
+        {% HOOK.ACTION.endFrontBody %}
+    </body>
 </html>

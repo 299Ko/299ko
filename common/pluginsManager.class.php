@@ -71,6 +71,8 @@ class pluginsManager {
         @util::writeJsonFile(DATA_PLUGIN . $name . '/config.json', $config);
         @chmod(DATA_PLUGIN . $name . '/config.json', 0644);
         // Appel de la fonction d'installation du plugin
+        if (file_exists(PLUGINS . $name .'/' . $name . '.php'))
+        require_once PLUGINS . $name .'/' . $name . '.php';
         if (function_exists($name . 'Install'))
             call_user_func($name . 'Install');
 

@@ -71,8 +71,13 @@ class util {
         return $url;
     }
 
-## Transforme une chaîne en URL
 
+    /**
+     * Normalize a string to be ready to use for an URL
+     *
+     * @param string    String to normalize
+     * @return string   Normalized string
+     */
     public static function strToUrl($str) {
         $str = str_replace('&', 'et', $str);
         if ($str !== mb_convert_encoding(mb_convert_encoding($str, 'UTF-32', 'UTF-8'), 'UTF-8', 'UTF-32'))
@@ -82,6 +87,8 @@ class util {
         $str = preg_replace(array('`[^a-z0-9]`i', '`[-]+`'), '-', $str);
         return strtolower(trim($str, '-'));
     }
+    
+    
 
     ## Vérifie si la chaîne est un email valide
 

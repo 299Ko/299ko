@@ -9,7 +9,7 @@
  */
 defined('ROOT') OR exit('No direct script access allowed');
 
-class CategoriesManager {
+class BannerEntriesManager {
 
     protected $file;
     protected $pluginId;

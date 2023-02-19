@@ -22,8 +22,8 @@ include_once(THEMES . $core->getConfigVal('theme') . '/header.php');
     <ul id="list">
         <?php foreach ($galerie->getItems() as $k => $obj)
             if (!$obj->getHidden()) { ?>
-                <li class="category_<?php echo util::strToUrl($obj->getCategory()); ?> category_all" style="background-image:url(<?php echo UPLOAD; ?>galerie/<?php echo $obj->getImg(); ?>);">
-                    <a href="<?php echo UPLOAD; ?>galerie/<?php echo $obj->getImg(); ?>" data-fancybox="gallery" data-caption="<?php echo $obj->getTitle(); ?><br><?php echo $obj->getCategory(); ?><br><?php echo htmlentities($obj->getContent()); ?>">
+        <li class="category_<?php echo util::strToUrl($obj->getCategory()); ?> category_all" style="background-image:url(<?php echo util::urlBuild(UPLOAD . 'galerie/' . $obj->getImg()); ?>);">
+                    <a href="<?php echo util::urlBuild(UPLOAD . 'galerie/' . $obj->getImg()); ?>" data-fancybox="gallery" data-caption="<?php echo $obj->getTitle(); ?><br><?php echo $obj->getCategory(); ?><br><?php echo htmlentities($obj->getContent()); ?>">
             <?php if ($runPlugin->getConfigVal('showTitles')) { ?><span><?php echo $obj->getTitle(); ?></span><?php } ?>
                     </a>
                 </li>

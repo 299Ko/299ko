@@ -20,7 +20,7 @@ include_once(ROOT . 'admin/header.php');
         <textarea readonly="readonly"><?php echo $emails; ?></textarea>
     </p>
 
-    <a href="index.php?p=contact&action=emptymails&token=<?php echo administrator::getToken(); ?>" class="button alert"
+    <a href="index.php?p=contact&action=emptymails&token=<?php echo administrator::getToken(); ?>" role="button" class="alert"
        onclick="return(confirm('Êtes-vous sûr de vouloir vider la base des adresses mail collectées ?'));">Supprimer la base</a> 
 </form>
 
