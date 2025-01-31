@@ -10,6 +10,9 @@
  * 
  * @package 299Ko https://github.com/299Ko/299ko
  */
+
+const ACCESS_DENIED = 'Access denied !';
+
 defined('ROOT') or exit('Access denied!');
 
 class core
@@ -337,34 +340,38 @@ class core
 
     public function install()
     {
-        $install = true;
         @chmod(ROOT . '.htaccess', 0604);
         if (!is_dir(DATA) && (!@mkdir(DATA) || !@chmod(DATA, 0755)))
-            $install = false;
-        if ($install) {
-            if (!file_exists(DATA . '.htaccess')) {
-                if (!@file_put_contents(DATA . '.htaccess', "Require all denied", 0604))
+            return false;
+
+        $install = true;
+        if (!file_exists(DATA . '.htaccess') && !@file_put_contents(DATA . '.htaccess', 'Require all denied' . PHP_EOL, 0604)) {
                     $install = false;
             }
-            if (!is_dir(DATA_PLUGIN) && (!@mkdir(DATA_PLUGIN) || !@chmod(DATA_PLUGIN, 0755)))
-                $install = false;
-            if (!is_dir(UPLOAD) && (!@mkdir(UPLOAD) || !@chmod(UPLOAD, 0755)))
-                $install = false;
-            if (!file_exists(UPLOAD . '.htaccess')) {
-                if (!@file_put_contents(UPLOAD . '.htaccess', "Require all granted", 0604))
+        if (!is_dir(DATA_PLUGIN) && (!@mkdir(DATA_PLUGIN) || !@chmod(DATA_PLUGIN, 0755))) {
                     $install = false;
             }
-            if (!file_exists(__FILE__) || !@chmod(__FILE__, 0644))
-                $install = false;
-            $key = uniqid(true);
-            if (
-                !file_exists(DATA . 'key.php') && !@file_put_contents(DATA
-                    . 'key.php', "<?php\ndefined('ROOT') OR exit"
-                    . "('Access denied!');"
-                    . "\ndefine('KEY', '$key'); ?>", 0604)
-            )
+        if (!is_dir(UPLOAD) && (!@mkdir(UPLOAD) || !@chmod(UPLOAD, 0755))) {
                 $install = false;
         }
+        if (!file_exists(UPLOAD . '.htaccess') && !@file_put_contents(UPLOAD . '.htaccess', 'Require all granted' . PHP_EOL, 0604)) {
+            $install = false;
+        }
+
+        $key = uniqid(true);
+        $filename = DATA . 'key.php';
+        if (!file_exists($filename)) {
+            ob_start();
+            echo '<?php' . PHP_EOL;
+?>
+defined('ROOT') or exit('<?= ACCESS_DENIED ?>');
+const KEY = '<?= $key ?>';
+<?php
+            if(!@file_put_contents($filename, ob_get_clean() . PHP_EOL, 0604)) {
+                $install = false;
+           }
+        }
+
         return $install;
     }
 
@@ -439,7 +446,9 @@ function logg($message, $severity = 'INFO')
  */
 function debug($message):void
 {
-    echo '<pre>';
-    print_r($message);
-    echo '</pre>';
+?>
+<pre>
+<?php print_r($message); ?>
+</pre>
+<?php
 }

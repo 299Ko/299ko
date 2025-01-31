@@ -7,7 +7,7 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
 defined('ROOT') or exit('Access denied!');
@@ -38,7 +38,7 @@ class util
     /**
      * Truncate an HTML content and keep only the <p> and <br> tags
      * It save the new lines and dont cut on a word
-     * 
+     *
      * @param  string $str      Content to truncate
      * @param  int    $length   Number of characters to keep
      * @param  string $add      Text to add after the content if truncated
@@ -48,8 +48,8 @@ class util
     {
         $str = str_replace("<br />", "<br>", $str);
         $no_tags_content = strip_tags($str, '<p><br>');
-        $no_tags_content = str_replace("<p>", "<br>", $no_tags_content);
-        $no_tags_content = str_replace("</p>", "", $no_tags_content);
+        $no_tags_content = str_replace('<p>', '<br>', $no_tags_content);
+        $no_tags_content = str_replace('</p>', '', $no_tags_content);
         if (strlen($no_tags_content) > $length) {
             return substr($no_tags_content, 0, strpos($no_tags_content, ' ', $length)) . $add;
         } else {
@@ -85,11 +85,16 @@ class util
 
     public static function sendEmail($from, $reply, $to, $subject, $msg)
     {
-        $headers = "From: " . $from . "\r\n";
-        $headers .= "Reply-To: " . $reply . "\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
-        $headers .= 'Content-Type: text/plain; charset="utf-8"' . "\r\n";
-        $headers .= 'Content-Transfer-Encoding: 8bit';
+        $headers = implode(
+            "\r\n",
+            array(
+                'From: ' . $from,
+                'Reply-To: ' . $reply,
+                'X-Mailer: 299ko',
+                'Content-Type: text/plain; charset="utf-8"',
+                'Content-Transfer-Encoding: 8bit',
+            )
+        );
         if (mail($to, $subject, $msg, $headers)) {
             return true;
         }
@@ -106,15 +111,17 @@ class util
 
     /**
      * List a directory and return an array with files and folders (separated). This function is not recursive
-     * 
+     *
      * @param string $folder Path to scan
      * @param array $not Array of files to exclude
      * @return array $data['dir] : Directories / $data['file'] : Files
      */
     public static function scanDir(string $folder, array $not = [])
     {
-        $data['dir'] = [];
-        $data['file'] = [];
+        $data = [
+            'dir' => [],
+            'file' => [],
+        ];
         $folder = rtrim($folder, '/') . '/';
         foreach (scandir($folder) as $file) {
             if ($file[0] != '.' && !in_array($file, $not)) {
@@ -208,7 +215,7 @@ class util
             // Date from string, old version
             $dateObj = new DateTime($date);
         }
-        return $dateObj->format(Lang::get("date-hour-format"));
+        return $dateObj->format(Lang::get('date-hour-format'));
     }
 
     public static function getDate($date) :string {
@@ -220,7 +227,7 @@ class util
             // Date from string, old version
             $dateObj = new DateTime($date);
         }
-        return $dateObj->format(Lang::get("date-only"));
+        return $dateObj->format(Lang::get('date-only'));
     }
 
     public static function getNaturalDate($date) {
@@ -233,12 +240,12 @@ class util
             $dateObj = new DateTime($date);
         }
         $cal = IntlCalendar::fromDateTime($dateObj->format('Y-m-d H:i:s'));
-        return IntlDateFormatter::formatObject($cal, Lang::get("date-natural-date-hour-format"), Lang::get('locale'));
+        return IntlDateFormatter::formatObject($cal, Lang::get('date-natural-date-hour-format'), Lang::get('locale'));
     }
 
     /**
      * Build absolute URL with siteURL saved in config.json
-     * 
+     *
      * @param  string URI
      * @param  bool   is Admin location
      * @return string URL
@@ -259,16 +266,12 @@ class util
 
     /**
      * Return current page URL
-     * 
+     *
      * @return string
      */
     public static function getCurrentURL()
     {
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-            $url = "https";
-        } else {
-            $url = "http";
-        }
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')  ? 'https' : 'http';
         $url .= "://";
         $url .= $_SERVER['HTTP_HOST'];
         $url .= $_SERVER['REQUEST_URI'];
@@ -300,15 +303,21 @@ class util
      */
     public static function generateTableOfContents($htmlContent, $title): string
     {
-        $toc = '<details class="toc-container">
-        <summary><header><h4>' . $title . '</h4></header>';
         $inner = self::generateInnerTOC($htmlContent);
         if (!$inner) {
             return false;
         }
-        $toc .= $inner;
-        $toc .= '</summary></details>';
-        return $toc;
+
+        ob_start();
+?>
+<details class="toc-container">
+    <summary>
+        <header><h4><?= $title ?></h4></header>
+<?= $inner ?>
+    </summary>
+</details>
+<?php
+        return ob_get_clean();
     }
 
     /**
@@ -318,14 +327,20 @@ class util
      */
     public static function generateTableOfContentAsModule($htmlContent): string
     {
-        $toc = '<details class="toc-container"><summary>';
         $inner = self::generateInnerTOC($htmlContent);
         if (!$inner) {
             return false;
         }
-        $toc .= $inner;
-        $toc .= '</summary></details>';
-        return $toc;
+
+        ob_start();
+?>
+<details class="toc-container">
+    <summary>
+<?= $inner ?>
+    </summary>
+</details>
+<?php
+        return ob_get_clean();
     }
 
     /**
@@ -336,31 +351,34 @@ class util
     protected static function generateInnerTOC($htmlContent): string
     {
         preg_match_all(
-            '#<h([1-6]) *id="(.*)">(.*)<\/h[1-6]>#isU',
+            '#<h([1-6])\s*id="(.*)">(.*)<\/h[1-6]>#isU',
             $htmlContent,
             $headings,
             PREG_SET_ORDER
         );
 
-        $toc = '';
+        ob_start();
         $current_level = 0;
         $items = 0;
+        $tab = '';
         foreach ($headings as $heading) {
-            $id = $heading[2];
-            $text = $heading[3];
-            $link = '<a href="#' . $id . '">' . $text . '</a>';
             $level = $heading[1];
+            $id = $heading[2];
+            $link = '<a href="#' . $id . '">' . trim($heading[3]) . '</a>';
+
+            if($level === $current_level) {
+                $toc .= ($items ? '</li>' . "\n" : '') . $tab . '<li>' . $link;
+                $items++;
+                continue;
+            }
 
             if ($level > $current_level) {
                 // Create new ol and up to higher level
                 for ($a = 0; $a < $level - $current_level; $a++) {
-                    $toc .= "\n" . str_repeat("\t", $current_level * 2) . '<ol class="toc-level-' . $level . '">' . "\n" . str_repeat("\t", ($current_level * 2) + 1) . '<li>';
+                    $toc .= PHP_EOL . str_repeat("\t", $current_level * 2) . '<ol class="toc-level-' . $level . '">' . PHP_EOL . $tab . '<li>';
                 }
                 $toc .= $link;
                 $items = 1;
-            } elseif ($level === $current_level) {
-                $toc .= ($items ? '</li>' . "\n" : '') . str_repeat("\t", ($level * 2) - 1) . '<li>' . $link;
-                $items++;
             } else {
                 // Close ol and down level
                 for ($a = 0; $a < $current_level - $level; $a++) {
@@ -371,14 +389,16 @@ class util
                 $items = 0;
             }
             $current_level = $level;
+            $tab = str_repeat("\t", ($current_level * 2) + 1);
         }
-        
-        if (!isset($level)) {
+
+        if ($current_level === 0) {
             // No heading
             return false;
         }
+
         // Close all opened ol
-        for ($a = $level - 1; $a >= 0; $a--) {
+        for ($a = $current_level - 1; $a >= 0; $a--) {
             $toc .= "\n" . str_repeat("\t", ($a * 2) + 1) . '</li>' .
                 "\n" . str_repeat("\t", $a * 2) . '</ol>';
         }

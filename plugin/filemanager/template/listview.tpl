@@ -82,7 +82,7 @@
     <button class="success" id="addFolderNameValidate" data-fancybox-close tabindex="-1" onClick="goCreateFolder(document.getElementById('addFolderName').value)">{{ Lang.filemanager.add-folder }}</button>
 </section>
 
-<form id="fmRedirectFlat" method="POST" action=" {{ redirectUrl }}">
+<form id="fmRedirectFlat" method="POST" action="{{ redirectUrl }}">
     <input type="text" id="fmCurrDir" name="fmCurrDir" value="{{ dir }}" />
     <input type="text" id="fmFolderToSee" name="fmFolderToSee" value="" />
 </form>
