@@ -147,6 +147,25 @@ class util
         return $data;
     }
 
+    /**
+     * Delete recursively a directory
+     *
+     * @param string $dir Dir to delete
+     * @return bool
+     */
+    public static function deleteDir($dir): bool {
+        if (!file_exists($dir)) return true;
+        if (!is_dir($dir)) {
+            unlink($dir);
+            return true;
+        }
+        foreach (scandir($dir) as $item) {
+            if ($item == '.' || $item == '..') continue;
+            static::deleteDir($dir . DS . $item);
+        }
+        return rmdir($dir);
+    }
+
     ## Sauvegarde un tableau dans un fichier au format json
 
     public static function writeJsonFile($file, $data)

@@ -1,5 +1,15 @@
 <?php
 /**
+ * @copyright (C) 2025, 299Ko
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
+ * @author Maxime Blanc <nemstudio18@gmail.com>
+ * @author Maxence Cauderlier <mx.koder@gmail.com>
+ * 
+ * @package 299Ko https://github.com/299Ko/299ko
+ *
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
+ */
+/**
  * MarketplaceAdminController
  *
  * Ce contrôleur gère l'interface d'administration de la marketplace.
@@ -10,39 +20,36 @@
  */
 
 defined('ROOT') or exit('Access denied!');
-defined('KEY') or exit('Access denied!');
 
-class MarketplaceAdminController extends AdminController {
+class MarketplaceAdminController extends AdminController
+{
 
-    private $cacheDir = PLUGINS . 'marketplace/cache/';
+    protected $cacheDir = DATA_PLUGIN . 'marketplace' . DS . 'cache' . DS;
+
+    protected $likesFile = DATA_PLUGIN . 'marketplace' . DS . 'likes.json';
 
     /**
      * Affiche la page marketplace en admin.
      *
      * @return AdminResponse
      */
-    public function index() {
+    public function index()
+    {
 
         // Chargement de la configuration du plugin
-        $configFile = PLUGINS . 'marketplace/param/config.json';
-        $config = json_decode(file_get_contents($configFile), true);
+        $config = $this->runPlugin->getConfig();
         $repos = [
             'plugins' => $config['githubPluginsRepo'],
-            'themes'  => $config['githubThemesRepo']
+            'themes' => $config['githubThemesRepo']
         ];
 
         // Récupération du filtre de recherche et de la pagination depuis GET
-        $search    = isset($_GET['search']) ? trim($_GET['search']) : '';
-        $page      = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $perPage   = 5;
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $perPage = 5;
 
         // Lecture du fichier de likes
-        $likesFile = PLUGINS . 'marketplace/data/likes.json';
-        if (file_exists($likesFile)) {
-            $likesData = json_decode(file_get_contents($likesFile), true);
-        } else {
-            $likesData = ["plugins" => [], "themes" => []];
-        }
+        $likesData = util::readJsonFile($this->likesFile);
 
         // Récupération des releases et ajout des likes et infos complémentaires
         $data = [];
@@ -54,14 +61,14 @@ class MarketplaceAdminController extends AdminController {
 
             // Filtrage sur le terme de recherche uniquement
             if ($search !== '') {
-                $releases = array_filter($releases, function($release) use ($search) {
+                $releases = array_filter($releases, function ($release) use ($search) {
                     return (stripos($release['name'], $search) !== false) ||
-                           (stripos($release['body'], $search) !== false);
+                        (stripos($release['body'], $search) !== false);
                 });
             }
 
             // Tri par date décroissante (pour afficher les plus récents en premier)
-            usort($releases, function($a, $b) {
+            usort($releases, function ($a, $b) {
                 return strtotime($b['published_at']) - strtotime($a['published_at']);
             });
 
@@ -70,7 +77,7 @@ class MarketplaceAdminController extends AdminController {
             $totalPages = ceil($total / $perPage);
             $pagination[$type] = [
                 'current' => $page,
-                'total'   => $totalPages
+                'total' => $totalPages
             ];
             $offset = ($page - 1) * $perPage;
             $releases = array_slice($releases, $offset, $perPage);
@@ -82,12 +89,12 @@ class MarketplaceAdminController extends AdminController {
                 $downloadCount = 0;
                 if (isset($release['assets']) && is_array($release['assets'])) {
                     foreach ($release['assets'] as $asset) {
-                        $downloadCount += isset($asset['download_count']) ? (int)$asset['download_count'] : 0;
+                        $downloadCount += isset($asset['download_count']) ? (int) $asset['download_count'] : 0;
                     }
                 }
                 $release['download_count'] = $downloadCount;
                 $releaseId = $release['id'];
-                $release['likes'] = isset($likesData[$type][$releaseId]) ? (int)$likesData[$type][$releaseId] : 0;
+                $release['likes'] = (int) $likesData[$type][$releaseId] ?? 0;
             }
             $data[$type] = $releases;
         }
@@ -115,14 +122,15 @@ class MarketplaceAdminController extends AdminController {
      * @param array $config Configuration du plugin.
      * @return array|null
      */
-    private function fetchGithubData($url, $config) {
+    protected function fetchGithubData($url, $config)
+    {
         // Créer le répertoire de cache s'il n'existe pas
         if (!file_exists($this->cacheDir)) {
             mkdir($this->cacheDir, 0755, true);
         }
         // Nom du fichier cache basé sur l'URL
         $cacheFile = $this->cacheDir . md5($url) . '.json';
-        $cacheDuration = isset($config['cacheDuration']) ? (int)$config['cacheDuration'] : 3600;
+        $cacheDuration = isset($config['cacheDuration']) ? (int) $config['cacheDuration'] : 3600;
 
         // Si le cache existe et n'est pas expiré, l'utiliser
         if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheDuration) {
@@ -151,7 +159,7 @@ class MarketplaceAdminController extends AdminController {
         // Exécution de la requête
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if(curl_errno($ch) || $httpCode !== 200) {
+        if (curl_errno($ch) || $httpCode !== 200) {
             curl_close($ch);
             return null;
         }
@@ -173,7 +181,8 @@ class MarketplaceAdminController extends AdminController {
      * @param string $zipUrl URL de l'archive zip.
      * @return ApiResponse
      */
-    public function installRelease($type, $zipUrl) {
+    public function installRelease($type, $zipUrl)
+    {
         $response = new ApiResponse();
         if (!in_array($type, ['plugins', 'themes'])) {
             $response->status = ApiResponse::STATUS_BAD_REQUEST;
@@ -216,12 +225,13 @@ class MarketplaceAdminController extends AdminController {
         // Copier le contenu extrait dans le répertoire d'installation
         $files = scandir($extractDir);
         foreach ($files as $file) {
-            if ($file === '.' || $file === '..') continue;
+            if ($file === '.' || $file === '..')
+                continue;
             $source = $extractDir . '/' . $file;
             $destination = $installDir . $file;
             $this->recurseCopy($source, $destination);
         }
-        $this->deleteDir($extractDir);
+        util::deleteDir($extractDir);
 
         $response->status = ApiResponse::STATUS_ACCEPTED;
         $response->body = "Installation réussie.";
@@ -234,10 +244,11 @@ class MarketplaceAdminController extends AdminController {
      * @param string $src Source.
      * @param string $dst Destination.
      */
-    private function recurseCopy($src, $dst) {
+    protected function recurseCopy($src, $dst)
+    {
         $dir = opendir($src);
         @mkdir($dst, 0755, true);
-        while(false !== ($file = readdir($dir))) {
+        while (false !== ($file = readdir($dir))) {
             if (($file !== '.') && ($file !== '..')) {
                 if (is_dir($src . '/' . $file)) {
                     $this->recurseCopy($src . '/' . $file, $dst . '/' . $file);
@@ -250,31 +261,14 @@ class MarketplaceAdminController extends AdminController {
     }
 
     /**
-     * Supprime récursivement un dossier.
-     *
-     * @param string $dir Répertoire à supprimer.
-     */
-    private function deleteDir($dir) {
-        if (!file_exists($dir)) return;
-        if (!is_dir($dir)) {
-            unlink($dir);
-            return;
-        }
-        foreach (scandir($dir) as $item) {
-            if ($item == '.' || $item == '..') continue;
-            $this->deleteDir($dir . DIRECTORY_SEPARATOR . $item);
-        }
-        rmdir($dir);
-    }
-
-    /**
      * Vérifie les mises à jour pour les plugins ou thèmes installés.
      * Compare la version locale (infos.json) avec la dernière release sur GitHub.
      *
      * @param array $config Configuration du plugin.
      * @return array Tableau d'alertes.
      */
-    private function checkForUpdates($config) {
+    protected function checkForUpdates($config)
+    {
         $alerts = [];
         $installedPluginsDir = PLUGINS;
         $plugins = glob($installedPluginsDir . '*', GLOB_ONLYDIR);
@@ -282,7 +276,8 @@ class MarketplaceAdminController extends AdminController {
             $infosFile = $pluginDir . '/param/infos.json';
             if (file_exists($infosFile)) {
                 $infos = json_decode(file_get_contents($infosFile), true);
-                if (!isset($infos['version'])) continue;
+                if (!isset($infos['version']))
+                    continue;
                 $currentVersion = $infos['version'];
                 // Construire l'URL de la dernière release sur GitHub pour ce plugin
                 $repo = 'https://api.github.com/repos/moncompte/' . strtolower($infos['name']) . '/releases/latest';
@@ -310,7 +305,8 @@ class MarketplaceAdminController extends AdminController {
      *
      * @return ApiResponse
      */
-    public function likeRelease() {
+    public function likeRelease()
+    {
         $response = new ApiResponse();
         $data = json_decode(file_get_contents("php://input"), true);
         $type = isset($data['type']) ? $data['type'] : '';
@@ -322,305 +318,282 @@ class MarketplaceAdminController extends AdminController {
             return $response;
         }
 
-        $likesFile = PLUGINS . 'marketplace/data/likes.json';
-        if (!file_exists($likesFile)) {
-            $likesData = ["plugins" => [], "themes" => []];
-        } else {
-            $likesData = json_decode(file_get_contents($likesFile), true);
-            if (!$likesData) {
-                $likesData = ["plugins" => [], "themes" => []];
-            }
-        }
+        $likesData = util::readJsonFile($this->likesFile);
 
         if (!isset($likesData[$type][$releaseId])) {
             $likesData[$type][$releaseId] = 0;
         }
         $likesData[$type][$releaseId]++;
 
-        file_put_contents($likesFile, json_encode($likesData));
+        util::writeJsonFile($this->likesFile, $likesData);
 
         $response->status = ApiResponse::STATUS_ACCEPTED;
         $response->body = json_encode(["likes" => $likesData[$type][$releaseId]]);
         return $response;
     }
 
-/**
- * Liste les plugins et thèmes disponibles dans la marketplace.
- *
- * @return AdminResponse
- */
-public function officialZone() {
-    // Chargement de la configuration du plugin
-    $configFile = PLUGINS . 'marketplace/param/config.json';
-    $config = json_decode(file_get_contents($configFile), true);
+    /**
+     * Liste les plugins et thèmes disponibles dans la marketplace.
+     *
+     * @return AdminResponse
+     */
+    public function officialZone()
+    {
+        // Chargement de la configuration du plugin
+        $configFile = PLUGINS . 'marketplace/param/config.json';
+        $config = json_decode(file_get_contents($configFile), true);
 
-    // Récupération des paramètres de recherche et de pagination depuis GET
-    $search  = isset($_GET['search']) ? trim($_GET['search']) : '';
-    $page    = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $perPage = 5;
+        // Récupération des paramètres de recherche et de pagination depuis GET
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $perPage = 5;
 
-    // Lecture du fichier de likes
-    $likesFile = PLUGINS . 'marketplace/data/likes.json';
-    if (file_exists($likesFile)) {
-        $likesData = json_decode(file_get_contents($likesFile), true);
-    } else {
-        $likesData = ["plugins" => [], "themes" => []];
-    }
+        // Lecture du fichier de likes
+        $likesData = util::readJsonFile($this->likesFile);
 
-    /* ------------------- Traitement des Plugins ------------------- */
+        /* ------------------- Traitement des Plugins ------------------- */
 
-    $repoPlugins = $config['githubPluginsRepo'];
-    $pluginsReleases = $this->fetchGithubData($repoPlugins, $config);
-    if (!$pluginsReleases) {
-        $pluginsReleases = [];
-    }
-    // Filtrage sur le terme de recherche si présent
-    if ($search !== '') {
-        $pluginsReleases = array_filter($pluginsReleases, function($release) use ($search) {
-            return (stripos($release['name'], $search) !== false) ||
-                   (stripos($release['body'], $search) !== false);
-        });
-    }
-    // Tri par date décroissante
-    usort($pluginsReleases, function($a, $b) {
-        return strtotime($b['published_at']) - strtotime($a['published_at']);
-    });
-    // Pagination
-    $totalPlugins    = count($pluginsReleases);
-    $totalPagesPlugins = ceil($totalPlugins / $perPage);
-    $offsetPlugins   = ($page - 1) * $perPage;
-    $pluginsReleases = array_slice($pluginsReleases, $offsetPlugins, $perPage);
-    // Ajout des infos complémentaires et des likes
-    foreach ($pluginsReleases as &$release) {
-        $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
-        $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
-        $downloadCount = 0;
-        if (isset($release['assets']) && is_array($release['assets'])) {
-            foreach ($release['assets'] as $asset) {
-                $downloadCount += isset($asset['download_count']) ? (int)$asset['download_count'] : 0;
-            }
+        $repoPlugins = $config['githubPluginsRepo'];
+        $pluginsReleases = $this->fetchGithubData($repoPlugins, $config);
+        if (!$pluginsReleases) {
+            $pluginsReleases = [];
         }
-        $release['download_count'] = $downloadCount;
-        $releaseId = $release['id'];
-        $release['likes'] = isset($likesData['plugins'][$releaseId]) ? (int)$likesData['plugins'][$releaseId] : 0;
-    }
-
-    /* ------------------- Traitement des Thèmes ------------------- */
-
-    $repoThemes = $config['githubThemesRepo'];
-    $themesReleases = $this->fetchGithubData($repoThemes, $config);
-    if (!$themesReleases) {
-        $themesReleases = [];
-    }
-    // Filtrage sur le terme de recherche si présent
-    if ($search !== '') {
-        $themesReleases = array_filter($themesReleases, function($release) use ($search) {
-            return (stripos($release['name'], $search) !== false) ||
-                   (stripos($release['body'], $search) !== false);
-        });
-    }
-    // Tri par date décroissante
-    usort($themesReleases, function($a, $b) {
-        return strtotime($b['published_at']) - strtotime($a['published_at']);
-    });
-    // Pagination
-    $totalThemes    = count($themesReleases);
-    $totalPagesThemes = ceil($totalThemes / $perPage);
-    $offsetThemes   = ($page - 1) * $perPage;
-    $themesReleases = array_slice($themesReleases, $offsetThemes, $perPage);
-    // Ajout des infos complémentaires et des likes
-    foreach ($themesReleases as &$release) {
-        $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
-        $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
-        $downloadCount = 0;
-        if (isset($release['assets']) && is_array($release['assets'])) {
-            foreach ($release['assets'] as $asset) {
-                $downloadCount += isset($asset['download_count']) ? (int)$asset['download_count'] : 0;
-            }
+        // Filtrage sur le terme de recherche si présent
+        if ($search !== '') {
+            $pluginsReleases = array_filter($pluginsReleases, function ($release) use ($search) {
+                return (stripos($release['name'], $search) !== false) ||
+                    (stripos($release['body'], $search) !== false);
+            });
         }
-        $release['download_count'] = $downloadCount;
-        $releaseId = $release['id'];
-        $release['likes'] = isset($likesData['themes'][$releaseId]) ? (int)$likesData['themes'][$releaseId] : 0;
+        // Tri par date décroissante
+        usort($pluginsReleases, function ($a, $b) {
+            return strtotime($b['published_at']) - strtotime($a['published_at']);
+        });
+        // Pagination
+        $totalPlugins = count($pluginsReleases);
+        $totalPagesPlugins = ceil($totalPlugins / $perPage);
+        $offsetPlugins = ($page - 1) * $perPage;
+        $pluginsReleases = array_slice($pluginsReleases, $offsetPlugins, $perPage);
+        // Ajout des infos complémentaires et des likes
+        foreach ($pluginsReleases as &$release) {
+            $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
+            $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
+            $downloadCount = 0;
+            if (isset($release['assets']) && is_array($release['assets'])) {
+                foreach ($release['assets'] as $asset) {
+                    $downloadCount += isset($asset['download_count']) ? (int) $asset['download_count'] : 0;
+                }
+            }
+            $release['download_count'] = $downloadCount;
+            $releaseId = $release['id'];
+            $release['likes'] = (int) $likesData['plugins'][$releaseId] ?? 0;
+        }
+
+        /* ------------------- Traitement des Thèmes ------------------- */
+
+        $repoThemes = $config['githubThemesRepo'];
+        $themesReleases = $this->fetchGithubData($repoThemes, $config);
+        if (!$themesReleases) {
+            $themesReleases = [];
+        }
+        // Filtrage sur le terme de recherche si présent
+        if ($search !== '') {
+            $themesReleases = array_filter($themesReleases, function ($release) use ($search) {
+                return (stripos($release['name'], $search) !== false) ||
+                    (stripos($release['body'], $search) !== false);
+            });
+        }
+        // Tri par date décroissante
+        usort($themesReleases, function ($a, $b) {
+            return strtotime($b['published_at']) - strtotime($a['published_at']);
+        });
+        // Pagination
+        $totalThemes = count($themesReleases);
+        $totalPagesThemes = ceil($totalThemes / $perPage);
+        $offsetThemes = ($page - 1) * $perPage;
+        $themesReleases = array_slice($themesReleases, $offsetThemes, $perPage);
+        // Ajout des infos complémentaires et des likes
+        foreach ($themesReleases as &$release) {
+            $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
+            $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
+            $downloadCount = 0;
+            if (isset($release['assets']) && is_array($release['assets'])) {
+                foreach ($release['assets'] as $asset) {
+                    $downloadCount += isset($asset['download_count']) ? (int) $asset['download_count'] : 0;
+                }
+            }
+            $release['download_count'] = $downloadCount;
+            $releaseId = $release['id'];
+            $release['likes'] = (int) $likesData['themes'][$releaseId] ?? 0;
+        }
+
+        /* ------------------- Création de la réponse officielle ------------------- */
+
+        $response = new AdminResponse();
+        $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-official');
+        $tpl->set('plugins', $pluginsReleases);
+        $tpl->set('themes', $themesReleases);
+        $tpl->set('searchQuery', $search);
+        $tpl->set('paginationPlugins', [
+            'current' => $page,
+            'total' => $totalPagesPlugins
+        ]);
+        $tpl->set('paginationThemes', [
+            'current' => $page,
+            'total' => $totalPagesThemes
+        ]);
+        $tpl->set('token', $this->user->token);
+        $response->addTemplate($tpl);
+
+        return $response;
     }
-
-    /* ------------------- Création de la réponse officielle ------------------- */
-
-    $response = new AdminResponse();
-    $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-official');
-    $tpl->set('plugins', $pluginsReleases);
-    $tpl->set('themes', $themesReleases);
-    $tpl->set('searchQuery', $search);
-    $tpl->set('paginationPlugins', [
-        'current' => $page,
-        'total'   => $totalPagesPlugins
-    ]);
-    $tpl->set('paginationThemes', [
-        'current' => $page,
-        'total'   => $totalPagesThemes
-    ]);
-    $tpl->set('token', $this->user->token);
-    $response->addTemplate($tpl);
-
-    return $response;
-}
-
-
-
 
     /**
- * Liste les plugins disponibles dans la marketplace.
- *
- * @return AdminResponse
- */
-public function listPlugins() {
-    // Chargement de la configuration du plugin
-    $configFile = PLUGINS . 'marketplace/param/config.json';
-    $config = json_decode(file_get_contents($configFile), true);
-    $repo = $config['githubPluginsRepo'];
+     * Liste les plugins disponibles dans la marketplace.
+     *
+     * @return AdminResponse
+     */
+    public function listPlugins()
+    {
+        // Chargement de la configuration du plugin
+        $configFile = PLUGINS . 'marketplace/param/config.json';
+        $config = json_decode(file_get_contents($configFile), true);
+        $repo = $config['githubPluginsRepo'];
 
-    // Récupération des paramètres de recherche et de pagination depuis GET
-    $search    = isset($_GET['search']) ? trim($_GET['search']) : '';
-    $page      = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $perPage   = 5;
+        // Récupération des paramètres de recherche et de pagination depuis GET
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $perPage = 5;
 
-    // Lecture du fichier de likes
-    $likesFile = PLUGINS . 'marketplace/data/likes.json';
-    if (file_exists($likesFile)) {
-        $likesData = json_decode(file_get_contents($likesFile), true);
-    } else {
-        $likesData = ["plugins" => [], "themes" => []];
-    }
+        // Lecture du fichier de likes
+        $likesData = util::readJsonFile($this->likesFile);
 
-    // Récupération des releases pour les plugins
-    $releases = $this->fetchGithubData($repo, $config);
-    if (!$releases) {
-        $releases = [];
-    }
-
-    // Filtrage sur le terme de recherche si présent
-    if ($search !== '') {
-        $releases = array_filter($releases, function($release) use ($search) {
-            return (stripos($release['name'], $search) !== false) ||
-                   (stripos($release['body'], $search) !== false);
-        });
-    }
-
-    // Tri par date décroissante
-    usort($releases, function($a, $b) {
-        return strtotime($b['published_at']) - strtotime($a['published_at']);
-    });
-
-    // Pagination
-    $total = count($releases);
-    $totalPages = ceil($total / $perPage);
-    $offset = ($page - 1) * $perPage;
-    $releases = array_slice($releases, $offset, $perPage);
-
-    // Ajout des infos complémentaires et des likes
-    foreach ($releases as &$release) {
-        $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
-        $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
-        $downloadCount = 0;
-        if (isset($release['assets']) && is_array($release['assets'])) {
-            foreach ($release['assets'] as $asset) {
-                $downloadCount += isset($asset['download_count']) ? (int)$asset['download_count'] : 0;
-            }
+        // Récupération des releases pour les plugins
+        $releases = $this->fetchGithubData($repo, $config);
+        if (!$releases) {
+            $releases = [];
         }
-        $release['download_count'] = $downloadCount;
-        $releaseId = $release['id'];
-        $release['likes'] = isset($likesData['plugins'][$releaseId]) ? (int)$likesData['plugins'][$releaseId] : 0;
-    }
 
-    // Création et envoi de la réponse
-    $response = new AdminResponse();
-    $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-plugins');
-    $tpl->set('releases', $releases);
-    $tpl->set('searchQuery', $search);
-    $tpl->set('pagination', [
-        'current' => $page,
-        'total'   => $totalPages
-    ]);
-    $tpl->set('token', $this->user->token);
-    $response->addTemplate($tpl);
-    return $response;
-}
-
-/**
- * Liste les thèmes disponibles dans la marketplace.
- *
- * @return AdminResponse
- */
-public function listThemes() {
-    // Chargement de la configuration du plugin
-    $configFile = PLUGINS . 'marketplace/param/config.json';
-    $config = json_decode(file_get_contents($configFile), true);
-    $repo = $config['githubThemesRepo'];
-
-    // Récupération des paramètres de recherche et de pagination depuis GET
-    $search    = isset($_GET['search']) ? trim($_GET['search']) : '';
-    $page      = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $perPage   = 5;
-
-    // Lecture du fichier de likes
-    $likesFile = PLUGINS . 'marketplace/data/likes.json';
-    if (file_exists($likesFile)) {
-        $likesData = json_decode(file_get_contents($likesFile), true);
-    } else {
-        $likesData = ["plugins" => [], "themes" => []];
-    }
-
-    // Récupération des releases pour les thèmes
-    $releases = $this->fetchGithubData($repo, $config);
-    if (!$releases) {
-        $releases = [];
-    }
-
-    // Filtrage sur le terme de recherche si présent
-    if ($search !== '') {
-        $releases = array_filter($releases, function($release) use ($search) {
-            return (stripos($release['name'], $search) !== false) ||
-                   (stripos($release['body'], $search) !== false);
-        });
-    }
-
-    // Tri par date décroissante
-    usort($releases, function($a, $b) {
-        return strtotime($b['published_at']) - strtotime($a['published_at']);
-    });
-
-    // Pagination
-    $total = count($releases);
-    $totalPages = ceil($total / $perPage);
-    $offset = ($page - 1) * $perPage;
-    $releases = array_slice($releases, $offset, $perPage);
-
-    // Ajout des infos complémentaires et des likes
-    foreach ($releases as &$release) {
-        $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
-        $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
-        $downloadCount = 0;
-        if (isset($release['assets']) && is_array($release['assets'])) {
-            foreach ($release['assets'] as $asset) {
-                $downloadCount += isset($asset['download_count']) ? (int)$asset['download_count'] : 0;
-            }
+        // Filtrage sur le terme de recherche si présent
+        if ($search !== '') {
+            $releases = array_filter($releases, function ($release) use ($search) {
+                return (stripos($release['name'], $search) !== false) ||
+                    (stripos($release['body'], $search) !== false);
+            });
         }
-        $release['download_count'] = $downloadCount;
-        $releaseId = $release['id'];
-        $release['likes'] = isset($likesData['themes'][$releaseId]) ? (int)$likesData['themes'][$releaseId] : 0;
+
+        // Tri par date décroissante
+        usort($releases, function ($a, $b) {
+            return strtotime($b['published_at']) - strtotime($a['published_at']);
+        });
+
+        // Pagination
+        $total = count($releases);
+        $totalPages = ceil($total / $perPage);
+        $offset = ($page - 1) * $perPage;
+        $releases = array_slice($releases, $offset, $perPage);
+
+        // Ajout des infos complémentaires et des likes
+        foreach ($releases as &$release) {
+            $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
+            $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
+            $downloadCount = 0;
+            if (isset($release['assets']) && is_array($release['assets'])) {
+                foreach ($release['assets'] as $asset) {
+                    $downloadCount += isset($asset['download_count']) ? (int) $asset['download_count'] : 0;
+                }
+            }
+            $release['download_count'] = $downloadCount;
+            $releaseId = $release['id'];
+            $release['likes'] = (int) $likesData['plugins'][$releaseId] ?? 0;
+        }
+
+        // Création et envoi de la réponse
+        $response = new AdminResponse();
+        $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-plugins');
+        $tpl->set('releases', $releases);
+        $tpl->set('searchQuery', $search);
+        $tpl->set('pagination', [
+            'current' => $page,
+            'total' => $totalPages
+        ]);
+        $tpl->set('token', $this->user->token);
+        $response->addTemplate($tpl);
+        return $response;
     }
 
-    // Création et envoi de la réponse
-    $response = new AdminResponse();
-    $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-themes');
-    $tpl->set('releases', $releases);
-    $tpl->set('searchQuery', $search);
-    $tpl->set('pagination', [
-        'current' => $page,
-        'total'   => $totalPages
-    ]);
-    $tpl->set('token', $this->user->token);
-    $response->addTemplate($tpl);
-    return $response;
-}
+    /**
+     * Liste les thèmes disponibles dans la marketplace.
+     *
+     * @return AdminResponse
+     */
+    public function listThemes()
+    {
+        // Chargement de la configuration du plugin
+        $configFile = PLUGINS . 'marketplace/param/config.json';
+        $config = json_decode(file_get_contents($configFile), true);
+        $repo = $config['githubThemesRepo'];
+
+        // Récupération des paramètres de recherche et de pagination depuis GET
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $perPage = 5;
+
+        // Lecture du fichier de likes
+        $likesData = util::readJsonFile($this->likesFile);
+
+        // Récupération des releases pour les thèmes
+        $releases = $this->fetchGithubData($repo, $config);
+        if (!$releases) {
+            $releases = [];
+        }
+
+        // Filtrage sur le terme de recherche si présent
+        if ($search !== '') {
+            $releases = array_filter($releases, function ($release) use ($search) {
+                return (stripos($release['name'], $search) !== false) ||
+                    (stripos($release['body'], $search) !== false);
+            });
+        }
+
+        // Tri par date décroissante
+        usort($releases, function ($a, $b) {
+            return strtotime($b['published_at']) - strtotime($a['published_at']);
+        });
+
+        // Pagination
+        $total = count($releases);
+        $totalPages = ceil($total / $perPage);
+        $offset = ($page - 1) * $perPage;
+        $releases = array_slice($releases, $offset, $perPage);
+
+        // Ajout des infos complémentaires et des likes
+        foreach ($releases as &$release) {
+            $release['version'] = isset($release['tag_name']) ? $release['tag_name'] : '';
+            $release['published_at'] = isset($release['published_at']) ? $release['published_at'] : '';
+            $downloadCount = 0;
+            if (isset($release['assets']) && is_array($release['assets'])) {
+                foreach ($release['assets'] as $asset) {
+                    $downloadCount += isset($asset['download_count']) ? (int) $asset['download_count'] : 0;
+                }
+            }
+            $release['download_count'] = $downloadCount;
+            $releaseId = $release['id'];
+            $release['likes'] = (int) $likesData['themes'][$releaseId] ?? 0;
+        }
+
+        // Création et envoi de la réponse
+        $response = new AdminResponse();
+        $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-themes');
+        $tpl->set('releases', $releases);
+        $tpl->set('searchQuery', $search);
+        $tpl->set('pagination', [
+            'current' => $page,
+            'total' => $totalPages
+        ]);
+        $tpl->set('token', $this->user->token);
+        $response->addTemplate($tpl);
+        return $response;
+    }
 
 }
