@@ -1,6 +1,8 @@
 {
-    "githubPluginsRepo": "https://api.github.com/repos/299Ko/plugins/contents/",
-    "githubThemesRepo": "https://api.github.com/repos/moncompte/mon-theme-marketplace/releases",
     "cacheDuration": "3600",
-    "githubToken": "YOUR_GITHUB_TOKEN"
+    "github_token": "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",
+    "repos": {
+        "plugin": "299Ko/plugins",
+        "theme": "299Ko/themes"
+    }
 }

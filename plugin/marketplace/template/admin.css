@@ -1,0 +1,204 @@
+/* -------------------------------------------------------------
+   RESET & GLOBAL STYLES
+------------------------------------------------------------- */
+/* Appliquer le modèle de boîte border-box à tous les éléments */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Styles globaux pour le body */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* -------------------------------------------------------------
+   TITRES & TEXTES
+------------------------------------------------------------- */
+/* Styles pour les titres principaux et secondaires */
+h1, h2 {
+  margin-bottom: 10px;
+  color: #222;
+}
+
+/* -------------------------------------------------------------
+   NAVIGATION MARKETPLACE
+------------------------------------------------------------- */
+/* Conteneur de navigation */
+.navigation-market {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* Liste horizontale pour la navigation */
+.navigation-market ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+/* Suppression des marges sur les éléments de liste */
+.navigation-market li {
+  margin: 0;
+}
+
+/* Liens de navigation */
+.navigation-market a {
+  text-decoration: none;
+  color: #0073aa;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+/* Effet survol pour les liens */
+.navigation-market a:hover {
+  text-decoration: underline;
+  color: #005880;
+}
+
+/* -------------------------------------------------------------
+   CONTAINER POUR ITEMS (PLUGINS & THÈMES)
+------------------------------------------------------------- */
+/* Conteneur général pour chaque plugin ou thème */
+.item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Titre des items */
+.item h2 {
+  font-size: 1.4em;
+  margin-bottom: 10px;
+}
+
+/* Bloc d'information pour chaque détail */
+.item .info {
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+/* Accentuer le texte des labels dans les infos */
+.item .info strong {
+  color: #555;
+}
+
+/* Conteneur pour les actions (boutons/icônes) */
+.item .actions {
+  margin-top: 15px;
+  text-align: right;
+}
+
+/* -------------------------------------------------------------
+   BOUTONS & ICÔNES D'ACTION
+------------------------------------------------------------- */
+/* Style pour le bouton d'installation/mise à jour */
+.download-btn {
+  display: inline-block;
+  background-color: #0073aa;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  font-size: 0.95em;
+}
+
+/* Effet survol pour le bouton */
+.download-btn:hover {
+  background-color: #005880;
+}
+
+/* Icône indiquant une mise à jour disponible (en rouge) */
+.update-icon {
+  color: #d9534f;
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+/* Icône indiquant que le plugin/thème est à jour (en vert) */
+.up-to-date-icon {
+  color: #5cb85c;
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+/* -------------------------------------------------------------
+   SECTIONS DE LA PAGE D'ACCUEIL
+------------------------------------------------------------- */
+/* Conteneur pour les sections (plugins et thèmes en vedette) */
+.section {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Titre des sections */
+.section h2 {
+  margin-bottom: 10px;
+  font-size: 1.3em;
+}
+
+/* Liste des éléments en vedette */
+.featured-list {
+  list-style: none;
+  margin-bottom: 15px;
+}
+
+/* Style pour chaque élément de la liste en vedette */
+.featured-list li {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+/* -------------------------------------------------------------
+   LIENS GÉNÉRAUX
+------------------------------------------------------------- */
+/* Style pour les liens génériques */
+.link {
+  color: #0073aa;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+/* Effet survol pour les liens génériques */
+.link:hover {
+  text-decoration: underline;
+  color: #005880;
+}
+
+/* -------------------------------------------------------------
+   RÉACTIVITÉ
+------------------------------------------------------------- */
+/* Ajustements pour les petits écrans */
+@media (max-width: 768px) {
+  .navigation-market ul {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .item, .section {
+    padding: 10px;
+  }
+}

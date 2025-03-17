@@ -1,68 +1,102 @@
-    <h1>Liste Complète des Thèmes</h1>
-    <!-- Lien de retour vers la page principale de la marketplace -->
-    <a href="<?= ROUTER::getInstance()->generate('admin-marketplace'); ?>">Retour à la Marketplace</a>
+<?php
+/**
+ * @copyright (C) 2025, 299Ko
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
+ * @author Maxime Blanc <nemstudio18@gmail.com>
+ * @author Maxence Cauderlier <mx.koder@gmail.com>
+ *
+ * @package 299Ko https://github.com/299Ko/299ko
+ *
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
+ */
 
-    <?php if(isset($themesData) && is_array($themesData) && count($themesData) > 0): ?>
-        <ul>
-            <?php foreach($themesData as $release): ?>
-                <li style="border-bottom:1px solid #ccc; padding:10px 0;">
-                    <strong><?= htmlspecialchars($release['name']); ?></strong>
-                    <p><?= htmlspecialchars($release['body']); ?></p>
-                    <p>
-                        <strong>Version :</strong> <?= htmlspecialchars($release['tag_name'] ?? ''); ?><br>
-                        <strong>Publié le :</strong> <?= htmlspecialchars($release['published_at'] ?? ''); ?><br>
-                        <strong>Téléchargements :</strong> <?= htmlspecialchars($release['download_count'] ?? '0'); ?><br>
-                        <strong>Likes :</strong> <span id="like-<?= htmlspecialchars($release['id']); ?>"><?= htmlspecialchars($release['likes'] ?? '0'); ?></span>
-                    </p>
-                    <a href="<?= htmlspecialchars($release['zipball_url']); ?>" target="_blank">Télécharger</a>
-                    <button onclick="installRelease('themes', '<?= htmlspecialchars($release['zipball_url']); ?>', '<?= htmlspecialchars($release['folder'] ?? ''); ?>')">Installer</button>
-                    <button onclick="likeRelease('themes', '<?= htmlspecialchars($release['id']); ?>')">Like</button>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p>Aucun thème disponible pour le moment.</p>
-    <?php endif; ?>
+/**
+ * admin-marketplace-themes.tpl
+ *
+ * FR: Affiche la liste complète des thèmes du marketplace.
+ * EN: Displays the full list of marketplace themes.
+ *
+ * Les données sont fournies par le contrôleur via la variable $this->data['themesList'].
+ * Data is provided by the controller via $this->data['themesList'].
+ */
+$themes = $this->data['themesList'] ?? [];
+?>
+<h1>Liste des Thèmes / Themes List</h1>
+            <div class="navigation-market">
+            <ul><li><a href="<?php echo  $this->data['router']->generate('admin-marketplace'); ?>" class="nav-link">Accueil Market Place</a></li>
+            <li><a href="<?php echo $this->data['router']->generate('marketplace-plugins'); ?>" class="link">
+                Plugins</a></li>
+                </ul>
+                </div>
+<?php if (!empty($themes)): ?>
+    <?php foreach ($themes as $theme): ?>
+        <div class="item">
+            <h2>
+                <?php
+                // FR: Affiche l'icône du thème s'il est définie (si applicable)
+                // EN: Display the theme icon if defined (if applicable)
+                if (!empty($theme['icon'])) {
+                    echo '<i class="' . htmlspecialchars($theme['icon']) . '"></i> ';
+                }
+                // FR: Affiche le nom du thème ou un message par défaut
+                // EN: Display the theme name or a default message
+                echo htmlspecialchars($theme['name'] ?? 'Nom non défini');
+                ?>
+            </h2>
+            <div class="info">
+                <strong>Description :</strong> <?php echo htmlspecialchars($theme['description'] ?? ''); ?>
+            </div>
+            <div class="info">
+                <strong>Version :</strong> <?php echo htmlspecialchars($theme['version'] ?? ''); ?>
+            </div>
+            <div class="info">
+                <strong>Auteur / Author:</strong> <?php echo htmlspecialchars($theme['authorEmail'] ?? ''); ?>
+            </div>
+            <?php if (!empty($theme['authorWebsite'])): ?>
+                <div class="info">
+                    <strong>Site web / Website:</strong>
+                    <a href="<?php echo htmlspecialchars($theme['authorWebsite']); ?>" target="_blank">
+                        <?php echo htmlspecialchars($theme['authorWebsite']); ?>
+                    </a>
+                </div>
+            <?php endif; ?>
+            <div class="info">
+                <strong>Type :</strong> <?php echo htmlspecialchars($theme['type'] ?? ''); ?>
+            </div>
+            <div class="info">
+                <strong>Dossier / Directory:</strong> <?php echo htmlspecialchars($theme['directory']); ?>
+            </div>
 
-    <script>
-        async function installRelease(type, zipUrl, pluginFolder = null) {
-            if (confirm("Voulez-vous installer cet élément ?")) {
-                let url = '<?= ROUTER::getInstance()->generate("admin-marketplace"); ?>?action=install';
-                let data = {
-                    type: type,
-                    zipUrl: zipUrl,
-                    token: '<?= htmlspecialchars($token) ?>'
-                };
-                if (pluginFolder !== null) {
-                    data.pluginFolder = pluginFolder;
-                }
-                let response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (response.status === 202) {
-                    alert("Installation réussie !");
-                    setTimeout(() => { window.location.reload(); }, 1500);
-                } else {
-                    alert("L'installation a échoué.");
-                }
-            }
-        }
-        async function likeRelease(type, releaseId) {
-            let url = '<?= ROUTER::getInstance()->generate("marketplace-like"); ?>';
-            let data = { type: type, releaseId: releaseId };
-            let response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            if (response.status === 202) {
-                let result = await response.json();
-                document.getElementById('like-' + releaseId).textContent = result.likes;
-                alert("Merci pour votre like !");
-            } else {
-                alert("Erreur lors de l'ajout du like.");
-            }
-        }
-    </script>
+            <div class="actions">
+                <?php if ($theme['is_installed']): ?>
+                    <?php if ($theme['update_needed']): ?>
+                        <!-- FR: Thème installé et mise à jour disponible
+                             EN: Theme installed and update available -->
+                        <span class="update-icon" title="Mise à jour disponible / Update available">&#x21bb;</span>
+                        <a href="<?php echo $this->data['router']->generate('marketplace-install-release')
+                            . '?folder=' . urlencode($theme['directory'])
+                            . '&type=' . urlencode($theme['type'] ?? 'theme')
+                            . '&commit=' . urlencode($theme['CommitGithubSHA']); ?>" class="download-btn">
+                            Mettre à niveau / Update
+                        </a>
+                    <?php else: ?>
+                        <!-- FR: Thème installé et à jour
+                             EN: Theme installed and up-to-date -->
+                        <span class="up-to-date-icon" title="Thème à jour / Theme is up-to-date">&#x2714;</span>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <!-- FR: Thème non installé
+                         EN: Theme not installed -->
+                    <a href="<?php echo $this->data['router']->generate('marketplace-install-release')
+                        . '?folder=' . urlencode($theme['directory'])
+                        . '&type=' . urlencode($theme['type'] ?? 'theme')
+                        . '&commit=' . urlencode($theme['CommitGithubSHA']); ?>" class="download-btn">
+                        Installer / Install
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>Aucun thème trouvé. / No themes found.</p>
+<?php endif; ?>
