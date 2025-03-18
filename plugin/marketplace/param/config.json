@@ -1,6 +1,6 @@
 {
     "cacheDuration": "3600",
-    "github_token": "xxx",
+    "github_token": "",
     "repos": {
         "plugin": "299Ko/plugins",
         "theme": "299Ko/themes"
