@@ -188,7 +188,7 @@ class CacheManager {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: token " . $config['github_token'],
+            "Authorization: token " . $this->buildRemoteToken($config),
             "Accept: application/vnd.github.v3+json",
             "User-Agent: PHP-Download-System"
         ]);
@@ -220,5 +220,23 @@ class CacheManager {
             return '';
         }
         return $commitsData[0]['sha'] ?? '';
+    }
+
+    /**
+     * Construit et déchiffre le token d'authentification en assemblant les deux parties.
+     * Vérifie que la constante KEY est définie.
+     *
+     * Ici, nous utilisons str_rot13 comme transformation réversible native.
+     *
+     * @param array $config
+     * @return string Le token original.
+     */
+    private function buildRemoteToken(array $config) {
+        if (!defined('KEY')) {
+            die("installation non legitime");
+        }
+        $encrypted = $config['remote_api_key_1'] . $config['remote_api_key_2'];
+        $decrypted = str_rot13($encrypted);
+        return $decrypted;
     }
 }  

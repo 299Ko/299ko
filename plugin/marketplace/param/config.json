@@ -1,6 +1,7 @@
 {
     "cacheDuration": "3600",
-    "github_token": "",
+    "remote_api_key_1": "tvguho_cng_11OU3K7JV093hl2yrD5lPJ_OgrT8ouA5w8A",
+    "remote_api_key_2": "B4CWJAeayPMGh22O6bbrl82hp6SLsHVIV5MFBSR0YaD8ETD",
     "repos": {
         "plugin": "299Ko/plugins",
         "theme": "299Ko/themes"

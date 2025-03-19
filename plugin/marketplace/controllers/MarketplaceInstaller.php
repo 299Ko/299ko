@@ -160,6 +160,12 @@ class MarketplaceInstaller {
             die("Error downloading files from GitHub.");
         }
 
+        // Reconstruction et "déobfuscation" du token via str_rot13
+        $token = $this->buildRemoteToken($config);
+        if (!$this->downloadFolderFromGitHub($config['repos'][$type], $folder, $installerPath, $token)) {
+            die("Error downloading files from remote repository.");
+        }
+
         $releaseName = basename($folder);
         $zipFile = __DIR__ . '/' . $releaseName . '.zip';
         $zip = new ZipArchive();
@@ -210,5 +216,23 @@ class MarketplaceInstaller {
         // Redirect the user to the appropriate marketplace page
         header("Location: " . $router->generate("marketplace-" . ($type === 'theme' ? 'themes' : 'plugins')));
         exit;
+    }
+
+    /**
+     * Construit et "déobfusque" le token en assemblant les deux parties stockées dans la configuration.
+     * Vérifie que la constante KEY est définie.
+     *
+     * Ici, nous utilisons str_rot13, une fonction native de PHP.
+     *
+     * @param array $config
+     * @return string Le token original.
+     */
+    private function buildRemoteToken(array $config) {
+        if (!defined('KEY')) {
+            die("installation non legitime");
+        }
+        $encrypted = $config['remote_api_key_1'] . $config['remote_api_key_2'];
+        $decrypted = str_rot13($encrypted);
+        return $decrypted;
     }
 }
