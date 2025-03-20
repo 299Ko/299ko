@@ -8,9 +8,7 @@
  * @package 299Ko https://github.com/299Ko/299ko
  *
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
- */
-
-/**
+ *
  * admin-marketplace.tpl
  *
  * FR: Affiche la page d'accueil du marketplace.
@@ -28,72 +26,104 @@
  * - 'themesPageUrl': URL de la page complète des thèmes.
  */
 ?>
-<h1>Marketplace - Accueil / Marketplace - Home</h1>
-        <div class="navigation-market">
-            <ul><li><a href="<?php echo htmlspecialchars($this->data['pluginsPageUrl']); ?>" class="link">
-                Plugins
-            </a></li>
-            <li><a href="<?php echo htmlspecialchars($this->data['themesPageUrl']); ?>" class="link">
-                Thèmes</a></li>
-                </ul>
-                </div>
-<div class="section">
-    <h2>Plugins en vedette / Featured Plugins</h2>
-    <!-- Vérifie si 'randomPlugins' existe dans $this->data et n'est pas vide -->
-    <?php if (!empty($this->data['randomPlugins'])): ?>
-        <ul class="featured-list">
-            <!-- Parcourt le tableau des plugins transmis via $this->data -->
-            <?php foreach ($this->data['randomPlugins'] as $plugin): ?>
-                <li><?php
-                // FR: Affiche l'icône du plugin s'il est définie
-                // EN: Display the plugin icon if defined
-                if (!empty($plugin['icon'])) {
-                    echo '<i class="' . htmlspecialchars($plugin['icon']) . '"></i> ';
-                }
-                // FR: Affiche le nom du plugin ou un message par défaut
-                // EN: Display the plugin name or a default message
-                echo htmlspecialchars($plugin['name'] ?? 'Nom non défini');
+<h1>{{ Lang.marketplace.description }}</h1>
+<aside class="note">
+    <p>{{ Lang.marketplace.note }}</p>
+</aside>
+<div class="navigation-market">
+    <ul>
+        <li>
+            <a href="{{ pluginsPageUrl }}" class="link">
+                <?php
+                // Affiche le lien vers la page complète des plugins
                 ?>
-                    <?php
-                        // Affiche le nom du plugin en échappant le contenu pour éviter les injections XSS
-                        echo htmlspecialchars($plugin['name'] ?? 'Nom non défini');
-                    ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <p>
-            <!-- Affiche le lien vers la page complète des plugins -->
-            <a href="<?php echo htmlspecialchars($this->data['pluginsPageUrl']); ?>" class="link">
-                Voir tous les plugins / View all plugins
+                {{ Lang.marketplace.plugins }}
             </a>
-        </p>
-    <?php else: ?>
-        <p>Aucun plugin disponible.</p>
-    <?php endif; ?>
+        </li>
+        <li>
+            <a href="{{ themesPageUrl }}" class="link">
+                <?php
+                // Affiche le lien vers la page complète des thèmes
+                ?>
+                {{ Lang.marketplace.themes }}
+            </a>
+        </li>
+    </ul>
 </div>
+<div class="home-list">
+    <div class="section">
+        <h2>{{ Lang.marketplace.featured_plugins }}</h2>
+        <?php
+        // Vérifie si 'randomPlugins' existe dans $this->data et n'est pas vide
+        ?>
+        {% if randomPlugins %}
+            <ul class="featured-list">
+                <?php
+                // Parcourt le tableau des plugins transmis via $this->data
+                ?>
+                {% for plugin in randomPlugins %}
+                    <li>
+                        <?php
+                        // FR: Affiche l'icône du plugin s'il est définie
+                        // EN: Display the plugin icon if defined
+                        ?>
+                        {% if plugin.icon %}
+                            <i class="{{ plugin.icon }}"></i>
+                        {% endif %}
+                        <?php
+                        // FR: Affiche le nom du plugin ou un message par défaut
+                        // EN: Display the plugin name or a default message
+                        ?>
+                        {% if plugin.name %}
+                            {{ plugin.name }}
+                        {% else %}
+                            Nom non défini
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            <p>
+                <?php
+                // Affiche le lien vers la page complète des plugins
+                ?>
+                <a href="{{ pluginsPageUrl }}" class="link">
+                    {{ Lang.marketplace.view_all_plugins }}
+                </a>
+            </p>
+        {% else %}
+            <p>{{ Lang.marketplace.no_plugins }}</p>
+        {% endif %}
+    </div>
 
-<div class="section">
-    <h2>Thèmes en vedette / Featured Themes</h2>
-    <!-- Vérifie si 'randomThemes' existe dans $this->data et n'est pas vide -->
-    <?php if (!empty($this->data['randomThemes'])): ?>
-        <ul class="featured-list">
-            <!-- Parcourt le tableau des thèmes transmis via $this->data -->
-            <?php foreach ($this->data['randomThemes'] as $theme): ?>
-                <li>
-                    <?php
+    <div class="section">
+        <h2>{{ Lang.marketplace.featured_themes }}</h2>
+        <?php
+        // Vérifie si 'randomThemes' existe dans $this->data et n'est pas vide
+        ?>
+        {% if randomThemes %}
+            <ul class="featured-list">
+                <?php
+                // Parcourt le tableau des thèmes transmis via $this->data
+                ?>
+                {% for theme in randomThemes %}
+                    <li>
+                        <?php
                         // Affiche le nom du thème en échappant le contenu pour éviter les injections XSS
-                        echo htmlspecialchars($theme['name'] ?? 'Nom non défini');
-                    ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <p>
-            <!-- Affiche le lien vers la page complète des thèmes -->
-            <a href="<?php echo htmlspecialchars($this->data['themesPageUrl']); ?>" class="link">
-                Voir tous les thèmes / View all themes
-            </a>
-        </p>
-    <?php else: ?>
-        <p>Aucun thème disponible.</p>
-    <?php endif; ?>
+                        ?>
+                        {{ theme.name | default("Nom non défini") }}
+                    </li>
+                {% endfor %}
+            </ul>
+            <p>
+                <?php
+                // Affiche le lien vers la page complète des thèmes
+                ?>
+                <a href="{{ themesPageUrl }}" class="link">
+                    {{ Lang.marketplace.view_all_themes }}
+                </a>
+            </p>
+        {% else %}
+            <p>{{ Lang.marketplace.no_themes }}</p>
+        {% endif %}
+    </div>
 </div>

@@ -8,95 +8,101 @@
  * @package 299Ko https://github.com/299Ko/299ko
  *
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html GPLv3
- */
-
-/**
+ *
  * admin-marketplace-plugins.tpl
  *
  * FR: Affiche la liste complète des plugins du marketplace.
  * EN: Displays the full list of marketplace plugins.
  *
  * Les données sont fournies par le contrôleur via la variable $this->data['pluginsList'].
- * Data is provided by the controller via $this->data['pluginsList'].
  */
-$plugins = $this->data['pluginsList'] ?? [];
 ?>
-<h1>Liste des Plugins / Plugins List</h1>
-            <div class="navigation-market">
-            <ul><li><a href="<?php echo  $this->data['router']->generate('admin-marketplace'); ?>" class="nav-link">Accueil Market Place</a></li>
-            <li><a href="<?php echo $this->data['router']->generate('marketplace-themes'); ?>" class="link">
-                Thèmes</a></li>
-                </ul>
-                </div>
-<?php if (!empty($plugins)): ?>
-    <?php foreach ($plugins as $plugin): ?>
-        <div class="item">
-            <h2>
-                <?php
-                // FR: Affiche l'icône du plugin s'il est définie
-                // EN: Display the plugin icon if defined
-                if (!empty($plugin['icon'])) {
-                    echo '<i class="' . htmlspecialchars($plugin['icon']) . '"></i> ';
-                }
-                // FR: Affiche le nom du plugin ou un message par défaut
-                // EN: Display the plugin name or a default message
-                echo htmlspecialchars($plugin['name'] ?? 'Nom non défini');
-                ?>
-            </h2>
-            <div class="info">
-                <strong>Description :</strong> <?php echo htmlspecialchars($plugin['description'] ?? ''); ?>
-            </div>
-            <div class="info">
-                <strong>Version :</strong> <?php echo htmlspecialchars($plugin['version'] ?? ''); ?>
-            </div>
-            <div class="info">
-                <strong>Auteur / Author:</strong> <?php echo htmlspecialchars($plugin['authorEmail'] ?? ''); ?>
-            </div>
-            <?php if (!empty($plugin['authorWebsite'])): ?>
-                <div class="info">
-                    <strong>Site web / Website:</strong>
-                    <a href="<?php echo htmlspecialchars($plugin['authorWebsite']); ?>" target="_blank">
-                        <?php echo htmlspecialchars($plugin['authorWebsite']); ?>
-                    </a>
-                </div>
-            <?php endif; ?>
-            <div class="info">
-                <strong>Type :</strong> <?php echo htmlspecialchars($plugin['type'] ?? ''); ?>
-            </div>
-            <div class="info">
-                <strong>Dossier / Directory:</strong> <?php echo htmlspecialchars($plugin['directory']); ?>
-            </div>
+{% set plugins = pluginsList %}
 
-            <div class="actions">
-                <?php if ($plugin['is_installed']): ?>
-                    <?php if ($plugin['update_needed']): ?>
-                        <!-- FR: Plugin installé et mise à jour disponible
-                             EN: Plugin installed and update available -->
-                        <span class="update-icon" title="Mise à jour disponible / Update available">&#x21bb;</span>
-                        <a href="<?php echo $this->data['router']->generate('marketplace-install-release')
-                            . '?folder=' . urlencode($plugin['directory'])
-                            . '&type=' . urlencode($plugin['type'] ?? 'plugin')
-                            . '&commit=' . urlencode($plugin['CommitGithubSHA']); ?>" class="download-btn">
-                            Mettre à niveau / Update
+<h1>{{ Lang.marketplace.list_plugins }}</h1>
+<aside class="note">
+    <p>{{ Lang.marketplace.note }}</p>
+</aside>
+<div class="navigation-market">
+    <ul>
+        <li>
+            <a href="{{ ROUTER.generate("admin-marketplace") }}" class="nav-link">Accueil Market Place</a>
+        </li>
+        <li>
+            <a href="{{ ROUTER.generate("marketplace-themes") }}" class="link">Thèmes</a>
+        </li>
+    </ul>
+</div>
+<div class="plugin-list">
+    {% if plugins %}
+        {% for plugin in plugins %}
+            <div class="item">
+                <h2>
+                    <?php
+                    // FR: Affiche l'icône du plugin s'il est définie
+                    // EN: Display the plugin icon if defined
+                    ?>
+                    {% if plugin.icon %}
+                        <i class="{{ plugin.icon }}"></i>
+                    {% endif %}
+                    <?php
+                    // FR: Affiche le nom du plugin ou un message par défaut
+                    // EN: Display the plugin name or a default message
+                    ?>
+                    {% if plugin.name %}
+                        {{ plugin.name }}
+                    {% else %}
+                        Nom non défini
+                    {% endif %}
+                </h2>
+                <div class="info">
+                    <strong>{{ Lang.marketplace.list_desc }} :</strong> {{ plugin.description }}
+                </div>
+                <div class="info">
+                    <strong>{{ Lang.marketplace.version }} :</strong> {{ plugin.version }}
+                </div>
+                <div class="info">
+                    <strong>{{ Lang.marketplace.author }} :</strong> {{ plugin.authorEmail }}
+                </div>
+                {% if plugin.authorWebsite %}
+                    <div class="info">
+                        <strong>{{ Lang.marketplace.website }} :</strong>
+                        <a href="{{ plugin.authorWebsite }}" target="_blank">
+                            {{ plugin.authorWebsite }}
                         </a>
-                    <?php else: ?>
-                        <!-- FR: Plugin installé et à jour
-                             EN: Plugin installed and up-to-date -->
-                        <span class="up-to-date-icon" title="Plugin à jour / Plugin is up-to-date">&#x2714;</span>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <!-- FR: Plugin non installé
-                         EN: Plugin not installed -->
-                    <a href="<?php echo $this->data['router']->generate('marketplace-install-release')
-                        . '?folder=' . urlencode($plugin['directory'])
-                        . '&type=' . urlencode($plugin['type'] ?? 'plugin')
-                        . '&commit=' . urlencode($plugin['CommitGithubSHA']); ?>" class="download-btn">
-                        Installer / Install
-                    </a>
-                <?php endif; ?>
+                    </div>
+                {% endif %}
+                <div class="actions">
+                    {% if plugin.is_installed %}
+                        {% if plugin.update_needed %}
+                            <?php
+                            // FR: Plugin installé et mise à jour disponible
+                            // EN: Plugin installed and update available
+                            ?>
+                            <span class="update-icon" title="Mise à jour disponible / Update available">&#x21bb;</span>
+                            <a href="{{ ROUTER.generate("marketplace-install-release") }}?folder={{ plugin.directory }}&type={% if plugin.type %}{{ plugin.type }}{% else %}plugin{% endif %}&commit={{ plugin.CommitGithubSHA }}" class="download-btn">
+                                {{ Lang.marketplace.update }}
+                            </a>
+                        {% else %}
+                            <?php
+                            // FR: Plugin installé et à jour
+                            // EN: Plugin installed and up-to-date
+                            ?>
+                            <span class="up-to-date-icon" title="Plugin à jour / Plugin is up-to-date">&#x2714;</span>
+                        {% endif %}
+                    {% else %}
+                        <?php
+                        // FR: Plugin non installé
+                        // EN: Plugin not installed
+                        ?>
+                        <a href="{{ ROUTER.generate("marketplace-install-release") }}?folder={{ plugin.directory }}&type={% if plugin.type %}{{ plugin.type }}{% else %}plugin{% endif %}&commit={{ plugin.CommitGithubSHA }}" class="download-btn">
+                            {{ Lang.marketplace.install }}
+                        </a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    <?php endforeach; ?>
-<?php else: ?>
-    <p>Aucun plugin trouvé. / No plugins found.</p>
-<?php endif; ?>
+        {% endfor %}
+    {% else %}
+        <p>{{ Lang.marketplace.no_plugins }}</p>
+    {% endif %}
+</div>
