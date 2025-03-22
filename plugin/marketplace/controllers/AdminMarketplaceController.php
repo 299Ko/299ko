@@ -48,12 +48,12 @@ class AdminMarketplaceController extends AdminController
         }
 
         // Randomly select 5 plugins from the cache data
-        $plugins = isset($pluginsData['plugins']) ? $pluginsData['plugins'] : [];
+        $plugins = $pluginsData['plugins'] ?? [];
         shuffle($plugins);
         $randomPlugins = array_slice($plugins, 0, 5);
 
         // Randomly select 5 themes from the cache data
-        $themes = isset($themesData['themes']) ? $themesData['themes'] : [];
+        $themes = $themesData['themes'] ?? [];
         shuffle($themes);
         $randomThemes = array_slice($themes, 0, 5);
 
