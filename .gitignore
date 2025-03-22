@@ -4,6 +4,7 @@
 
 # plugins
 /plugin/market
+/plugin/highlight
 
 # themes
 !/theme/default/

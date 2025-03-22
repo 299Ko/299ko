@@ -1,6 +1,6 @@
-<h3>{{ Lang.marketplace.description }}</h3>
 <div class="msg info">
     <p>{{ Lang.marketplace.note }}</p>
+    <a href="javascript:" class="msg-button-close"><i class="fa-solid fa-xmark"></i></a>
 </div>
 <section>
     <a href="{{ pluginsPageUrl }}" class="button">
@@ -29,7 +29,7 @@
                 {% endfor %}
             </ul>
             <p>
-                <a href="{{ pluginsPageUrl }}" class="link">
+                <a href="{{ pluginsPageUrl }}">
                     {{ Lang.marketplace.view_all_plugins }}
                 </a>
             </p>
@@ -49,7 +49,7 @@
                 {% endfor %}
             </ul>
             <p>
-                <a href="{{ themesPageUrl }}" class="link">
+                <a href="{{ themesPageUrl }}">
                     {{ Lang.marketplace.view_all_themes }}
                 </a>
             </p>

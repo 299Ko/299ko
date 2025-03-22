@@ -1,87 +1,34 @@
 /* -------------------------------------------------------------
-   RESET & GLOBAL STYLES
-------------------------------------------------------------- */
-/* Appliquer le modèle de boîte border-box à tous les éléments */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Styles globaux pour le body */
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f4f4f4;
-  padding: 20px;
-}
-
-/* -------------------------------------------------------------
-   TITRES & TEXTES
-------------------------------------------------------------- */
-/* Styles pour les titres principaux et secondaires */
-h1, h2 {
-  margin-bottom: 5px;
-  color: #222;
-}
-
-.marketplace-admin h2
-{
-  margin-bottom: 5px;
-}
-
-/* -------------------------------------------------------------
-   NAVIGATION MARKETPLACE
-------------------------------------------------------------- */
-/* Conteneur de navigation */
-.navigation-market {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-/* Liste horizontale pour la navigation */
-.navigation-market ul {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-}
-
-/* Suppression des marges sur les éléments de liste */
-.navigation-market li {
-  margin: 0;
-}
-
-/* Liens de navigation */
-.navigation-market a {
-  text-decoration: none;
-  color: #0073aa;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-/* Effet survol pour les liens */
-.navigation-market a:hover {
-  text-decoration: underline;
-  color: #005880;
-}
-
-/* -------------------------------------------------------------
    CONTAINER POUR ITEMS (PLUGINS & THÈMES)
 ------------------------------------------------------------- */
 /* Conteneur général pour chaque plugin ou thème */
+
+.market-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9em;
+}
+
+.market-item>header+div {
+  flex-grow: 2;
+}
+
+.market-item>header h2 {
+  margin-bottom: 0;
+  font-size: 24px;
+}
+
+.market-item>footer {
+  text-align: center;
+}
+
 .item {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 15px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Titre des items */
@@ -152,7 +99,7 @@ h1, h2 {
   border-radius: 4px;
   padding: 15px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Titre des sections */
@@ -203,108 +150,105 @@ h1, h2 {
     gap: 5px;
   }
 
-  .item, .section {
+  .item,
+  .section {
     padding: 10px;
   }
 }
 
-/* Conteneur global du contenu */
-#content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
 /* Surcouche pour la liste de plugins */
-.plugin-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+.market-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
 }
 
 /* Style de base pour chaque tuile de plugin */
 .plugin-list .item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Effet de survol pour chaque tuile */
 .plugin-list .item:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* Style du titre dans chaque tuile */
 .plugin-list .item h2 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
 }
 
 /* Style des informations complémentaires */
 .plugin-list .item .info {
-    font-size: 0.9em;
-    margin-bottom: 8px;
+  font-size: 0.9em;
+  margin-bottom: 8px;
 }
 
 /* Section des actions (boutons, liens, etc.) */
 .plugin-list .item .actions {
-    margin-top: 15px;
-    text-align: center;
+  margin-top: 15px;
+  text-align: center;
 }
 
 /* Style pour le bouton d'installation */
 .plugin-list .item .download-btn {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #007BFF;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #007BFF;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 .plugin-list .item .download-btn:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 /* Navigation de la marketplace */
 .navigation-market ul {
-    list-style: none;
-    padding: 0;;
-    display: flex;
-    gap: 15px;
+  list-style: none;
+  padding: 0;
+  ;
+  display: flex;
+  gap: 15px;
 }
 
 .navigation-market a {
-    text-decoration: none;
-    color: #007BFF;
-    transition: color 0.2s ease;
+  text-decoration: none;
+  color: #007BFF;
+  transition: color 0.2s ease;
 }
 
 .navigation-market a:hover {
-    color: #0056b3;
+  color: #0056b3;
 }
 
 .home-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 .home-list h2 {
-    text-align: center;
+  text-align: center;
 }
 
 /* Styles pour la note */
 .note {
-  background-color: #e7f3fe; /* fond bleu très clair */
-  border-left: 4px solid #0073aa; /* bordure bleue sur la gauche */
+  background-color: #e7f3fe;
+  /* fond bleu très clair */
+  border-left: 4px solid #0073aa;
+  /* bordure bleue sur la gauche */
   padding: 0 15px;
   margin-bottom: 10px;
   border-radius: 4px;

@@ -60,6 +60,7 @@ class AdminMarketplaceController extends AdminController
         // Prepare the admin response using the marketplace template
         $response = new AdminResponse();
         $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace');
+        $response->setTitle(lang::get('marketplace.description'));
         $tpl->set('router', ROUTER::getInstance());
         $tpl->set('randomPlugins', $randomPlugins);
         $tpl->set('randomThemes', $randomThemes);

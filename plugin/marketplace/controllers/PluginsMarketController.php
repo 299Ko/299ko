@@ -54,8 +54,9 @@ class PluginsMarketController extends AdminController
         // Prepare the admin response with the plugins marketplace template
         $response = new AdminResponse();
         $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-plugins');
+        $response->setTitle(lang::get('marketplace.list_plugins'));
         $tpl->set('router', ROUTER::getInstance());
-        $tpl->set('pluginsList', $plugins);
+        $tpl->set('plugins', $plugins);
         $response->addTemplate($tpl);
         return $response;
     }
