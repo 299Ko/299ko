@@ -210,28 +210,28 @@ abstract class CategoriesManager {
     public function outputAsCheckbox($itemId = 0) {
         $catDisplay = 'root';
         ob_start();
-        require COMMON . 'categories/template/checkboxCategories.php';
+        require COMMON . 'content' . DS .'categories' . DS .'template' . DS .'checkboxCategories.php';
         return ob_get_clean();
     }
 
     public function outputAsSelect($parentId, $categoryId, $fieldName = "parentId") {
         $catDisplay = 'root';
         ob_start();
-        require COMMON . 'categories/template/selectCategory.php';
+        require COMMON . 'content' . DS .'categories' . DS .'template' . DS .'selectCategory.php';
         return ob_get_clean();
     }
     
     public function outputAsSelectOne($itemId, $fieldName = 'category-one') {
         $catDisplay = 'root';
         ob_start();
-        require COMMON . 'categories/template/selectOneCategory.php';
+        require COMMON . 'content' . DS .'categories' . DS .'template' . DS .'selectOneCategory.php';
         return ob_get_clean();
     }
 
     public function outputAsList() {
         $catDisplay = 'root';
         ob_start();
-        require COMMON . 'categories/template/listCategories.php';
+        require COMMON . 'content' . DS .'categories' . DS .'template' . DS .'listCategories.php';
         return ob_get_clean();
     }
 
