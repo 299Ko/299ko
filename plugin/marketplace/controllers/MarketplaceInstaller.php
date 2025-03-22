@@ -52,39 +52,49 @@ class MarketplaceInstaller {
         if (!is_array($items)) {
             return false;
         }
-        // Iterate through each item in the folder
+        // Iterate through each item in the GitHub API response
         foreach ($items as $item) {
-            // Correction du séparateur de dossier pour Windows
+            // Build local path with proper directory separators
             $localPath = rtrim($localDir, '/\\') . DIRECTORY_SEPARATOR . $item['name'];
 
             if ($item['type'] === 'dir') {
-                // Vérification robuste de l'existence ET création sécurisée
+                // Create directory only if it doesn't exist
                 if (!is_dir($localPath)) {
+                    // Silent directory creation with error suppression
                     if (!@mkdir($localPath, 0777, true)) {
-                        error_log("Erreur création dossier: $localPath");
+                        error_log("[Marketplace] Failed to create directory: $localPath");
                         return false;
                     }
                 }
-                // Appel récursif avec le path normalisé
+
+                // Normalize path for GitHub API (force forward slashes)
                 $normalizedPath = str_replace(DIRECTORY_SEPARATOR, '/', $item['path']);
+
+                // Recursively download subdirectory contents
                 if (!$this->downloadFolderFromGitHub($repo, $normalizedPath, $localPath, $token)) {
                     return false;
                 }
+
             } elseif ($item['type'] === 'file') {
-                // Création du dossier parent si besoin
+                // Ensure parent directory exists for the file
                 $parentDir = dirname($localPath);
-                if (!is_dir($parentDir) && !@mkdir($parentDir, 0777, true)) {
-                    error_log("Erreur création dossier parent: $parentDir");
-                    return false;
+                if (!is_dir($parentDir) {
+                    if (!@mkdir($parentDir, 0777, true)) {
+                        error_log("[Marketplace] Failed to create parent directory: $parentDir");
+                        return false;
+                    }
                 }
-                // Téléchargement avec gestion d'erreur
+
+                // Download file contents with error handling
                 $fileContent = @file_get_contents($item['download_url']);
                 if ($fileContent === false) {
-                    error_log("Erreur téléchargement: " . $item['download_url']);
+                    error_log("[Marketplace] Failed to download: " . $item['download_url']);
                     return false;
                 }
+
+                // Write file contents to local path
                 if (@file_put_contents($localPath, $fileContent) === false) {
-                    error_log("Erreur écriture fichier: $localPath");
+                    error_log("[Marketplace] Failed to write file: $localPath");
                     return false;
                 }
             }
