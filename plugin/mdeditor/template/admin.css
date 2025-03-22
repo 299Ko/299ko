@@ -1,0 +1,14 @@
+.editor-toolbar button{
+    color:#333;
+    width : 30px;
+}
+
+.editor-toolbar.fullscreen, CodeMirror-wrap.CodeMirror-fullscreen {
+    z-index:996 !important;
+}
+
+@media only screen and (max-width: 960px) {
+    .editor-toolbar button{
+        width : 30px;
+    }
+}

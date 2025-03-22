@@ -1,0 +1,8 @@
+{
+    "name": "MDEditor",
+    "icon" : "fa-brands fa-markdown",
+    "description": "Editeur MarkDown WYSIWYG",
+    "authorEmail": "mx.koder@gmail.com",
+    "authorWebsite" : "https://299ko.ovh",
+    "version": "1.3.1"
+}

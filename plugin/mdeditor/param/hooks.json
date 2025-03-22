@@ -1,0 +1,5 @@
+{
+    "endAdminBody": "mdeditorAdmin",
+    "beforeEditEditor": "mdeditorBeforeEdit",
+    "beforeSaveEditor": "mdeditorBeforeSave"
+}

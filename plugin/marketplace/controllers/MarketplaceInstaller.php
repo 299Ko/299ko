@@ -22,6 +22,7 @@ defined('ROOT') or exit('Access denied!');
  * and streamlines the installation process.
  */
 class MarketplaceInstaller {
+
     /**
      * Recursively download a folder from GitHub.
      *
@@ -78,7 +79,7 @@ class MarketplaceInstaller {
             } elseif ($item['type'] === 'file') {
                 // Ensure parent directory exists for the file
                 $parentDir = dirname($localPath);
-                if (!is_dir($parentDir) {
+                if (!is_dir($parentDir)) {
                     if (!@mkdir($parentDir, 0777, true)) {
                         error_log("[Marketplace] Failed to create parent directory: $parentDir");
                         return false;
@@ -100,29 +101,6 @@ class MarketplaceInstaller {
             }
         }
         return true;
-    }
-
-    /**
-     * Add a folder and its contents to a ZIP archive.
-     *
-     * @param string $folder The folder path to add.
-     * @param ZipArchive $zip The ZIP archive instance.
-     * @param string $parentFolder Optional parent folder path within the archive.
-     */
-    public function addFolderToZip($folder, $zip, $parentFolder = '') {
-        $handle = opendir($folder);
-        while (($file = readdir($handle)) !== false) {
-            if ($file == '.' || $file == '..') continue;
-            $filePath = $folder . '/' . $file;
-            $localPath = $parentFolder . $file;
-            if (is_dir($filePath)) {
-                $zip->addEmptyDir($localPath);
-                $this->addFolderToZip($filePath, $zip, $localPath . '/');
-            } else {
-                $zip->addFile($filePath, $localPath);
-            }
-        }
-        closedir($handle);
     }
 
     /**
@@ -194,50 +172,18 @@ class MarketplaceInstaller {
         }
 
         $releaseName = basename($folder);
-        $zipFile = __DIR__ . '/' . $releaseName . '.zip';
-        $zip = new ZipArchive();
-        // Create a ZIP archive from the downloaded folder
-        if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            die("Unable to create ZIP file.");
-        }
-        $this->addFolderToZip($installerPath, $zip);
-        $zip->close();
-
-        // Create a temporary directory for extracting the archive
-        $extractDir = sys_get_temp_dir() . '/mk_extract_' . uniqid();
-        if (!mkdir($extractDir, 0755, true)) {
-            die("Error creating extraction directory.");
-        }
-        $zip = new ZipArchive();
-        // Extract the ZIP archive to the extraction directory
-        if ($zip->open($zipFile) === true) {
-            $zip->extractTo($extractDir);
-            $zip->close();
-        } else {
-            unlink($zipFile);
-            die("Error extracting the archive.");
-        }
-        unlink($zipFile);
-
         // Determine the installation directory based on the type
         $installDir = ($type === 'theme') ? ROOT . 'theme' . DS : PLUGINS;
-        $sourceDir = $extractDir . '/' . $releaseName;
         $destinationDir = $installDir . $releaseName;
-        // Fallback in case the expected source directory structure is not found
-        if (!is_dir($sourceDir)) {
-            $sourceDir = $extractDir;
-            $destinationDir = $installDir . $releaseName;
-        }
-        // Copy the extracted files to the installation directory
-        $this->recurseCopy($sourceDir, $destinationDir);
+        // Copy the downloaded files directly to the installation directory
+        $this->recurseCopy($installerPath, $destinationDir);
 
         // Save the commit SHA in a file within the installation directory if provided
         if (!empty($commitSHA)) {
             file_put_contents($destinationDir . '/commit.sha', $commitSHA);
         }
 
-        // Clean up temporary directories
-        $this->deleteDirectory($extractDir);
+        // Clean up temporary directory
         $this->deleteDirectory($installerPath);
 
         // Redirect the user to the appropriate marketplace page
