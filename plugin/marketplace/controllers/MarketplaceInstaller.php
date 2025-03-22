@@ -54,22 +54,39 @@ class MarketplaceInstaller {
         }
         // Iterate through each item in the folder
         foreach ($items as $item) {
-            $localPath = $localDir . '/' . $item['name'];
+            // Correction du séparateur de dossier pour Windows
+            $localPath = rtrim($localDir, '/\\') . DIRECTORY_SEPARATOR . $item['name'];
+
             if ($item['type'] === 'dir') {
-                // Create the directory and recursively download its contents
-                if (!mkdir($localPath, 0777, true)) {
-                    return false;
+                // Vérification robuste de l'existence ET création sécurisée
+                if (!is_dir($localPath)) {
+                    if (!@mkdir($localPath, 0777, true)) {
+                        error_log("Erreur création dossier: $localPath");
+                        return false;
+                    }
                 }
-                if (!$this->downloadFolderFromGitHub($repo, $item['path'], $localPath, $token)) {
+                // Appel récursif avec le path normalisé
+                $normalizedPath = str_replace(DIRECTORY_SEPARATOR, '/', $item['path']);
+                if (!$this->downloadFolderFromGitHub($repo, $normalizedPath, $localPath, $token)) {
                     return false;
                 }
             } elseif ($item['type'] === 'file') {
-                // Download and save the file content
-                $fileContent = file_get_contents($item['download_url']);
-                if ($fileContent === false) {
+                // Création du dossier parent si besoin
+                $parentDir = dirname($localPath);
+                if (!is_dir($parentDir) && !@mkdir($parentDir, 0777, true)) {
+                    error_log("Erreur création dossier parent: $parentDir");
                     return false;
                 }
-                file_put_contents($localPath, $fileContent);
+                // Téléchargement avec gestion d'erreur
+                $fileContent = @file_get_contents($item['download_url']);
+                if ($fileContent === false) {
+                    error_log("Erreur téléchargement: " . $item['download_url']);
+                    return false;
+                }
+                if (@file_put_contents($localPath, $fileContent) === false) {
+                    error_log("Erreur écriture fichier: $localPath");
+                    return false;
+                }
             }
         }
         return true;
@@ -156,7 +173,7 @@ class MarketplaceInstaller {
         }
 
         // Download the folder from GitHub into the temporary directory
-        if (!$this->downloadFolderFromGitHub($config['repos'][$type], $folder, $installerPath, $config['github_token'])) {
+        if (!$this->downloadFolderFromGitHub($config['repos'][$type], $folder, $installerPath, $this->buildRemoteToken($config))) {
             die("Error downloading files from GitHub.");
         }
 

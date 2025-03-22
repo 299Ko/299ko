@@ -28,6 +28,7 @@ class CacheManager {
     protected $pluginsCacheFile;
     protected $themesCacheFile;
     protected $config;
+    protected $baseCacheConfigFile;
 
     public function __construct() {
         // Define cache directory and file paths
