@@ -38,7 +38,7 @@ class ThemesMarketController extends AdminController
 
         // For each theme, determine if it is installed and if an update is needed
         foreach ($themes as &$theme) {
-            $themeDir = ROOT . 'theme' . DS . $theme['directory'] . DS;
+            $pluginDir = THEMES . $plugin['directory'] . DS;
             $theme['is_installed'] = is_dir($themeDir);
             if ($theme['is_installed']) {
                 $commitFile = $themeDir . 'commit.sha';
@@ -54,8 +54,9 @@ class ThemesMarketController extends AdminController
         // Prepare the admin response with the themes marketplace template
         $response = new AdminResponse();
         $tpl = $response->createPluginTemplate('marketplace', 'admin-marketplace-themes');
+        $response->setTitle(lang::get('marketplace.list_plugins'));
         $tpl->set('router', ROUTER::getInstance());
-        $tpl->set('themesList', $themes);
+        $tpl->set('themes', $themes);
         $response->addTemplate($tpl);
         return $response;
     }
