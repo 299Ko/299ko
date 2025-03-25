@@ -32,7 +32,19 @@ class lang {
     public static $availablesLocales = [
         'fr' => 'Français',
         'en' => 'English',
-        'ru' => 'Russian'
+        'ru' => 'Russian',
+        'ar'    => 'Arabic',
+        'de'    => 'German',
+        'es'    => 'Spanish',
+        'hi'    => 'Hindi',
+        'it'    => 'Italian',
+        'ja'    => 'Japanese',
+        'ko'    => 'Korean',
+        'nl'    => 'Dutch',
+        'pl'    => 'Polish',
+        'pt'    => 'Portuguese',
+        'zh-CN' => 'Chinese (Simplified)',
+        'tr'    => 'Turkish'
     ];
     
     /**
