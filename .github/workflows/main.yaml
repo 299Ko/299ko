@@ -21,3 +21,4 @@ jobs:
         port: 4822
         sftp_only: true
         local_path: ./
+        rsyncArgs: '--exclude=data --exclude=.git --exclude=*.log'
