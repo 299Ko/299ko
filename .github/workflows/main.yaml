@@ -12,10 +12,12 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Push files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.6
       with:
         server: kodercloud.ovh
         username: ${{ secrets.FTP_MASTER_USER }}
         password: ${{ secrets.FTP_MASTER_PASS }}
-        server-dir: /web/299ko/test/
+        remote-path: /web/299ko/test/
         port: 4822
+        sftp_only: true
+        local_path: ./
