@@ -17,7 +17,7 @@ jobs:
         server: kodercloud.ovh
         username: ${{ secrets.FTP_MASTER_USER }}
         password: ${{ secrets.FTP_MASTER_PASS }}
-        remote-path: /web/299ko/test/
+        remote_path: /web/299ko/test/
         port: 4822
         sftp_only: true
         local_path: ./
