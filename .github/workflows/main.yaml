@@ -17,4 +17,4 @@ jobs:
         server: kodercloud.ovh
         username: ${{ secrets.FTP_MASTER_USER }}
         password: ${{ secrets.FTP_MASTER_PASS }}
-        server-dir: /web/299ko/test
+        server-dir: /web/299ko/test/
