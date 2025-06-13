@@ -16,6 +16,7 @@
 !/plugin/seo/
 !/plugin/tinymce/
 !/plugin/users/
+!/plugin/wiki/
 
 # themes
 /theme/*

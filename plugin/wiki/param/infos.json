@@ -1,0 +1,10 @@
+{
+  "name": "299Docs",
+  "icon": "fa-solid fa-book",
+  "description": "Plugin Wiki pour gérer des pages collaboratives basées sur des fichiers JSON avec catégories, brouillons et versionning.",
+  "authorEmail": "nemstudio18@gmail.com",
+  "authorWebsite": "https://flexcb.fr",
+  "version": "0.2",
+  "homeAdminMethod": "AdminWikiController#index",
+  "homePublicMethod": "WikiPageController#view"
+}

@@ -1,0 +1,10 @@
+{
+    "priority": "2",
+    "label": "299Docs",
+    "itemsByPage": "10",
+    "allowSearch": "1",
+    "defaultDraft": "0",
+    "defaultPage": "Accueil Docs",
+    "storageDir": "wiki",
+    "versionLimit": 2
+}

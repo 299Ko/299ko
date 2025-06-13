@@ -1,0 +1,13 @@
+.wikiAction {
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: space-around;
+    border: none;
+    width: 100px;
+}
+
+.wikiAction a
+{
+	margin: 0 5px;
+}
+
