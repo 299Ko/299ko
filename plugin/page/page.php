@@ -248,22 +248,47 @@ class page {
         return $temp;
     }
 
-    public function isUnlocked($obj) {
-        if ($obj->getPassword() == '')
-            return true;
-        elseif (isset($_SESSION['pagePassword']) && sha1($obj->getId()) . $obj->getPassword() . sha1($_SERVER['REMOTE_ADDR']) == $_SESSION['pagePassword'])
-            return true;
-        else
-            return false;
-    }
-
-    public function unlock($obj, $password) {
-        if (sha1(trim($password)) == $obj->getPassword()) {
-            $_SESSION['pagePassword'] = sha1($obj->getId()) . $obj->getPassword() . sha1($_SERVER['REMOTE_ADDR']);
+    public function isUnlocked($obj)
+    {
+        // 1) If no password is defined for the object, grant access immediately
+        if ($obj->getPassword() === '') {
             return true;
         }
+    
+        // Build the expected session token:
+        // SHA1(object ID) + stored password hash + SHA1(client IP address)
+        $expectedToken = sha1($obj->getId()) . $obj->getPassword() . sha1($_SERVER['REMOTE_ADDR']);
+    
+        // 2) Check if the session token exists and matches the expected value
+        if (isset($_SESSION['pagePassword']) && $_SESSION['pagePassword'] === $expectedToken) {
+            // 2a) Verify that the session has not expired (30 minutes = 1800 seconds)
+            if (isset($_SESSION['pagePasswordTime']) && (time() - $_SESSION['pagePasswordTime']) <= 10) {
+                return true;
+            }
+    
+            // 2b) Session token has expired: clean up session variables
+            unset($_SESSION['pagePassword'], $_SESSION['pagePasswordTime']);
+            return false;
+        }
+    
+        // 3) In all other cases, consider the page locked
         return false;
     }
+    
+    public function unlock($obj, $password)
+    {
+        // Compare the SHA-1 hash of the supplied password with the stored hash
+        if (sha1(trim($password)) === $obj->getPassword()) {
+            // On success, set the session token and timestamp
+            $_SESSION['pagePassword']     = sha1($obj->getId()) . $obj->getPassword() . sha1($_SERVER['REMOTE_ADDR']);
+            $_SESSION['pagePasswordTime'] = time();
+            return true;
+        }
+    
+        // Password mismatch
+        return false;
+    }
+    
 
     private function makeId() {
         $ids = array(0);

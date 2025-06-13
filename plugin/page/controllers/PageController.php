@@ -51,7 +51,7 @@ class PageController extends PublicController
             // quelques contrôle et temps mort volontaire avant le send...
             sleep(2);
         
-            if (isset($_POST['password']) && $_SERVER['HTTP_REFERER'] === $url) {
+            if (isset($_POST['password'])) {
                 $this->page->unlock($this->pageItem, $_POST['password']);
             }
             header('location:' . $url);
