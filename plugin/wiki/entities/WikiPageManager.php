@@ -186,24 +186,18 @@ class WikiPageManager {
     }
 
     /**
-     * Loads all Wiki pages from the pages directory.
+     * Loads all pages from the storage directory
      *
-     * @return array All Wiki pages.
+     * @return array Array of all pages with their data.
      */
-    protected function loadAllPages() {
+    public function loadAllPages() {
         $pages = [];
-        $files = scandir($this->pagesDir);
+        $files = glob($this->pagesDir . '*.json');
         foreach ($files as $file) {
-            if ($file === '.' || $file === '..') continue;
-            if (pathinfo($file, PATHINFO_EXTENSION) !== 'json') continue;
-            $data = json_decode(file_get_contents($this->pagesDir . $file), true);
-            if (!defined('ADMIN_MODE') || ADMIN_MODE === false) {
-                if (!empty($data['draft']) && ($data['draft'] === true || $data['draft'] == '1')) {
-                    continue;
-                }
+            $data = json_decode(file_get_contents($file), true);
+            if ($data) {
+                $pages[] = $data;
             }
-            $data['filename'] = $file;
-            $pages[] = $data;
         }
         return $pages;
     }
