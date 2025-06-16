@@ -12,13 +12,15 @@ defined('ROOT') or exit('Access denied!');
 class ConfigManagerAdminController extends AdminController {
     
     public function home() {
+        if (is_dir(ROOT . 'update')) {
+            show::msg(lang::get('configmanager-update-dir-found') . '<br/><a class="button" href="' . $this->router->generate('configmanager-manual-update', ['token' => $this->user->token]) . '">' . lang::get('configmanager-update') . '</a>', 'true');
+        }
 
         $response = new AdminResponse();
         $tpl = $response->createPluginTemplate('configmanager', 'config');
 
         $tpl->set('link', $this->router->generate('configmanager-admin-save'));
         $tpl->set('cacheClearLink', $this->router->generate('configmanager-admin-cache-clear', ['token' => $this->user->token]));
-
 
         $response->addTemplate($tpl);
         return $response;
@@ -33,7 +35,7 @@ class ConfigManagerAdminController extends AdminController {
         } else {
             $lang = lang::getLocale();
         }
-        $config = array(
+        $config = [
             'siteName' => (trim($_POST['siteName']) != '') ? trim($_POST['siteName']) : 'Demo',
             'siteDesc' => (trim($_POST['siteDesc']) != '') ? trim($_POST['siteDesc']) : '',
             'siteLang' => $lang,
@@ -43,7 +45,7 @@ class ConfigManagerAdminController extends AdminController {
             'hideTitles' => (isset($_POST['hideTitles'])) ? true : false,
             'debug' => (isset($_POST['debug'])) ? true : false,
             'defaultAdminPlugin' => $_POST['defaultAdminPlugin']
-        );
+        ];
 
         if (!$this->core->saveConfig($config, $config)) {
             show::msg(lang::get("core-changes-not-saved"), 'error');

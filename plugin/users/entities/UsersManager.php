@@ -34,7 +34,7 @@ class UsersManager
     public static function login(string $mail, string $password, bool $useCookies = false): bool
     {
         $user = User::find('email',$mail);
-        if ($user === false) {
+        if ($user === null) {
             // User dont exist
             return false;
         }
@@ -63,7 +63,7 @@ class UsersManager
         $cryptedPwd = $parts[1] ?? '';
 
         $user = User::find('email',$mail);
-        if ($user === false) {
+        if ($user === null) {
             // User dont exist
             setcookie('koAutoConnect', '/', 1, '/');
             return false;
@@ -126,7 +126,7 @@ class UsersManager
 
     /**
      * Return the current User, if connected by session
-     * @return User|false User or false if not connected
+     * @return User|null User or false if not connected
      */
     public static function getCurrentUser(): ?User
     {
@@ -134,7 +134,7 @@ class UsersManager
             return null;
         }
         $user = User::find('email', $_SESSION['email']);
-        if ($user !== false) {
+        if ($user !== null) {
             if ($_SESSION['token'] === $user->token) {
                 return $user;
             }

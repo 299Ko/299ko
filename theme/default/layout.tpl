@@ -39,7 +39,7 @@
 				{% IF CORE.getConfigVal(hideTitles) == 0 %}
 					<div id="pageTitle">
 						{% if PAGE_TITLE %}
-							{{ PAGE_TITLE }}
+							<h1>{{ PAGE_TITLE }}</h1>
 						{% else %}
 							{{ SHOW.mainTitle }}
 						{% endif %}

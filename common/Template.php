@@ -329,7 +329,7 @@ class Template {
                 }
             } 
             // Check if the name is a variable, callable, object, array or class
-            if (!is_array($name) && !is_callable($name) && !is_object($name) && !isset($this->data[$name]) && !class_exists($name)) {
+            if (!is_array($name) && !is_callable($name) && !is_object($name) && !isset($parent[$name]) && !class_exists($name)) {
                 // Unknown $name
                 return false;
             }

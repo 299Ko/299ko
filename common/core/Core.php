@@ -462,13 +462,13 @@ function logg($message, $severity = 'INFO')
 }
 
 /**
- * Debug display as print_r with <pre> tag
+ * Debug display as var_dump with <pre> tag
  * @param mixed $message Message or var to display
  * @return void
  */
 function debug($message): void
 {
     echo '<pre>';
-    print_r($message);
+    var_dump($message);
     echo '</pre>';
 }

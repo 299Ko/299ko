@@ -32,7 +32,7 @@ class UsersAdminManagementController extends AdminController {
             show::msg(Lang::get('users-bad-entries'), 'error');
             return $this->addUser();
         }
-        if (User::find('email',$mail) !== false) {
+        if (User::find('email',$mail) !== null) {
             show::msg(Lang::get('users-already-exists'), 'error');
             return $this->addUser();
         }
