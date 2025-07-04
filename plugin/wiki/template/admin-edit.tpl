@@ -124,11 +124,13 @@
                         <textarea name="changeDescription" id="changeDescription" placeholder="{{Lang.wiki-change-description-placeholder}}"></textarea>
                     </div>
                     
+                    {% if wikiPage.getId() %}
                     <div class="wiki-history-actions">
-                        <a href="{{ ROUTER.generate("admin-wiki-history", {"id": wikiPage.getId()}) }}" class="btn btn-info">
+                        <a href="{{ ROUTER.generate("admin-wiki-history", ["id" => wikiPage.getId()]) }}" class="btn btn-info">
                             <i class="fa fa-history"></i> {{Lang.wiki-view-history}}
                         </a>
                     </div>
+                    {% endif %}
                 {% else %}
                     <p>{{Lang.wiki.categories.none}}</p>
                 {% endif %}

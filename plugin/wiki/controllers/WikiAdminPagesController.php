@@ -142,23 +142,25 @@ class WikiAdminPagesController extends AdminController
         $changeDescription = $this->request->post('changeDescription') ?? '';
         $wikiPage->setModifiedBy($this->user->email);
         
+        // Préparer les catégories avant la sauvegarde
+        $choosenCats = [];
+        if (isset($_POST['categoriesCheckbox'])) {
+            foreach ($_POST['categoriesCheckbox'] as $cat) {
+                $choosenCats[] = (int) $cat;
+            }
+        }
+        $label = filter_input(INPUT_POST, 'category-add-label', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if ($label !== '') {
+            $parentId = filter_input(INPUT_POST, 'category-add-parentId', FILTER_VALIDATE_INT) ?? 0;
+            $choosenCats[] = $this->categoriesManager->createCategory($label, $parentId);
+        }
+        
+        // Sauvegarder la page (une seule fois)
         if ($this->wikiPageManager->saveWikiPage($wikiPage, $changeDescription)) {
-            $choosenCats = [];
-            if (isset($_POST['categoriesCheckbox'])) {
-                foreach ($_POST['categoriesCheckbox'] as $cat) {
-                    $choosenCats[] = (int) $cat;
-                }
-            }
-            $label = filter_input(INPUT_POST, 'category-add-label', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            if ($label !== '') {
-                $parentId = filter_input(INPUT_POST, 'category-add-parentId', FILTER_VALIDATE_INT) ?? 0;
-                $choosenCats[] = $this->categoriesManager->createCategory($label, $parentId);
-            }
-            
             // Sauvegarder les associations dans le système de catégories
             WikiCategoriesManager::saveItemToCategories($wikiPage->getId(), $choosenCats);
             
-            // Mettre à jour la propriété categories de la page
+            // Mettre à jour la propriété categories de la page (optionnel, pour l'affichage)
             $wikiPage->categories = ['categories' => []];
             foreach ($choosenCats as $catId) {
                 $category = $this->categoriesManager->getCategory($catId);
@@ -170,9 +172,6 @@ class WikiAdminPagesController extends AdminController
                     ];
                 }
             }
-            
-            // Sauvegarder la page avec ses catégories mises à jour
-            $this->wikiPageManager->saveWikiPage($wikiPage, $changeDescription);
             
             // Recharger les catégories pour mettre à jour les compteurs
             $this->categoriesManager = new WikiCategoriesManager();

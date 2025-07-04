@@ -43,6 +43,19 @@ function wikiEndFrontHead() {
 }
 
 /**
+ * Hook pour ajouter des éléments dans le head de la page d'administration
+ * 
+ * @return string Code HTML à ajouter dans le head admin
+ */
+function wikiEndAdminHead() {
+    $core = core::getInstance();
+    $output = '<link rel="stylesheet" href="' . $core->getConfigVal('siteUrl') . '/plugin/wiki/template/admin.css" media="all">' . "\n";
+    $output .= '<script src="' . $core->getConfigVal('siteUrl') . '/plugin/wiki/template/admin.js"></script>' . "\n";
+    
+    return $output;
+}
+
+/**
  * Shortcode pour créer des liens vers des pages Wiki
  * 
  * @param array $attributes Attributs du shortcode ['id' => int, 'name' => string]
