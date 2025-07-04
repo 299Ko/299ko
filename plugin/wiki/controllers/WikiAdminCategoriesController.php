@@ -28,7 +28,8 @@ class WikiAdminCategoriesController extends AdminController {
         }
         
         $label = filter_var($this->request->post('label'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $parentId = filter_var($this->request->post('parentId'), FILTER_SANITIZE_NUMBER_INT) ?? 0;
+        $parentId = filter_var($this->request->post('parentId'), FILTER_SANITIZE_NUMBER_INT);
+        $parentId = ($parentId === false || $parentId === '') ? 0 : (int)$parentId;
         
         if (empty($label)) {
             show::msg(lang::get('core-required-fields'), 'error');
@@ -105,7 +106,8 @@ class WikiAdminCategoriesController extends AdminController {
         
         $id = (int) $this->request->post('id') ?? 0;
         $label = filter_var($this->request->post('label'), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $parentId = (int)filter_var($this->request->post('parentId'), FILTER_SANITIZE_NUMBER_INT) ?? 0;
+        $parentId = filter_var($this->request->post('parentId'), FILTER_SANITIZE_NUMBER_INT);
+        $parentId = ($parentId === false || $parentId === '') ? 0 : (int)$parentId;
         
         if (!$this->categoriesManager->isCategoryExist($id)) {
             $this->core->error404();

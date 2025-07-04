@@ -28,7 +28,8 @@ class BlogAdminCategoriesController extends AdminController {
             return $response;
         }
         $label = filter_var($this->jsonData['label'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $parentId = filter_var($this->jsonData['parentId'], FILTER_SANITIZE_NUMBER_INT) ?? 0;
+        $parentId = filter_var($this->jsonData['parentId'], FILTER_SANITIZE_NUMBER_INT);
+        $parentId = ($parentId === false || $parentId === '') ? 0 : (int)$parentId;
         $this->categoriesManager->createCategory($label, $parentId);
         $response->status = ApiResponse::STATUS_CREATED;
         return $response;
@@ -82,7 +83,8 @@ class BlogAdminCategoriesController extends AdminController {
             return $response;
         }
         $label = filter_var($this->jsonData['label'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $parentId = (int)filter_var($this->jsonData['parentId'], FILTER_SANITIZE_NUMBER_INT) ?? 0;
+        $parentId = filter_var($this->jsonData['parentId'], FILTER_SANITIZE_NUMBER_INT);
+        $parentId = ($parentId === false || $parentId === '') ? 0 : (int)$parentId;
         if (!$this->categoriesManager->isCategoryExist($id)) {
             $response->status = ApiResponse::STATUS_NOT_FOUND;
             return $response;
