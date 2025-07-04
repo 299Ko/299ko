@@ -1,0 +1,286 @@
+.blog-author {
+    display: flex;
+}
+
+.blog-avatar {
+     width:auto;
+}
+
+.blog-avatar img {
+    max-width: 80px;
+    border-radius: 50%;
+    border:2px solid #ccc;
+    box-shadow: 0 0 5px rgba(0,0,0,0.15);
+}
+
+.blog-infos {
+    margin-left: 20px;
+}
+
+.blog-infos-name span {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.blog-infos-bio {
+    font-size: 12px;
+}
+
+.blog-label-category {
+    position: relative;
+}
+
+.blog-label-category:after {
+    content: ',';
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.blog-label-category:last-of-type:after {
+    content: '';
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+/* Comments */
+
+#comments-add-respond {
+    position: relative;
+}
+
+#comments-cancel-respond {
+    display: none;
+    position: absolute;
+    top:0;
+    right:0;
+}
+
+.comment-content {
+    clear:both;
+}
+
+/* Styles pour la page d'accueil du wiki */
+.wiki-home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.wiki-intro {
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 4px solid;
+}
+
+.wiki-last-activity {
+    padding: 15px;
+    margin-bottom: 30px;
+    border-left: 4px solid;
+}
+
+.wiki-last-activity h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+}
+
+.activity-content {
+    font-weight: 500;
+}
+
+.wiki-toc {
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 4px solid;
+}
+
+.wiki-toc-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: #666;
+}
+
+.wiki-toc-empty h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.wiki-toc-empty p {
+    margin: 0;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* Styles spécifiques pour la TOC du wiki - Surcharge du CSS d'origine */
+.wiki-toc .toc-container {
+    /* Annuler le float et la largeur du CSS d'origine */
+    float: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+.wiki-toc .toc-container summary {
+    cursor: pointer;
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid;
+    padding-bottom: 10px;
+}
+
+.wiki-toc .toc-container summary::marker,
+.wiki-toc .toc-container summary::-webkit-details-marker {
+    display: none;
+}
+
+.wiki-toc .toc-container summary header h4 {
+    margin: 0;
+    background: none;
+    padding: 0;
+}
+
+.wiki-toc .toc-container ol {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+.wiki-toc .toc-container li {
+    margin: 8px 0;
+    line-height: 1.4;
+    padding-left: 0;
+}
+
+.wiki-toc .toc-container a {
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: block;
+    padding: 4px 0;
+}
+
+.wiki-toc .toc-container a:hover {
+    text-decoration: underline;
+}
+
+/* Surcharge des niveaux de la TOC - Seulement la disposition */
+.wiki-toc .toc-level-1 {
+    margin-bottom: 12px;
+}
+
+.wiki-toc .toc-level-2 {
+    margin-bottom: 8px;
+    padding-left: 15px;
+}
+
+.wiki-toc .toc-level-3 {
+    margin-bottom: 6px;
+    padding-left: 30px;
+}
+
+.wiki-toc .toc-level-4 {
+    margin-bottom: 4px;
+    padding-left: 45px;
+}
+
+.wiki-toc .toc-level-5 {
+    margin-bottom: 4px;
+    padding-left: 60px;
+}
+
+.wiki-toc .toc-level-6 {
+    margin-bottom: 4px;
+    padding-left: 75px;
+}
+
+/* Styles pour les flèches interactives - Utilisation de Font Awesome */
+.wiki-toc li.has-children > a::before {
+    content: '\f054'; /* Font Awesome chevron-right */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 10px;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.wiki-toc li.has-children.expanded > a::before {
+    transform: rotate(90deg);
+}
+
+/* Styles pour les éléments enfants (initialement cachés) */
+.wiki-toc .toc-children {
+    display: none;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.wiki-toc .toc-children.expanded {
+    display: block;
+}
+
+/* Animation pour l'expansion */
+.wiki-toc .toc-children.expanding {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+.wiki-toc .toc-children.collapsing {
+    animation: slideUp 0.3s ease-in;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        max-height: 500px;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive pour mobile */
+@media only screen and (max-width: 960px) {
+    .wiki-toc .toc-container {
+        float: none !important;
+        max-width: 100% !important;
+        margin: 0 0 20px 0 !important;
+    }
+    
+    .wiki-toc .toc-level-2 {
+        padding-left: 10px;
+    }
+    
+    .wiki-toc .toc-level-3 {
+        padding-left: 20px;
+    }
+    
+    .wiki-toc .toc-level-4 {
+        padding-left: 30px;
+    }
+    
+    .wiki-toc .toc-level-5 {
+        padding-left: 40px;
+    }
+    
+    .wiki-toc .toc-level-6 {
+        padding-left: 50px;
+    }
+}
+

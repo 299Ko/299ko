@@ -1,0 +1,11 @@
+{
+    "slug" : "wiki",
+    "name" : "wiki",
+    "icon" : "fa-solid fa-book",
+    "description" : "Gestion d'une Documentation type Wiki avec système de versions",
+    "authorEmail" : "maximeblanc@flexcb.fr",
+    "authorWebsite" : "https://www.flexcb.fr",
+    "version" : "1.0",
+    "homePublicMethod" : "WikiListController#home",
+    "homeAdminMethod" : "WikiAdminPagesController#list"
+}

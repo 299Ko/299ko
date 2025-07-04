@@ -1,0 +1,4 @@
+{
+    "endFrontHead" : "wikiEndFrontHead",
+    "beforeRunPlugin" : "wikiBeforeRunPlugin"
+}
