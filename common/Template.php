@@ -195,7 +195,7 @@ class Template {
             return '<?php echo core::getInstance()->callHook(\'' . $name . '\', $this->getVar(\'' . $args . '\', $this->data) ); ?>';
         }
         // Action Hook
-        return '<?php core::getInstance()->callHook(\'' . $name . '\'); ?>';
+        return '<?php echo core::getInstance()->callHook(\'' . $name . '\'); ?>';
     }
     
     protected function _getLang($matches) {
