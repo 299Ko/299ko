@@ -219,7 +219,7 @@ class show {
             $core = core::getInstance();
             $data = '';
             foreach ($pluginsManager->getPlugins() as $k => $plugin)
-                if ($plugin->getConfigval('activate') == 1) {
+                if ($plugin->getConfigval('activate') == 1 && $plugin->getInfoVal('hideInPublicMenu') !== true) {
                     foreach ($plugin->getNavigation() as $k2 => $item)
                         if ($item['label'] != '') {
                             if ($item['parent'] < 1) {
