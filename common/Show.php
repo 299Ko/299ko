@@ -215,41 +215,82 @@ class show {
         if (function_exists('mainNavigation'))
             call_user_func('mainNavigation', $format);
         else {
-            $pluginsManager = pluginsManager::getInstance();
-            $core = core::getInstance();
-            $data = '';
-            foreach ($pluginsManager->getPlugins() as $k => $plugin)
-                if ($plugin->getConfigval('activate') == 1 && $plugin->getInfoVal('hideInPublicMenu') !== true) {
-                    foreach ($plugin->getNavigation() as $k2 => $item)
-                        if ($item['label'] != '') {
-                            if ($item['parent'] < 1) {
-                                $temp = $format;
-                                $temp = str_replace('[target]', $item['target'], $temp);
-                                $temp = str_replace('[label]', $item['label'], $temp);
-                                $temp = str_replace('[targetAttribut]', $item['targetAttribut'], $temp);
-                                $temp = str_replace('[cssClass]', $item['cssClass'], $temp);
-                                $data2 = '<ul>';
-                                $i = 0;
-                                foreach ($plugin->getNavigation() as $k3 => $item2)
-                                    if ($item2['label'] != '' && $item2['parent'] == $item['id']) {
-                                        $temp2 = $format;
-                                        $temp2 = str_replace('[target]', $item2['target'], $temp2);
-                                        $temp2 = str_replace('[label]', $item2['label'], $temp2);
-                                        $temp2 = str_replace('[targetAttribut]', $item2['targetAttribut'], $temp2);
-                                        $temp2 = str_replace('[cssClass]', $item2['cssClass'], $temp2);
-                                        $temp2 = str_replace('[childrens]', '', $temp2);
-                                        $data2 .= $temp2;
-                                        $i++;
-                                    }
-                                $data2 .= '</ul>';
-                                if ($i == 0)
-                                    $data2 = '';
-                                $temp = str_replace('[childrens]', $data2, $temp);
-                                $data .= $temp;
+            // Utiliser le système de navigation du plugin page
+            if (pluginsManager::isActivePlugin('page')) {
+                $page = new page();
+                $data = '';
+
+                foreach ($page->getItems() as $pageItem) {
+                    if (!$pageItem->getIsHidden()) {
+                        if ($pageItem->getParent() < 1) {
+                            $temp = $format;
+                            $temp = str_replace('[target]', $page->makeUrl($pageItem), $temp);
+                            $temp = str_replace('[label]', $pageItem->getName(), $temp);
+                            $temp = str_replace('[targetAttribut]', $pageItem->getTargetAttr(), $temp);
+                            $temp = str_replace('[cssClass]', $pageItem->getCssClass(), $temp);
+
+                            // Gestion des sous-menus
+                            $data2 = '<ul>';
+                            $i = 0;
+                            foreach ($page->getItems() as $childItem) {
+                                if ($childItem->getParent() == $pageItem->getId() && !$childItem->getIsHidden()) {
+                                    $temp2 = $format;
+                                    $temp2 = str_replace('[target]', $page->makeUrl($childItem), $temp2);
+                                    $temp2 = str_replace('[label]', $childItem->getName(), $temp2);
+                                    $temp2 = str_replace('[targetAttribut]', $childItem->getTargetAttr(), $temp2);
+                                    $temp2 = str_replace('[cssClass]', $childItem->getCssClass(), $temp2);
+                                    $temp2 = str_replace('[childrens]', '', $temp2);
+                                    $data2 .= $temp2;
+                                    $i++;
+                                }
                             }
+                            $data2 .= '</ul>';
+                            if ($i == 0)
+                                $data2 = '';
+                            $temp = str_replace('[childrens]', $data2, $temp);
+                            $data .= $temp;
                         }
+                    }
                 }
-            echo $data;
+                echo $data;
+            } else {
+                // Fallback vers l'ancien système si le plugin page n'est pas actif
+                $pluginsManager = pluginsManager::getInstance();
+                $core = core::getInstance();
+                $data = '';
+                foreach ($pluginsManager->getPlugins() as $k => $plugin)
+                    if ($plugin->getConfigval('activate') == 1 && $plugin->getInfoVal('hideInPublicMenu') !== true) {
+                        foreach ($plugin->getNavigation() as $k2 => $item)
+                            if ($item['label'] != '') {
+                                if ($item['parent'] < 1) {
+                                    $temp = $format;
+                                    $temp = str_replace('[target]', $item['target'], $temp);
+                                    $temp = str_replace('[label]', $item['label'], $temp);
+                                    $temp = str_replace('[targetAttribut]', $item['targetAttribut'], $temp);
+                                    $temp = str_replace('[cssClass]', $item['cssClass'], $temp);
+                                    $data2 = '<ul>';
+                                    $i = 0;
+                                    foreach ($plugin->getNavigation() as $k3 => $item2)
+                                        if ($item2['label'] != '' && $item2['parent'] == $item['id']) {
+                                            $temp2 = $format;
+                                            $temp2 = str_replace('[target]', $item2['target'], $temp2);
+                                            $temp2 = str_replace('[label]', $item2['label'], $temp2);
+                                            $temp2 = str_replace('[targetAttribut]', $item2['targetAttribut'], $temp2);
+                                            $temp2 = str_replace('[cssClass]', $item2['cssClass'], $temp2);
+                                            $temp2 = str_replace('[childrens]', '', $temp2);
+                                            $data2 .= $temp2;
+                                            $i++;
+                                        }
+                                    $data2 .= '</ul>';
+                                    if ($i == 0)
+                                        $data2 = '';
+                                    $temp = str_replace('[childrens]', $data2, $temp);
+                                    $data .= $temp;
+                                }
+                            }
+                    }
+                echo $data;
+            }
         }
     }
 
